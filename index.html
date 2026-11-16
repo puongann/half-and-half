@@ -1206,22 +1206,22 @@ const MAX_PER_TABLE = 3;
 const TYPES = {
   '0': { name: 'Zero conditional', vn: 'Câu điều kiện loại 0', short: 'Type 0', mood: 'Facts of life', moodVi: 'Chân lý cuộc đời',
     ifF: 'present simple', mainF: 'present simple', ex: ['If you heat ice', 'it melts'], topic: 'cond0', want: 0,
-    dummy: ['If it rains', 'the grass gets wet'] },
+    exL: 'it turns into water', dummy: ['If it rains', 'the grass gets wet'] },
   '1': { name: 'First conditional', vn: 'Câu điều kiện loại 1', short: 'Type 1', mood: 'Pinky promises', moodVi: 'Hứa là làm',
     ifF: 'present simple', mainF: 'will / can + V', ex: ['If it rains tomorrow', 'I will stay at home'], topic: 'cond1', want: 1,
-    dummy: ['If it rains', 'it will be fine'] },
+    exL: 'I will watch films all day', dummy: ['If it rains', 'it will be fine'] },
   '2': { name: 'Second conditional', vn: 'Câu điều kiện loại 2', short: 'Type 2', mood: 'Dream on!', moodVi: 'Mơ đi!',
     ifF: 'past simple (be → were)', mainF: 'would / could + V', ex: ['If I were a cat', 'I would sleep all day'], topic: 'cond2', want: 2,
-    dummy: ['If it rained', 'it would be fine'] },
+    exL: 'I would chase mice', dummy: ['If it rained', 'it would be fine'] },
   '3': { name: 'Third conditional', vn: 'Câu điều kiện loại 3', short: 'Type 3', mood: 'If only back then…', moodVi: 'Nếu lúc đó…',
     ifF: 'had + V3', mainF: 'would have + V3', ex: ['If I had studied', 'I would have passed'], topic: 'cond3', want: 3,
-    dummy: ['If it had rained', 'it would have been fine'] },
+    exL: 'my parents would have been proud', dummy: ['If it had rained', 'it would have been fine'] },
   mA: { name: 'Mixed conditional (past → now)', vn: 'Câu điều kiện hỗn hợp (quá khứ → hiện tại)', short: 'Mixed A', mood: 'Blame it on the past', moodVi: 'Tại hồi đó…',
     ifF: 'had + V3 (past)', mainF: 'would + V (now)', ex: ['If I had slept earlier', 'I would be awake now'], topic: 'condm', want: 'm',
-    dummy: ['If it had rained', 'it would be fine now'] },
+    exL: 'I would feel great', dummy: ['If it had rained', 'it would be fine now'] },
   mB: { name: 'Mixed conditional (now → past)', vn: 'Câu điều kiện hỗn hợp (hiện tại → quá khứ)', short: 'Mixed B', mood: 'Because of who I am', moodVi: 'Tại tính mình vậy…',
     ifF: 'past simple (always true)', mainF: 'would have + V3 (past)', ex: ['If I were braver', 'I would have asked her out'], topic: 'condm', want: 'm2',
-    dummy: ['If it rained', 'it would have been fine'] },
+    exL: 'she would have said yes', dummy: ['If it rained', 'it would have been fine'] },
   /* passive voice: each student writes one passive clause; the group is given the linking word(s) */
   pS: { kind: 'pass', tense: 'pS', name: 'Passive · present simple', vn: 'Bị động · hiện tại đơn', short: 'Passive', mood: 'Every single day', moodVi: 'Ngày nào cũng vậy',
     verbF: 'am / is / are + V3', ex: ['Pizza is eaten here every day', 'more pizza is ordered every morning', 'the bill is never paid'] },
@@ -1261,13 +1261,13 @@ const VOTES = [
   { k: 0, e: '🤯', en: 'Total chaos', vi: 'Loạn hết cả lên' }
 ];
 // "Clause 1, so [clause 2]" — where my clause sits in the group's sentence
-function linkPreview(role, c) {
-  const slot = n => n === role || (n === 'main' && role === 'main2') ? '[YOUR CLAUSE]' : '[clause]';
-  return slot('if') + ' ' + c[0] + ' ' + slot('main') + (c[1] ? ' ' + c[1] + ' ' + slot('twist') : '') + '.';
+function linkPreview(role, c, type) {
+  const slot = n => n === roleKey(role) ? '[YOUR PART]' : '[…]';
+  return (isPass(type) ? '' : 'If ') + slot('a') + (c[0] ? ' ' + c[0] + ' ' : ', ') + slot('b') + (c[1] ? ' ' + c[1] + ' ' + slot('x') : '') + '.';
 }
 const isPass = type => TYPES[type] && TYPES[type].kind === 'pass';
 // what each half looks like for a round type: a = first half (If… / Something was V3), b = second (main / by…), x = trio twist
-function lay(type, c) {
+function lay(type, c, trio) {
   const T = TYPES[type];
   if (isPass(type)) {
     const c1 = c && c[0], c2 = c && c[1], f = T.verbF;
@@ -1275,19 +1275,19 @@ function lay(type, c) {
       a: { pre: '', form: 'Clause 1: something + ' + f, ex: T.ex[0], lbl: '', en: 'You write CLAUSE 1', vi: 'Bạn viết mệnh đề 1 (câu bị động)', ph: 'My bike / Ms Hoa …' },
       b: { pre: c1 || '', form: (c1 || 'so / because / but') + ' + something + ' + f, ex: (c1 || 'so') + ' ' + T.ex[1], lbl: (c1 || '').toUpperCase(), en: 'You write CLAUSE 2', vi: 'Bạn viết mệnh đề 2 (câu bị động)', ph: 'the cake / my parents …' },
       b2: { en: 'You write CLAUSE 2', vi: 'Bạn viết mệnh đề 2 (câu bị động)' },
-      x: { pre: c2 || '', form: (c2 || 'and / so / but') + ' + something + ' + f, ex: (c2 || 'but') + ' ' + T.ex[2], lbl: (c2 || '').toUpperCase(), en: 'You write CLAUSE 3', vi: 'Bạn viết mệnh đề 3 (câu bị động)', ph: 'nobody / the dog …' },
-      third: ['Group of 3: + and / so / but + clause 3', 'Nhóm 3: + and / so / but + mệnh đề 3']
+      x: { pre: c2 || '', form: (c2 || 'and / so / but') + ' + something + ' + f, ex: (c2 || 'but') + ' ' + T.ex[2], lbl: (c2 || '').toUpperCase(), en: 'You write CLAUSE 3', vi: 'Bạn viết mệnh đề 3 (câu bị động)', ph: 'nobody / the dog …' }
     };
   }
   return {
     a: { pre: 'If', form: 'If + ' + T.ifF, ex: T.ex[0], lbl: 'If', en: 'You write the IF half', vi: 'Bạn viết vế IF (điều kiện)', ph: 'I / [name] …' },
     b: { pre: '', form: T.mainF, ex: T.ex[1], lbl: '', en: 'You write the MAIN half', vi: 'Bạn viết vế chính (kết quả)', ph: 'I / [name] …' },
     b2: { en: 'You write ANOTHER main half', vi: 'Bạn viết thêm một vế chính' },
-    x: { pre: 'unless', form: 'unless + ' + T.ifF, ex: 'unless ' + T.ex[0].replace(/^If /, ''), lbl: 'Unless', en: 'You write the TWIST', vi: 'Bạn viết vế “unless” (trừ khi…)', ph: 'I / [name] …' },
-    third: ['3rd person: another main half', 'Người thứ 3: viết thêm một vế chính']
+    x: trio === 'twist'
+      ? { pre: 'unless', form: 'unless + ' + T.ifF, ex: 'unless ' + T.ex[0].replace(/^If /, ''), lbl: 'Unless', en: 'You write the TWIST', vi: 'Bạn viết vế “unless” (trừ khi…)', ph: 'I / [name] …' }
+      : { pre: (c && c[1]) || '', form: ((c && c[1]) || 'and / so / but') + ' + ' + T.mainF, ex: ((c && c[1]) || 'and') + ' ' + T.exL, lbl: ((c && c[1]) || '').toUpperCase(), en: 'You write the LAST PART', vi: 'Bạn viết vế cuối (and / so / but …)', ph: 'I / [name] …' }
   };
 }
-const roleKey = role => role === 'if' ? 'a' : role === 'twist' ? 'x' : 'b';
+const roleKey = role => role === 'if' ? 'a' : role === 'twist' || role === 'link' ? 'x' : 'b';
 const formOf = (role, type) => lay(type)[roleKey(role)].form;
 // the three halves as shown on screen, with their joining words and punctuation
 function halfTexts(type, p) {
@@ -1295,10 +1295,14 @@ function halfTexts(type, p) {
     const c1 = (p.c && p.c[0]) || 'so', c2 = (p.c && p.c[1]) || 'and', cm = w => /^(so|but)$/.test(w) ? ',' : '';
     return { a: cap1(p.ifT) + cm(c1), b: c1 + ' ' + lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), x: p.tw ? c2 + ' ' + lowStart(p.xT) + '.' : '' };
   }
+  if (p.tw && p.trio !== 'twist') {
+    const c2 = (p.c && p.c[1]) || 'and', cm = /^(so|but)$/.test(c2) ? ',' : '';
+    return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + cm, x: c2 + ' ' + lowStart(p.xT) + '.' };
+  }
   return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + (p.tw ? ',' : '.'), x: p.tw ? 'unless ' + lowStart(p.xT) + '.' : '' };
 }
 function frameHTML(type, trio, withX) {
-  const L = lay(type), xHTML = (trio === 'twist' || isPass(type)) ? `${esc(L.x.form)}<small>${esc(L.x.ex)}</small>` : `${VI(...L.third)}<small>${esc(L.b.ex)}</small>`;
+  const L = lay(type, null, trio), xHTML = `${VI('Group of 3:', 'Nhóm 3:')} ${esc(L.x.form)}<small>${esc(L.x.ex)}</small>`;
   return `<div class="fi">${esc(L.a.form)}<small>${esc(L.a.ex)}${isPass(type) ? '' : ','}</small></div>
     <div class="fm">${esc(L.b.form)}<small>${esc(L.b.ex)}.</small></div>${withX ? `<div class="fx" id="fx">${xHTML}</div>` : ''}`;
 }
@@ -1415,6 +1419,7 @@ document.addEventListener('click', e => {
 const cleanHalf = s => String(s || '').replace(/\s+/g, ' ').trim().replace(/^[,;:\s]+/, '').replace(/[.,;:!?\s]+$/, '');
 function checkHalf(raw, role, type) {
   if (isPass(type)) return checkPass(raw, role, type);
+  if (role === 'link') { raw = String(raw || '').replace(/^\s*(and|so|but)\b[,\s]*/i, ''); role = 'main'; }
   const T = TYPES[type];
   let t = cleanHalf(raw);
   if (role !== 'main') t = t.replace(/^(if|unless)\b\s*/i, '');
@@ -1455,10 +1460,10 @@ function checkHalf(raw, role, type) {
 function sentenceParts(R, roles, tk, slot) {
   const ro = roles[tk]; if (!ro) return null;
   const H = R && R.h ? R.h : {}, g = pid => H[pid] && H[pid].text;
-  const tw = R.meta.trio === 'twist' && ro.x;
+  const tw = R.meta.trio !== 'two' && ro.x;
   const mainPid = slot && slot === tk + 'b' ? ro.x : ro.main;
   const ifT = g(ro.if), mainT = g(mainPid), xT = tw ? g(ro.x) : null;
-  return { ifT, mainT, xT, tw, mainPid, c: ro.c || [] };
+  return { ifT, mainT, xT, tw, mainPid, c: ro.c || [], trio: R.meta.trio };
 }
 // words both halves share (mind-readers!)
 const STOP = new Set(('i you he she it we they me him her us them my your his its our their mine yours a an the and or but so to of in on at for with from by about as into than then too very really just not no this that these those there here what who when where why how all some any every each more most much many lot lots will would could can might may must shall should have has had having do does did be am is are was were been being get got gets go goes went gone going make made one thing things up out off over now day if unless always never ever also every again still even only').split(' '));
@@ -1555,7 +1560,7 @@ function tablesMap() {
   for (const k in m) m[k].sort((a, b) => (a.t || 0) - (b.t || 0) || a.pid.localeCompare(b.pid));
   return m;
 }
-const slotsOf = (R, tk) => { const ro = R && R.meta && R.meta.roles && R.meta.roles[tk]; if (!ro) return []; return ro.x && R.meta.trio !== 'twist' ? [tk + 'a', tk + 'b'] : [tk]; };
+const slotsOf = (R, tk) => { const ro = R && R.meta && R.meta.roles && R.meta.roles[tk]; if (!ro) return []; return ro.x && R.meta.trio === 'two' ? [tk + 'a', tk + 'b'] : [tk]; };
 const tableOfSlot = s => s.replace(/[ab]$/, '');
 const tableDone = (R, tk) => { const ro = R.meta.roles[tk], H = R.h || {}; return [ro.if, ro.main, ro.x].filter(Boolean).every(p => H[p] && H[p].text); };
 function slotScore(R, slot) {
@@ -1757,7 +1762,7 @@ function tableCards(mode) {
     const tk = 't' + id, ro = roles && roles[tk];
     let cls = '', status = mem.length >= 3 ? '🫂' : '🧑‍🤝‍🧑';
     if (mode === 'write') { if (ro) { const done = tableDone(R, tk); if (done) cls = 'ready'; status = done ? '✅' : '✍️'; } else status = '⏳'; }
-    const link = mode === 'write' && ro && ro.c ? `<div><span class="tag sun">🔗 ${ro.c.map(esc).join(' · ')}</span></div>` : '';
+    const link = mode === 'write' && ro && ro.c && ro.c.some(Boolean) ? `<div><span class="tag sun">🔗 ${ro.c.filter(Boolean).map(esc).join(' · ')}</span></div>` : '';
     html += `<div class="tbl ${cls}"><h3><span>${mem.length >= 3 ? VI('Group of 3', 'Nhóm 3') : VI('Pair', 'Cặp')}</span><span>${status}</span></h3>${link}<div class="row" style="gap:6px">${mem.map(p => chip(p, ro)).join('')}</div></div>`;
   }
   const solo = singles(tm);
@@ -1803,7 +1808,7 @@ function tLobby() {
             <label class="field" style="flex:1;min-width:180px">${VI('Theme (optional)', 'Chủ đề (không bắt buộc)')}
               <select id="theme">${THEMES.map(t => `<option value="${esc(t[0])}">${t[0] ? esc(t[0]) : 'No theme'}</option>`).join('')}</select></label>
             <label class="field" id="trioBox" style="flex:1;min-width:220px">${VI('Groups of 3', 'Nhóm 3 người')}
-              <select id="trio"><option value="two">A · Two endings (2 main halves)</option><option value="twist">C · Twist (3rd writes “unless …” / “but …”)</option></select></label>
+              <select id="trio"><option value="link">3rd adds “and / so / but …”</option><option value="twist">Twist: 3rd adds “unless …”</option></select></label>
           </div>
           <div class="frame" id="frame"></div>
           <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
@@ -1819,10 +1824,10 @@ function tLobby() {
     const drawFrame = () => {
       const t = $('#rtype').value;
       $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || isPass(t);
-      $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t);
+      $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t, $('#trio').value, Object.values(tablesMap()).some(m => m.length >= 3));
       LS.set('cp_lastType_' + CODE, t);
     };
-    $('#rtype').onchange = drawFrame; drawFrame();
+    $('#rtype').onchange = drawFrame; $('#trio').onchange = drawFrame; drawFrame();
     $('#start').onclick = () => startRound($('#rtype').value, $('#theme').value, $('#trio').value);
     if ($('#toFinal')) $('#toFinal').onclick = () => { if (confirm('Finish the game and show the winners?')) patch({ 'state/phase': 'final' }); };
   }, () => {
@@ -1839,15 +1844,16 @@ async function startRound(type, theme, trio) {
   const types = roundTypes();
   if (type === '?') type = types[Math.floor(Math.random() * types.length)];
   const r = (st().round || 0) + 1, tm = tablesMap(), roles = {}, pass = isPass(type);
-  if (pass) trio = 'twist'; // passive: a group of 3 always writes 3 clauses
+  if (pass || trio !== 'twist') trio = 'link'; // a group of 3 writes one sentence: 3rd part joined by and / so / but
   for (const [tb, mem0] of Object.entries(tm)) {
     const mem = mem0.slice(0, MAX_PER_TABLE); if (mem.length < 2) continue;
     const k = (r - 1) % mem.length, rot = mem.slice(k).concat(mem.slice(0, k)); // roles take turns each round
     roles['t' + tb] = { if: rot[0].pid, main: rot[1].pid, x: rot[2] ? rot[2].pid : null };
     if (pass) roles['t' + tb].c = rot[2] ? shuffle(['and', 'so', 'but']).slice(0, 2) : shuffle(['so', 'because', 'but']).slice(0, 1);
+    else if (rot[2] && trio === 'link') roles['t' + tb].c = ['', shuffle(['and', 'so', 'but'])[0]];
   }
   if (!Object.keys(roles).length) return toast('No pairs yet.');
-  await patch({ ['rounds/' + roundKey(r) + '/meta']: { type, theme: theme || '', trio: trio || 'two', roles, at: Date.now() }, state: { phase: 'write', round: r } });
+  await patch({ ['rounds/' + roundKey(r) + '/meta']: { type, theme: theme || '', trio: trio || 'link', roles, at: Date.now() }, state: { phase: 'write', round: r } });
 }
 function roundHeader(R) {
   const T = TYPES[R.meta.type];
@@ -1885,16 +1891,16 @@ function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class
 function tReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta || !R.meta.order) return tLobby();
   const order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], roles = R.meta.roles, ro = roles[tk];
-  const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname), slots = slotsOf(R, tk), twist = R.meta.trio === 'twist' && ro.x;
+  const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname), slots = slotsOf(R, tk), twist = R.meta.trio !== 'two' && ro.x;
   const flipped = !!s.flipped;
   show(`trv${s.round}_${i}_${flipped}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
     <div class="stage">
       <p class="who">${namesJoin(names)}</p>
       ${!flipped ? `<div class="facedown"><div class="a">❓</div><div class="b">❓</div>${ro.x ? '<div class="c">❓</div>' : ''}</div>
-        <p class="big-note muted">${VI('Do these two think alike? Let’s see…', 'Hai bạn này có hiểu ý nhau không? Cùng xem nào…')}</p>
+        <p class="big-note muted">${ro.x ? VI('Do these three think alike? Let’s see…', 'Ba bạn này có hiểu ý nhau không? Cùng xem nào…') : VI('Do these two think alike? Let’s see…', 'Hai bạn này có hiểu ý nhau không? Cùng xem nào…')}</p>
         <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
       : `<div class="pairs">${slots.map(sl => {
-          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c), H = halfTexts(R.meta.type, p), lb = (l, n) => (l ? l + ' · ' : '') + esc(pname(n));
+          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c, R.meta.trio), H = halfTexts(R.meta.type, p), lb = (l, n) => (l ? l + ' · ' : '') + esc(pname(n));
           return `<div class="sent closed" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
             ${halfCard('hi', lb(L.a.lbl, ro.if), H.a)}
             ${halfCard('hm', lb(L.b.lbl, p.mainPid), H.b)}
@@ -1994,7 +2000,7 @@ function myRole(R) {
   for (const [tk, ro] of Object.entries(R.meta.roles)) {
     if (ro.if === PID) return { tk, role: 'if', ro };
     if (ro.main === PID) return { tk, role: 'main', ro };
-    if (ro.x === PID) return { tk, role: R.meta.trio === 'twist' ? 'twist' : 'main2', ro };
+    if (ro.x === PID) return { tk, role: R.meta.trio === 'twist' ? 'twist' : R.meta.trio === 'two' ? 'main2' : 'link', ro };
   }
   return null;
 }
@@ -2063,15 +2069,15 @@ function sWait() {
     $('#box').querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => joinGroup(PID, b.dataset.pid));
   });
 }
-function roleUI(role, type, c) {
-  const L = lay(type, c), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x' }[role];
-  const d = role === 'if' ? L.a : role === 'twist' ? L.x : L.b, t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
+function roleUI(role, type, c, trio) {
+  const L = lay(type, c, trio), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x', link: 'x' }[role];
+  const d = L[roleKey(role)], t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
   return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
 }
 function sWrite() {
   const R = curRound(), me = myRole(R);
   if (!me) return show('swx' + st().round, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:48px">⏳</p><h2>${VI('You’ll play next round!', 'Bạn sẽ chơi ở vòng sau!')}</h2><p class="muted">${VI('You need a partner when the round starts.', 'Bạn cần có cặp khi vòng bắt đầu.')}</p></div></div>`);
-  const T = TYPES[R.meta.type], ui = roleUI(me.role, R.meta.type, me.ro.c), checkRole = me.role === 'if' ? 'if' : me.role === 'twist' ? 'twist' : 'main';
+  const T = TYPES[R.meta.type], ui = roleUI(me.role, R.meta.type, me.ro.c, R.meta.trio), checkRole = me.role === 'main2' ? 'main' : me.role;
   const ex = ui.ex;
   let editing = false;
   show('swr' + st().round, `<div class="wrap">${pHead()}
@@ -2080,8 +2086,8 @@ function sWrite() {
       <h2>${VI(ui.en, ui.vi)}</h2>
       <p class="form">${esc(ui.form)}</p>
       <p class="ex">e.g. ${esc(ex)}</p>
-      ${me.ro.c && me.ro.c.length ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.length > 1 ? 's' : ''}: ${me.ro.c.map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
-        <p class="ex">${esc(linkPreview(me.role, me.ro.c))}</p>` : ''}
+      ${me.ro.c && me.ro.c.some(Boolean) ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.filter(Boolean).length > 1 ? 's' : ''}: ${me.ro.c.filter(Boolean).map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
+        <p class="ex">${esc(linkPreview(me.role, me.ro.c, R.meta.type))}</p>` : ''}
     </div>
     <p class="shh">🤐 ${VI(`With ${partnersLine(me.ro)} — no talking! Signs only.`, 'Không được nói chuyện! Chỉ ra hiệu thôi.')}</p>
     <div id="area"></div></div>`, null, () => {
