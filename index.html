@@ -1221,14 +1221,34 @@ const TYPES = {
     dummy: ['If it had rained', 'it would be fine now'] },
   mB: { name: 'Mixed conditional (now → past)', vn: 'Câu điều kiện hỗn hợp (hiện tại → quá khứ)', short: 'Mixed B', mood: 'Because of who I am', moodVi: 'Tại tính mình vậy…',
     ifF: 'past simple (always true)', mainF: 'would have + V3 (past)', ex: ['If I were braver', 'I would have asked her out'], topic: 'condm', want: 'm2',
-    dummy: ['If it rained', 'it would have been fine'] }
+    dummy: ['If it rained', 'it would have been fine'] },
+  /* passive voice: each student writes one passive clause; the group is given the linking word(s) */
+  pS: { kind: 'pass', tense: 'pS', name: 'Passive · present simple', vn: 'Bị động · hiện tại đơn', short: 'Passive', mood: 'Every single day', moodVi: 'Ngày nào cũng vậy',
+    verbF: 'am / is / are + V3', ex: ['Pizza is eaten here every day', 'more pizza is ordered every morning', 'the bill is never paid'] },
+  pP: { kind: 'pass', tense: 'pP', name: 'Passive · past simple', vn: 'Bị động · quá khứ đơn', short: 'Passive', mood: 'Who did it?!', moodVi: 'Ai làm vậy?!',
+    verbF: 'was / were + V3', ex: ['My homework was eaten', 'a new one was written', 'it was eaten again'] },
+  pF: { kind: 'pass', tense: 'pF', name: 'Passive · future', vn: 'Bị động · tương lai', short: 'Passive', mood: 'News from the future', moodVi: 'Tin nóng từ tương lai',
+    verbF: 'will be + V3', ex: ['Our school will be closed', 'the students will be sent home', 'the teachers will be paid anyway'] },
+  pPP: { kind: 'pass', tense: 'pPP', name: 'Passive · present perfect', vn: 'Bị động · hiện tại hoàn thành', short: 'Passive', mood: 'It just happened!', moodVi: 'Vừa mới xảy ra!',
+    verbF: 'has / have been + V3', ex: ['My phone has been stolen', 'the police have been called', 'nothing has been found'] },
+  pM: { kind: 'pass', tense: 'pM', name: 'Passive · modals', vn: 'Bị động · động từ khuyết thiếu', short: 'Passive', mood: 'Rules are rules', moodVi: 'Luật là luật',
+    verbF: 'can / must / should + be + V3', ex: ['Homework should be banned', 'students must be given more free time', 'teachers can be paid more'] }
 };
 const GROUPS = [
-  { id: '0', label: 'Type 0', vi: 'Loại 0', types: ['0'] },
-  { id: '1', label: 'Type 1', vi: 'Loại 1', types: ['1'] },
-  { id: '2', label: 'Type 2', vi: 'Loại 2', types: ['2'] },
-  { id: '3', label: 'Type 3', vi: 'Loại 3', types: ['3'] },
-  { id: 'm', label: 'Mixed', vi: 'Hỗn hợp', types: ['mA', 'mB'] }
+  { id: '0', topic: 'cond', label: 'Type 0', vi: 'Loại 0', types: ['0'] },
+  { id: '1', topic: 'cond', label: 'Type 1', vi: 'Loại 1', types: ['1'] },
+  { id: '2', topic: 'cond', label: 'Type 2', vi: 'Loại 2', types: ['2'] },
+  { id: '3', topic: 'cond', label: 'Type 3', vi: 'Loại 3', types: ['3'] },
+  { id: 'm', topic: 'cond', label: 'Mixed', vi: 'Hỗn hợp', types: ['mA', 'mB'] },
+  { id: 'pS', topic: 'pass', label: 'Present simple', vi: 'Hiện tại đơn', types: ['pS'] },
+  { id: 'pP', topic: 'pass', label: 'Past simple', vi: 'Quá khứ đơn', types: ['pP'] },
+  { id: 'pF', topic: 'pass', label: 'Future (will)', vi: 'Tương lai (will)', types: ['pF'] },
+  { id: 'pPP', topic: 'pass', label: 'Present perfect', vi: 'Hiện tại hoàn thành', types: ['pPP'] },
+  { id: 'pM', topic: 'pass', label: 'Modals', vi: 'Động từ khuyết thiếu', types: ['pM'] }
+];
+const GTOPICS = [
+  { id: 'cond', en: 'Conditionals', vi: 'Câu điều kiện' },
+  { id: 'pass', en: 'Passive voice', vi: 'Câu bị động' }
 ];
 const THEMES = [
   ['', 'No theme', 'Không chủ đề'], ['📚 Exams', 'Exams', 'Thi cử'], ['💘 Crush', 'Crush', 'Crush'], ['🏝️ Holiday', 'Holiday', 'Kỳ nghỉ'],
@@ -1236,11 +1256,133 @@ const THEMES = [
   ['👩‍🏫 Teachers', 'Teachers', 'Thầy cô'], ['🦸 Superpowers', 'Superpowers', 'Siêu năng lực']
 ];
 const VOTES = [
-  { k: 2, e: '💞', en: 'Perfect match', vi: 'Hợp nhau quá' },
+  { k: 2, e: '🧑‍🤝‍🧑', en: 'Perfect match', vi: 'Hợp nhau quá' },
   { k: 1, e: '🙂', en: 'Kind of…', vi: 'Cũng tạm' },
   { k: 0, e: '🤯', en: 'Total chaos', vi: 'Loạn hết cả lên' }
 ];
-const formOf = (role, type) => { const T = TYPES[type]; return role === 'if' ? 'If + ' + T.ifF : role === 'twist' ? 'unless + ' + T.ifF : T.mainF; };
+// "Clause 1, so [clause 2]" — where my clause sits in the group's sentence
+function linkPreview(role, c) {
+  const slot = n => n === role || (n === 'main' && role === 'main2') ? '[YOUR CLAUSE]' : '[clause]';
+  return slot('if') + ' ' + c[0] + ' ' + slot('main') + (c[1] ? ' ' + c[1] + ' ' + slot('twist') : '') + '.';
+}
+const isPass = type => TYPES[type] && TYPES[type].kind === 'pass';
+// what each half looks like for a round type: a = first half (If… / Something was V3), b = second (main / by…), x = trio twist
+function lay(type, c) {
+  const T = TYPES[type];
+  if (isPass(type)) {
+    const c1 = c && c[0], c2 = c && c[1], f = T.verbF;
+    return {
+      a: { pre: '', form: 'Clause 1: something + ' + f, ex: T.ex[0], lbl: '', en: 'You write CLAUSE 1', vi: 'Bạn viết mệnh đề 1 (câu bị động)', ph: 'My bike / Ms Hoa …' },
+      b: { pre: c1 || '', form: (c1 || 'so / because / but') + ' + something + ' + f, ex: (c1 || 'so') + ' ' + T.ex[1], lbl: (c1 || '').toUpperCase(), en: 'You write CLAUSE 2', vi: 'Bạn viết mệnh đề 2 (câu bị động)', ph: 'the cake / my parents …' },
+      b2: { en: 'You write CLAUSE 2', vi: 'Bạn viết mệnh đề 2 (câu bị động)' },
+      x: { pre: c2 || '', form: (c2 || 'and / so / but') + ' + something + ' + f, ex: (c2 || 'but') + ' ' + T.ex[2], lbl: (c2 || '').toUpperCase(), en: 'You write CLAUSE 3', vi: 'Bạn viết mệnh đề 3 (câu bị động)', ph: 'nobody / the dog …' },
+      third: ['Group of 3: + and / so / but + clause 3', 'Nhóm 3: + and / so / but + mệnh đề 3']
+    };
+  }
+  return {
+    a: { pre: 'If', form: 'If + ' + T.ifF, ex: T.ex[0], lbl: 'If', en: 'You write the IF half', vi: 'Bạn viết vế IF (điều kiện)', ph: 'I / [name] …' },
+    b: { pre: '', form: T.mainF, ex: T.ex[1], lbl: '', en: 'You write the MAIN half', vi: 'Bạn viết vế chính (kết quả)', ph: 'I / [name] …' },
+    b2: { en: 'You write ANOTHER main half', vi: 'Bạn viết thêm một vế chính' },
+    x: { pre: 'unless', form: 'unless + ' + T.ifF, ex: 'unless ' + T.ex[0].replace(/^If /, ''), lbl: 'Unless', en: 'You write the TWIST', vi: 'Bạn viết vế “unless” (trừ khi…)', ph: 'I / [name] …' },
+    third: ['3rd person: another main half', 'Người thứ 3: viết thêm một vế chính']
+  };
+}
+const roleKey = role => role === 'if' ? 'a' : role === 'twist' ? 'x' : 'b';
+const formOf = (role, type) => lay(type)[roleKey(role)].form;
+// the three halves as shown on screen, with their joining words and punctuation
+function halfTexts(type, p) {
+  if (isPass(type)) {
+    const c1 = (p.c && p.c[0]) || 'so', c2 = (p.c && p.c[1]) || 'and', cm = w => /^(so|but)$/.test(w) ? ',' : '';
+    return { a: cap1(p.ifT) + cm(c1), b: c1 + ' ' + lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), x: p.tw ? c2 + ' ' + lowStart(p.xT) + '.' : '' };
+  }
+  return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + (p.tw ? ',' : '.'), x: p.tw ? 'unless ' + lowStart(p.xT) + '.' : '' };
+}
+function frameHTML(type, trio, withX) {
+  const L = lay(type), xHTML = (trio === 'twist' || isPass(type)) ? `${esc(L.x.form)}<small>${esc(L.x.ex)}</small>` : `${VI(...L.third)}<small>${esc(L.b.ex)}</small>`;
+  return `<div class="fi">${esc(L.a.form)}<small>${esc(L.a.ex)}${isPass(type) ? '' : ','}</small></div>
+    <div class="fm">${esc(L.b.form)}<small>${esc(L.b.ex)}.</small></div>${withX ? `<div class="fx" id="fx">${xHTML}</div>` : ''}`;
+}
+
+/* ---------- passive voice checker ---------- */
+const PASS_TENSE = {
+  pS: ['present simple', 'hiện tại đơn'], pP: ['past simple', 'quá khứ đơn'], pF: ['future with will', 'tương lai với will'],
+  pPP: ['present perfect', 'hiện tại hoàn thành'], pM: ['a modal (can / must / should …)', 'động từ khuyết thiếu (can / must / should …)'],
+  past_perf: ['past perfect', 'quá khứ hoàn thành'], cont: ['continuous', 'tiếp diễn']
+};
+const P_MODAL = new Set('can could must should may might would shall'.split(' '));
+const P_ADV = new Set('not never always often usually sometimes already just still also really probably even finally suddenly accidentally secretly quickly slowly ever soon recently'.split(' '));
+const P_SUBJ = { i: 1, he: 3, she: 3, it: 3, you: 2, we: 2, they: 2, people: 2, children: 2, kids: 2, men: 2, women: 2, police: 2 };
+const P_OBJ = { i: 'me', he: 'him', she: 'her', we: 'us', they: 'them' };
+let passRole = 'if';
+function passErr(en, vi, type, ans) {
+  const h = lay(type)[roleKey(passRole)];
+  return { ok: false, msg: VI(en, vi), ans: ans || '', hint: `Your half: <b>${esc(h.form)}</b><br>e.g. <i>${esc(h.ex)}</i>` };
+}
+function checkPass(raw, role, type) {
+  const T = TYPES[type]; passRole = role;
+  let t = cleanHalf(raw);
+  if (!t) return { ok: false, msg: VI('Write something first! ✍️', 'Viết gì đó đã nhé!') };
+  if (t.length > 160) return { ok: false, msg: VI('That’s a novel! Keep it under 160 characters.', 'Dài quá! Viết dưới 160 ký tự thôi nhé.') };
+  t = t.replace(/^(so|because|but|and)\b[,\s]*/i, '');
+  if (t.split(' ').length < 2) return { ok: false, msg: VI('Too short: you need something + be + V3.', 'Ngắn quá: cần có chủ ngữ + be + V3.') };
+  if (/\b(because|but)\b|,\s*(so|and)\b|\.\s+\w/i.test(t)) return passErr('Just ONE clause! Your partner writes the next part.', 'Chỉ viết MỘT mệnh đề thôi! Phần sau là của bạn cùng nhóm.', type);
+  const byP = t.match(/\bby\s+(I|he|she|we|they)\b/i);
+  if (byP) { const f = byP[1].toLowerCase(); return passErr(`After “by”, use ${P_OBJ[f]}, not ${byP[1]}.`, `Sau “by” dùng ${P_OBJ[f]}, không dùng ${byP[1]}.`, type, `by ${byP[1]} → by ${P_OBJ[f]}`); }
+  const orig = t;
+  const s = t.toLowerCase().replace(/’/g, "'").replace(/\bwon't\b/g, 'will not').replace(/\bcan't\b|\bcannot\b/g, 'can not').replace(/\bshan't\b/g, 'shall not')
+    .replace(/n't\b/g, ' not').replace(/'ll\b/g, ' will').replace(/'re\b/g, ' are').replace(/'m\b/g, ' am').replace(/'ve\b/g, ' have')
+    .replace(/\b(it|he|she|that|this|there|what|who|everything|everyone|nobody|someone|something)'s\b/g, '$1 is');
+  const w = s.match(/[a-z]+/g) || [];
+  const BE = new Set(['am', 'is', 'are', 'was', 'were', 'be', 'been', 'being']);
+  const skip = k => { while (k < w.length && P_ADV.has(w[k])) k++; return k; };
+  const back = k => { k--; while (k >= 0 && P_ADV.has(w[k])) k--; return k; };
+  let bi = -1;
+  for (let k = 0; k < w.length; k++) if (BE.has(w[k])) { bi = k; break; }
+  if (bi < 0) {
+    const k = w.findIndex((x, n) => (P_MODAL.has(x) || x === 'will') && n > 0 && w[skip(n + 1)]), v0 = k >= 0 ? w[skip(k + 1)] : '';
+    const base0 = v0 && (partBase(v0) || (BASE.has(v0) ? v0 : IRR[v0]));
+    if (base0) { const pp = partOf(base0); return passErr(`Missing “be”: ${w[k]} ${v0} → ${w[k]} be ${pp}.`, `Thiếu “be”: ${w[k]} ${v0} → ${w[k]} be ${pp}.`, type, `${w[k]} ${v0} → ${w[k]} be ${pp}`); }
+    return passErr('No “be” here, so it isn’t passive yet. Start with the thing, then be + V3.', 'Chưa có “be” nên chưa phải câu bị động. Bắt đầu bằng vật/người bị tác động, rồi be + V3.', type);
+  }
+  // the last be-word of the group: "has been eaten", "is being eaten"
+  let be = bi, nx = skip(bi + 1);
+  while (nx < w.length && BE.has(w[nx])) { be = nx; nx = skip(nx + 1); }
+  if (bi === 0 || (back(bi) >= 0 && P_MODAL.has(w[back(bi)]) && back(back(bi)) < 0) || (back(bi) >= 0 && /^(has|have|had|will)$/.test(w[back(bi)]) && back(back(bi)) < 0))
+    return passErr('Who or what? Put the thing first: My phone was stolen…', 'Cái gì / ai bị tác động? Đặt nó lên đầu: My phone was stolen…', type);
+  const v = w[nx] || '';
+  if (!v) return passErr('Add the V3 after “' + w[be] + '”.', 'Thêm V3 sau “' + w[be] + '”.', type);
+  if (/ing$/.test(v) && v.length > 4 && !partBase(v)) return passErr(`“${w[be]} ${v}” is active (V-ing). Passive uses be + V3.`, `“${w[be]} ${v}” là chủ động (V-ing). Bị động dùng be + V3.`, type);
+  // V3 form
+  const pb = partBase(v);
+  if (!pb) {
+    let base = BADPAST[v] ? IRR[BADPAST[v]] : IRR[v] || (BASE.has(v) ? v : null);
+    if (base) { const pp = partOf(base); return passErr(`After “${w[be]}”, use V3: ${v} → ${pp}.`, `Sau “${w[be]}” phải dùng V3: ${v} → ${pp}.`, type, `${w[be]} ${v} → ${w[be]} ${pp}`); }
+    if (!/(ed|en|wn|ne|t)$/.test(v)) return passErr(`“${w[be]} ${v}” doesn’t look like be + V3.`, `“${w[be]} ${v}” chưa giống be + V3.`, type);
+  }
+  // which tense?
+  const b0 = w[bi], pre = back(bi) >= 0 ? w[back(bi)] : '';
+  let tense;
+  if (b0 === 'being' || (w[be] === 'being')) tense = 'cont';
+  else if (/^(am|is|are)$/.test(b0)) tense = BE.has(w[skip(bi + 1)]) && w[skip(bi + 1)] === 'being' ? 'cont' : 'pS';
+  else if (/^(was|were)$/.test(b0)) tense = w[skip(bi + 1)] === 'being' ? 'cont' : 'pP';
+  else if (b0 === 'been') tense = pre === 'had' ? 'past_perf' : /^(has|have)$/.test(pre) ? (back(back(bi)) >= 0 && P_MODAL.has(w[back(back(bi))]) ? 'pM' : 'pPP') : 'pPP';
+  else if (b0 === 'be') tense = pre === 'will' ? 'pF' : (pre === 'to' && /^(going)$/.test(w[back(back(bi))] || '')) ? 'pF' : 'pM';
+  if (tense !== T.tense) {
+    const [en, vi] = PASS_TENSE[tense] || ['another tense', 'thì khác'];
+    return passErr(`Nice passive, but that’s ${en}. This round is ${PASS_TENSE[T.tense][0]}: ${T.verbF}.`, `Bị động đúng rồi, nhưng đó là ${vi}. Vòng này là ${PASS_TENSE[T.tense][1]}: ${T.verbF}.`, type);
+  }
+  // subject–verb agreement with a pronoun / plural word right before the verb group
+  const subj = back(bi) >= 0 ? w[(P_MODAL.has(pre) || /^(has|have|will)$/.test(pre)) ? back(back(bi)) : back(bi)] : '';
+  const per = P_SUBJ[subj], fin = (P_MODAL.has(pre) || pre === 'will') ? null : /^(has|have)$/.test(pre) && b0 === 'been' ? pre : /^(am|is|are|was|were)$/.test(b0) ? b0 : null;
+  const finAt = /^(has|have)$/.test(fin || '') ? back(bi) : bi, andSubj = /^(am|is|was|has)$/.test(fin || '') && w.slice(0, finAt).includes('and');
+  if (fin && (per || andSubj)) {
+    const p = andSubj ? 2 : per;
+    const want = { am: p === 1 ? 'am' : p === 3 ? 'is' : 'are', is: p === 1 ? 'am' : p === 3 ? 'is' : 'are', are: p === 1 ? 'am' : p === 3 ? 'is' : 'are',
+      was: p === 2 ? 'were' : 'was', were: p === 2 ? 'were' : 'was', has: p === 3 ? 'has' : 'have', have: p === 3 ? 'has' : 'have' }[fin];
+    if (want && want !== fin) return passErr(`“${andSubj ? 'A and B' : subj === 'i' ? 'I' : subj}” goes with “${want}”, not “${fin}”.`, `“${andSubj ? 'A and B' : subj === 'i' ? 'I' : subj}” đi với “${want}”, không phải “${fin}”.`, type, `${fin} → ${want}`);
+  }
+  return { ok: true, text: orig };
+}
 
 /* ---------- small helpers ---------- */
 const clone = v => v == null ? v : JSON.parse(JSON.stringify(v));
@@ -1272,6 +1414,7 @@ document.addEventListener('click', e => {
 /* ---------- checking one half ---------- */
 const cleanHalf = s => String(s || '').replace(/\s+/g, ' ').trim().replace(/^[,;:\s]+/, '').replace(/[.,;:!?\s]+$/, '');
 function checkHalf(raw, role, type) {
+  if (isPass(type)) return checkPass(raw, role, type);
   const T = TYPES[type];
   let t = cleanHalf(raw);
   if (role !== 'main') t = t.replace(/^(if|unless)\b\s*/i, '');
@@ -1313,13 +1456,9 @@ function sentenceParts(R, roles, tk, slot) {
   const ro = roles[tk]; if (!ro) return null;
   const H = R && R.h ? R.h : {}, g = pid => H[pid] && H[pid].text;
   const tw = R.meta.trio === 'twist' && ro.x;
-  const mainPid = slot && slot.endsWith('b') ? ro.x : ro.main;
+  const mainPid = slot && slot === tk + 'b' ? ro.x : ro.main;
   const ifT = g(ro.if), mainT = g(mainPid), xT = tw ? g(ro.x) : null;
-  return { ifT, mainT, xT, tw, mainPid };
-}
-function sentenceText(p) {
-  if (!p || !p.ifT || !p.mainT) return '';
-  return 'If ' + lowStart(p.ifT) + ', ' + lowStart(p.mainT) + (p.tw && p.xT ? ', unless ' + lowStart(p.xT) : '') + '.';
+  return { ifT, mainT, xT, tw, mainPid, c: ro.c || [] };
 }
 // words both halves share (mind-readers!)
 const STOP = new Set(('i you he she it we they me him her us them my your his its our their mine yours a an the and or but so to of in on at for with from by about as into than then too very really just not no this that these those there here what who when where why how all some any every each more most much many lot lots will would could can might may must shall should have has had having do does did be am is are was were been being get got gets go goes went gone going make made one thing things up out off over now day if unless always never ever also every again still even only').split(' '));
@@ -1475,7 +1614,7 @@ const sndPop = () => beep([520, 780], .1, 'sine', .07);
 const sndJoin = () => beep([660, 880, 1320], .16, 'triangle', .1);
 const sndWin = () => beep([523, 659, 784, 1047, 1319], .22, 'triangle', .12);
 function confetti(n = 70) {
-  const em = ['💞', '💖', '✨', '🎉', '💕', '⭐', '🤯'];
+  const em = ['🧑‍🤝‍🧑', '🤝', '✨', '🎉', '🫂', '⭐', '🤯'];
   for (let i = 0; i < n; i++) {
     const d = document.createElement('div'); d.className = 'confetti'; d.textContent = em[i % em.length];
     d.style.left = Math.random() * 100 + 'vw'; d.style.animationDuration = (2.5 + Math.random() * 2.5) + 's'; d.style.animationDelay = Math.random() * 1.2 + 's';
@@ -1495,7 +1634,7 @@ function show(key, html, after, update) {
 }
 function render() {
   if (!CODE) return showHome();
-  if (!room) return show('loading', `<div class="wrap"><div class="card center"><p class="big-note"><span class="spin">💞</span> Finding room ${esc(CODE)}…</p><p class="muted">If this takes long, check the link or the internet.</p></div></div>`);
+  if (!room) return show('loading', `<div class="wrap"><div class="card center"><p class="big-note"><span class="spin">🧑‍🤝‍🧑</span> Finding room ${esc(CODE)}…</p><p class="muted">If this takes long, check the link or the internet.</p></div></div>`);
   if (room.__missing) return show('missing', `<div class="wrap"><div class="card col center"><h2>Room ${esc(CODE)} not found 😿</h2><p>${VI('Check the code with your teacher.', 'Kiểm tra lại mã phòng với giáo viên nhé.')}</p><a class="btn" href="${location.pathname}">← Back</a></div></div>`);
   return isHost() ? renderTeacher() : renderStudent();
 }
@@ -1506,15 +1645,16 @@ function showHome() {
   const saved = LS.get('cp_groups', ['1']);
   show('home', `<div class="wrap" style="max-width:720px">
     <div class="center col" style="gap:6px;margin-top:10px">
-      <div class="logo"><span class="h">Half</span> &amp; <span class="b">Half</span> 💞</div>
+      <div class="logo"><span class="h">Half</span> &amp; <span class="b">Half</span> 🧑‍🤝‍🧑</div>
       <p class="muted">${VI('Two halves, one sentence, zero talking. Which pair reads each other’s minds?', 'Mỗi người viết nửa câu, không được nói chuyện. Cặp nào hiểu ý nhau nhất?')}</p>
     </div>
     <div class="card col">
       <h2>${VI('👩‍🏫 Teacher: new game', 'Giáo viên: tạo game mới')}</h2>
       <fieldset style="border:0;padding:0;margin:0" class="col">
-        <legend style="font-weight:800;margin-bottom:8px">${VI('Practise which conditionals?', 'Luyện câu điều kiện loại nào?')}</legend>
-        <div class="row" id="groups">${GROUPS.map(g => `<label class="chk"><input type="checkbox" value="${g.id}"${saved.includes(g.id) ? ' checked' : ''}> ${g.label}${VS(g.vi)}</label>`).join('')}
-          <button class="btn small" id="allBtn" type="button">${VI('All', 'Tất cả')}</button></div>
+        <legend style="font-weight:800;margin-bottom:8px">${VI('Practise what? Tick any mix.', 'Luyện gì? Chọn bao nhiêu cũng được.')}</legend>
+        <div class="col" id="groups" style="gap:10px">${GTOPICS.map(tp => `<div class="row" style="align-items:center"><b style="min-width:130px">${VI(tp.en, tp.vi)}</b>
+          ${GROUPS.filter(g => g.topic === tp.id).map(g => `<label class="chk"><input type="checkbox" value="${g.id}"${saved.includes(g.id) ? ' checked' : ''}> ${g.label}${VS(g.vi)}</label>`).join('')}
+          <button class="btn small" data-all="${tp.id}" type="button">${VI('All', 'Tất cả')}</button></div>`).join('')}</div>
       </fieldset>
       <details${DB ? '' : ' open'}><summary>${VI('Database', 'Cơ sở dữ liệu')} ${DB ? (DB === 'local' ? '· test mode on this computer' : '· ✓ ' + esc(DB.replace(/^https:\/\//, '').slice(0, 40))) : '· not set'}</summary>
         <div class="col" style="margin-top:10px">
@@ -1530,7 +1670,7 @@ function showHome() {
       <div class="row"><input type="text" id="code" placeholder="HH-XXXX" style="flex:1;min-width:150px;text-transform:uppercase"><button class="btn blue" id="join">${VI('Join', 'Vào')}</button></div>
     </div>
   </div>`, () => {
-    $('#allBtn').onclick = () => $('#groups').querySelectorAll('input').forEach(i => (i.checked = true));
+    $('#groups').querySelectorAll('[data-all]').forEach(b => b.onclick = () => GROUPS.filter(g => g.topic === b.dataset.all).forEach(g => ($('#groups').querySelector(`input[value="${g.id}"]`).checked = true)));
     $('#create').onclick = createRoom;
     if ($('#resume')) $('#resume').onclick = () => go(last.code, last.db, true);
     $('#join').onclick = () => { const c = $('#code').value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (c) go(c.startsWith('HH') ? c : 'HH' + c, DB || 'local'); };
@@ -1579,7 +1719,7 @@ function studentLink() {
   return u.toString();
 }
 function topBar(extra = '') {
-  return `<div class="t-top"><div class="logo" style="font-size:clamp(24px,2.6vw,36px)"><span class="h">Half</span> &amp; <span class="b">Half</span> 💞</div>
+  return `<div class="t-top"><div class="logo" style="font-size:clamp(24px,2.6vw,36px)"><span class="h">Half</span> &amp; <span class="b">Half</span> 🧑‍🤝‍🧑</div>
     <div class="row">${extra}<span class="tag sun">${esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
 }
 // a pair's id comes from both players, so two people tapping each other at the same time land in the same pair
@@ -1615,9 +1755,10 @@ function tableCards(mode) {
   for (const [id, mem] of groupsSorted(tm)) {
     if (mem.length < 2) continue;
     const tk = 't' + id, ro = roles && roles[tk];
-    let cls = '', status = mem.length >= 3 ? '💜' : '💞';
+    let cls = '', status = mem.length >= 3 ? '🫂' : '🧑‍🤝‍🧑';
     if (mode === 'write') { if (ro) { const done = tableDone(R, tk); if (done) cls = 'ready'; status = done ? '✅' : '✍️'; } else status = '⏳'; }
-    html += `<div class="tbl ${cls}"><h3><span>${mem.length >= 3 ? VI('Group of 3', 'Nhóm 3') : VI('Pair', 'Cặp')}</span><span>${status}</span></h3><div class="row" style="gap:6px">${mem.map(p => chip(p, ro)).join('')}</div></div>`;
+    const link = mode === 'write' && ro && ro.c ? `<div><span class="tag sun">🔗 ${ro.c.map(esc).join(' · ')}</span></div>` : '';
+    html += `<div class="tbl ${cls}"><h3><span>${mem.length >= 3 ? VI('Group of 3', 'Nhóm 3') : VI('Pair', 'Cặp')}</span><span>${status}</span></h3>${link}<div class="row" style="gap:6px">${mem.map(p => chip(p, ro)).join('')}</div></div>`;
   }
   const solo = singles(tm);
   if (solo.length) html += `<div class="tbl solo" style="grid-column:1/-1"><h3><span>${VI('Not paired yet', 'Chưa có cặp')}</span><span>👀 ${solo.length}</span></h3><div class="row" style="gap:6px">${solo.map(p => chip(p, null)).join('')}</div></div>`;
@@ -1657,12 +1798,12 @@ function tLobby() {
           <div class="row" style="justify-content:space-between"><h2>${s.round ? VI(`Round ${next} — get ready`, `Vòng ${next} — chuẩn bị`) : VI('Who’s here?', 'Ai đã vào?')}</h2>
           <span class="tag" id="cnt"></span></div>
           <div class="row">
-            <label class="field" style="flex:1;min-width:220px">${VI('Conditional this round', 'Câu điều kiện vòng này')}
-              <select id="rtype">${types.map(t => `<option value="${t}"${t === last ? ' selected' : ''}>${TYPES[t].short} · ${TYPES[t].name}</option>`).join('')}${types.length > 1 ? '<option value="?">🎲 Surprise me</option>' : ''}</select></label>
+            <label class="field" style="flex:1;min-width:220px">${VI('Grammar this round', 'Ngữ pháp vòng này')}
+              <select id="rtype">${types.map(t => `<option value="${t}"${t === last ? ' selected' : ''}>${isPass(t) ? TYPES[t].name : TYPES[t].short + ' · ' + TYPES[t].name}</option>`).join('')}${types.length > 1 ? '<option value="?">🎲 Surprise me</option>' : ''}</select></label>
             <label class="field" style="flex:1;min-width:180px">${VI('Theme (optional)', 'Chủ đề (không bắt buộc)')}
               <select id="theme">${THEMES.map(t => `<option value="${esc(t[0])}">${t[0] ? esc(t[0]) : 'No theme'}</option>`).join('')}</select></label>
             <label class="field" id="trioBox" style="flex:1;min-width:220px">${VI('Groups of 3', 'Nhóm 3 người')}
-              <select id="trio"><option value="two">A · Two endings (2 main halves)</option><option value="twist">C · Twist (3rd writes “unless …”)</option></select></label>
+              <select id="trio"><option value="two">A · Two endings (2 main halves)</option><option value="twist">C · Twist (3rd writes “unless …” / “but …”)</option></select></label>
           </div>
           <div class="frame" id="frame"></div>
           <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
@@ -1677,8 +1818,8 @@ function tLobby() {
     $('#copy').onclick = async () => { try { await navigator.clipboard.writeText(link); toast('Link copied ✓'); } catch (e) { prompt('Copy this link:', link); } };
     const drawFrame = () => {
       const t = $('#rtype').value;
-      $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` :
-        `<div class="fi">If + ${esc(TYPES[t].ifF)}<small>${esc(TYPES[t].ex[0])},</small></div><div class="fm">${esc(TYPES[t].mainF)}<small>${esc(TYPES[t].ex[1])}.</small></div>`;
+      $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || isPass(t);
+      $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t);
       LS.set('cp_lastType_' + CODE, t);
     };
     $('#rtype').onchange = drawFrame; drawFrame();
@@ -1688,7 +1829,7 @@ function tLobby() {
     const tm2 = tablesMap(), np = Object.keys(players()).length, rdy = Object.values(tm2).filter(m => m.length >= 2).length;
     $('#cnt').textContent = `${np} student${np === 1 ? '' : 's'} · ${rdy} pair${rdy === 1 ? '' : 's'} ready`;
     $('#tables').innerHTML = tableCards('lobby'); bindChips();
-    $('#trioBox').hidden = !Object.values(tm2).some(m => m.length >= 3);
+    $('#trioBox').hidden = !Object.values(tm2).some(m => m.length >= 3) || isPass($('#rtype').value);
     $('#start').disabled = !rdy;
     const solo = singles(tm2).map(p => p.name);
     $('#startNote').textContent = !rdy ? 'Waiting for at least one pair…' : solo.length ? `Not paired: ${solo.join(', ')} — they’ll wait this round.` : '';
@@ -1697,11 +1838,13 @@ function tLobby() {
 async function startRound(type, theme, trio) {
   const types = roundTypes();
   if (type === '?') type = types[Math.floor(Math.random() * types.length)];
-  const r = (st().round || 0) + 1, tm = tablesMap(), roles = {};
+  const r = (st().round || 0) + 1, tm = tablesMap(), roles = {}, pass = isPass(type);
+  if (pass) trio = 'twist'; // passive: a group of 3 always writes 3 clauses
   for (const [tb, mem0] of Object.entries(tm)) {
     const mem = mem0.slice(0, MAX_PER_TABLE); if (mem.length < 2) continue;
     const k = (r - 1) % mem.length, rot = mem.slice(k).concat(mem.slice(0, k)); // roles take turns each round
     roles['t' + tb] = { if: rot[0].pid, main: rot[1].pid, x: rot[2] ? rot[2].pid : null };
+    if (pass) roles['t' + tb].c = rot[2] ? shuffle(['and', 'so', 'but']).slice(0, 2) : shuffle(['so', 'because', 'but']).slice(0, 1);
   }
   if (!Object.keys(roles).length) return toast('No pairs yet.');
   await patch({ ['rounds/' + roundKey(r) + '/meta']: { type, theme: theme || '', trio: trio || 'two', roles, at: Date.now() }, state: { phase: 'write', round: r } });
@@ -1716,11 +1859,7 @@ function tWrite() {
   const R = curRound(); if (!R || !R.meta) return tLobby();
   const T = TYPES[R.meta.type], twist = R.meta.trio === 'twist';
   show('tw' + st().round, `<div class="wide">${topBar()}${roundHeader(R)}
-    <div class="frame" style="margin-bottom:14px">
-      <div class="fi">🩷 If + ${esc(T.ifF)}<small>${esc(T.ex[0])},</small></div>
-      <div class="fm">💙 ${esc(T.mainF)}<small>${esc(T.ex[1])}.</small></div>
-      <div class="fx" id="fx">💜 ${twist ? 'unless + ' + esc(T.ifF) : VI('3rd person: another main half', 'Người thứ 3: viết thêm một vế chính')}<small>${twist ? 'unless ' + esc(T.ex[0].replace(/^If /, '')) : esc(T.ex[1])}</small></div>
-    </div>
+    <div class="frame" style="margin-bottom:14px">${frameHTML(R.meta.type, R.meta.trio, true)}</div>
     <div class="card row" style="justify-content:space-between;margin-bottom:16px">
       <p class="big-note">🤐 ${VI('No talking! Signs and body language only.', 'Cấm nói chuyện! Chỉ được ra hiệu bằng tay, nét mặt.')}</p>
       <div class="row"><span class="tag sun" id="prog"></span><button class="btn small ghost" id="cancel">${VI('Cancel round', 'Huỷ vòng')}</button><button class="btn primary" id="reveal">🎬 ${VI('Reveal!', 'Lật bài!')}</button></div>
@@ -1751,15 +1890,15 @@ function tReveal() {
   show(`trv${s.round}_${i}_${flipped}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
     <div class="stage">
       <p class="who">${namesJoin(names)}</p>
-      ${!flipped ? `<div class="facedown"><div class="a">🩷</div><div class="b">💙</div>${ro.x ? '<div class="c">💜</div>' : ''}</div>
+      ${!flipped ? `<div class="facedown"><div class="a">❓</div><div class="b">❓</div>${ro.x ? '<div class="c">❓</div>' : ''}</div>
         <p class="big-note muted">${VI('Do these two think alike? Let’s see…', 'Hai bạn này có hiểu ý nhau không? Cùng xem nào…')}</p>
         <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
       : `<div class="pairs">${slots.map(sl => {
-          const p = sentenceParts(R, roles, tk, sl);
-          return `<div class="sent closed" data-slot="${sl}"><span class="pop">💞</span>
-            ${halfCard('hi', 'If · ' + esc(pname(ro.if)), 'If ' + lowStart(p.ifT) + ',')}
-            ${halfCard('hm', esc(pname(p.mainPid)), lowStart(p.mainT) + (twist ? ',' : '.'))}
-            ${twist ? halfCard('hx', 'Unless · ' + esc(pname(ro.x)), 'unless ' + lowStart(p.xT) + '.') : ''}</div>
+          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c), H = halfTexts(R.meta.type, p), lb = (l, n) => (l ? l + ' · ' : '') + esc(pname(n));
+          return `<div class="sent closed" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
+            ${halfCard('hi', lb(L.a.lbl, ro.if), H.a)}
+            ${halfCard('hm', lb(L.b.lbl, p.mainPid), H.b)}
+            ${twist ? halfCard('hx', lb(L.x.lbl, ro.x), H.x) : ''}</div>
             <div id="mr_${sl}"></div>
             <div class="score" id="sc_${sl}"></div>`;
         }).join('')}</div>
@@ -1788,8 +1927,8 @@ function tReveal() {
       box.innerHTML = `<div class="votes"><b>${VI(`Class vote · ${sc.n} vote${sc.n === 1 ? '' : 's'}`, 'Cả lớp bình chọn')}</b>
           ${VOTES.map(v => `<div class="vbar k${v.k}"><span>${v.e} ${v.en}</span><span class="bar"><i style="width:${sc.counts[v.k] / tot * 100}%"></i></span><span>${sc.counts[v.k]}</span></div>`).join('')}</div>
         <div class="meter"><div class="pct">${pct(sc.compat)}</div><b>${VI('compatible', 'hợp nhau')}</b></div>
-        <div class="col" style="align-items:center"><b>${VI('Teacher’s hearts', 'Tim của giáo viên')}</b>
-          <div class="hearts" data-slot="${sl}">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${sc.h >= n ? 'on' : ''}" aria-label="${n} hearts">❤️</button>`).join('')}</div>
+        <div class="col" style="align-items:center"><b>${VI('Teacher’s handshakes', 'Bắt tay của giáo viên')}</b>
+          <div class="hearts" data-slot="${sl}">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${sc.h >= n ? 'on' : ''}" aria-label="${n} handshakes">🤝</button>`).join('')}</div>
           <span class="muted" style="font-size:14px">${VI('Class 50% · Teacher 50%', 'Cả lớp 50% · Giáo viên 50%')}</span></div>`;
       box.querySelectorAll('.hearts button').forEach(b => b.onclick = () => {
         const n = +b.dataset.n, cur = (curRound().hearts || {})[sl];
@@ -1799,7 +1938,7 @@ function tReveal() {
   });
 }
 function rankTable(rows, roundR) {
-  return `<table class="rank"><tr><th></th><th>${VI('Pair', 'Cặp')}</th>${roundR ? `<th class="num">${VI('This round', 'Vòng này')}</th>` : ''}<th class="num">💞 ${VI('Compatible', 'Hợp nhau')}</th><th class="num">🤯 ${VI('Chaos', 'Loạn')}</th></tr>
+  return `<table class="rank"><tr><th></th><th>${VI('Pair', 'Cặp')}</th>${roundR ? `<th class="num">${VI('This round', 'Vòng này')}</th>` : ''}<th class="num">🧑‍🤝‍🧑 ${VI('Compatible', 'Hợp nhau')}</th><th class="num">🤯 ${VI('Chaos', 'Loạn')}</th></tr>
     ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td><b>${namesJoin(r.names)}</b></td>
       ${roundR ? `<td class="num">${roundR.meta.roles[r.tk] && roundR.meta.order.includes(r.tk) ? pct(tableScore(roundR, r.tk).compat) : '–'}</td>` : ''}
       <td class="num">${pct(r.compat)}</td><td class="num">${pct(r.chaos)}</td></tr>`).join('')}</table>`;
@@ -1830,7 +1969,7 @@ function tFinal() {
   show('tf', `<div class="wide">${topBar(`<button class="btn small" id="more">↩︎ ${VI('Play more rounds', 'Chơi thêm')}</button><button class="btn small" id="del">🗑 ${VI('Delete room', 'Xoá phòng')}</button>`)}
     <h1 class="center" style="font-size:clamp(34px,4.4vw,64px);margin-bottom:20px">🏆 ${VI('And the besties are…', 'Và cặp bạn thân nhất là…')}</h1>
     <div class="podium" style="margin-bottom:26px">
-      <div class="award bff"><div class="ico">💞</div><h2>${VI('Best Friends Forever', 'Bạn thân trọn đời')}</h2>
+      <div class="award bff"><div class="ico">🧑‍🤝‍🧑</div><h2>${VI('Best Friends Forever', 'Bạn thân trọn đời')}</h2>
         ${bff ? `<p class="names">${namesJoin(bff.names)}</p><p><b>${pct(bff.compat)}</b> compatible</p>` : '<p>No votes yet</p>'}</div>
       <div class="award chaos"><div class="ico">🤯</div><h2>${VI('Chaos Kings', 'Vua hỗn loạn')}</h2>
         ${chaos ? `<p class="names">${namesJoin(chaos.names)}</p><p><b>${pct(chaos.chaos)}</b> chaos votes</p>` : '<p>Everyone made sense?! 😳</p>'}</div>
@@ -1861,7 +2000,7 @@ function myRole(R) {
 }
 function pHead() {
   const p = players()[PID];
-  return `<div class="p-head"><b class="logo" style="font-size:22px"><span class="h">Half</span> &amp; <span class="b">Half</span> 💞</b>${p ? `<span class="tag sun">${esc(p.name)}</span>` : ''}</div>`;
+  return `<div class="p-head"><b class="logo" style="font-size:22px"><span class="h">Half</span> &amp; <span class="b">Half</span> 🧑‍🤝‍🧑</b>${p ? `<span class="tag sun">${esc(p.name)}</span>` : ''}</div>`;
 }
 function renderStudent() {
   const s = st();
@@ -1906,7 +2045,7 @@ function sWait() {
     const tm = tablesMap(), mine = myTable(), mates = mine && tm[mine] ? tm[mine].filter(p => p.pid !== PID) : [];
     if (mates.length) {
       const canGrow = mates.length + 1 < MAX_PER_TABLE;
-      $('#box').innerHTML = `<div class="card col center"><p style="font-size:54px;line-height:1">${mates.length >= 2 ? '💜' : '💞'}</p>
+      $('#box').innerHTML = `<div class="card col center"><p style="font-size:54px;line-height:1">${mates.length >= 2 ? '🫂' : '🧑‍🤝‍🧑'}</p>
         <p class="big-note">${VI(`You & ${namesJoin(mates.map(p => p.name))}`, 'Bạn và bạn cùng cặp')}</p>
         <p class="muted">${VI('Wait for your teacher to start the round.', 'Chờ giáo viên bắt đầu vòng chơi nhé.')}</p>
         ${canGrow ? `<p class="muted" style="font-size:14px">${VI('Only if your teacher says so, a 3rd classmate can tap your name to join you.', 'Nếu giáo viên cho phép, bạn thứ 3 có thể chạm vào tên bạn để vào nhóm.')}</p>` : ''}
@@ -1919,29 +2058,30 @@ function sWait() {
     $('#box').innerHTML = `<div class="card col"><h2>${VI('Tap your partner’s name', 'Chạm vào tên bạn cùng cặp')}</h2>
       <p class="muted" style="font-size:15px">${VI('The person sitting next to you. They should tap your name too (or just one of you is enough).', 'Bạn ngồi cạnh bạn. Chỉ cần một người chạm là được.')}</p>
       <div class="vote">${solo.map(p => `<button data-pid="${p.pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${VI('Nobody else yet… waiting for classmates 👀', 'Chưa có ai khác… đang chờ các bạn 👀')}</p>`}</div>
-      ${groups.length ? `<details><summary>${VI('Group of 3? Join a pair', 'Nhóm 3 người? Vào một cặp')}</summary><div class="vote" style="margin-top:10px">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">💞</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div></details>` : ''}
+      ${groups.length ? `<details><summary>${VI('Group of 3? Join a pair', 'Nhóm 3 người? Vào một cặp')}</summary><div class="vote" style="margin-top:10px">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">🧑‍🤝‍🧑</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div></details>` : ''}
     </div>`;
     $('#box').querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => joinGroup(PID, b.dataset.pid));
   });
 }
-const ROLE_UI = {
-  if: { cls: 'if', en: 'You write the IF half', vi: 'Bạn viết vế IF (điều kiện)', pre: 'If', ph: 'I / [name] …' },
-  main: { cls: 'main', en: 'You write the MAIN half', vi: 'Bạn viết vế chính (kết quả)', pre: '', ph: 'I / [name] …' },
-  main2: { cls: 'x', en: 'You write ANOTHER main half', vi: 'Bạn viết thêm một vế chính', pre: '', ph: 'I / [name] …' },
-  twist: { cls: 'x', en: 'You write the TWIST', vi: 'Bạn viết vế “unless” (trừ khi…)', pre: 'unless', ph: 'I / [name] …' }
-};
+function roleUI(role, type, c) {
+  const L = lay(type, c), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x' }[role];
+  const d = role === 'if' ? L.a : role === 'twist' ? L.x : L.b, t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
+  return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
+}
 function sWrite() {
   const R = curRound(), me = myRole(R);
   if (!me) return show('swx' + st().round, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:48px">⏳</p><h2>${VI('You’ll play next round!', 'Bạn sẽ chơi ở vòng sau!')}</h2><p class="muted">${VI('You need a partner when the round starts.', 'Bạn cần có cặp khi vòng bắt đầu.')}</p></div></div>`);
-  const T = TYPES[R.meta.type], ui = ROLE_UI[me.role], checkRole = me.role === 'if' ? 'if' : me.role === 'twist' ? 'twist' : 'main';
-  const ex = checkRole === 'main' ? T.ex[1] : checkRole === 'if' ? T.ex[0] : 'unless ' + T.ex[0].replace(/^If /, '');
+  const T = TYPES[R.meta.type], ui = roleUI(me.role, R.meta.type, me.ro.c), checkRole = me.role === 'if' ? 'if' : me.role === 'twist' ? 'twist' : 'main';
+  const ex = ui.ex;
   let editing = false;
   show('swr' + st().round, `<div class="wrap">${pHead()}
     <p class="muted center"><b>${VI(`Round ${st().round} · ${T.name}`, `Vòng ${st().round} · ${T.vn}`)}</b>${R.meta.theme ? ` · ${esc(R.meta.theme)}` : ''}</p>
     <div class="role ${ui.cls}">
       <h2>${VI(ui.en, ui.vi)}</h2>
-      <p class="form">${esc(formOf(checkRole, R.meta.type))}</p>
+      <p class="form">${esc(ui.form)}</p>
       <p class="ex">e.g. ${esc(ex)}</p>
+      ${me.ro.c && me.ro.c.length ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.length > 1 ? 's' : ''}: ${me.ro.c.map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
+        <p class="ex">${esc(linkPreview(me.role, me.ro.c))}</p>` : ''}
     </div>
     <p class="shh">🤐 ${VI(`With ${partnersLine(me.ro)} — no talking! Signs only.`, 'Không được nói chuyện! Chỉ ra hiệu thôi.')}</p>
     <div id="area"></div></div>`, null, () => {
@@ -1979,14 +2119,14 @@ function sReveal() {
   const i = Math.min(s.cur || 0, R.meta.order.length - 1), tk = R.meta.order[i], ro = R.meta.roles[tk];
   const own = [ro.if, ro.main, ro.x].includes(PID), slots = slotsOf(R, tk);
   const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname);
-  if (!s.flipped) return show(`srv${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">💞</p>
+  if (!s.flipped) return show(`srv${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">🧑‍🤝‍🧑</p>
     <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesJoin(names)}</p>
     <p class="muted">${VI('Look at the screen 👀', 'Nhìn lên màn hình nào 👀')}</p></div></div>`);
   show(`srv${s.round}_${i}_1`, `<div class="wrap">${pHead()}
     <p class="center"><b>${namesJoin(names)}</b></p>
     ${slots.map(sl => {
-      const p = sentenceParts(R, R.meta.roles, tk, sl);
-      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">If ${esc(lowStart(p.ifT))},</span> <span class="m">${esc(lowStart(p.mainT))}</span>${p.tw ? `, <span class="xx">unless ${esc(lowStart(p.xT))}</span>` : ''}.</p>
+      const p = sentenceParts(R, R.meta.roles, tk, sl), H = halfTexts(R.meta.type, p);
+      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${esc(H.a)}</span> <span class="m">${esc(H.b)}</span>${p.tw ? ` <span class="xx">${esc(H.x)}</span>` : ''}</p>
         ${own ? '' : `<div class="vote" data-slot="${sl}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}</div>`;
     }).join('<hr style="border:0;border-top:2px dashed var(--line);width:100%">')}
     ${own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>` : `<p class="muted center">${VI('Do the two halves match?', 'Hai vế có hợp nhau không?')}</p>`}
@@ -2006,7 +2146,7 @@ function sReveal() {
 function sResults() {
   const fin = st().phase === 'final';
   const { rows, bff, chaos } = winners(), tk = 't' + myTable(), meRow = rows.find(r => r.tk === tk), rank = rows.indexOf(meRow) + 1;
-  const award = fin && bff && bff.tk === tk ? ['💞', 'Best Friends Forever', 'Bạn thân trọn đời'] : fin && chaos && chaos.tk === tk ? ['🤯', 'Chaos Kings', 'Vua hỗn loạn'] : null;
+  const award = fin && bff && bff.tk === tk ? ['🧑‍🤝‍🧑', 'Best Friends Forever', 'Bạn thân trọn đời'] : fin && chaos && chaos.tk === tk ? ['🤯', 'Chaos Kings', 'Vua hỗn loạn'] : null;
   show('sr' + st().phase + st().round + (meRow ? Math.round(meRow.compat) : ''), `<div class="wrap">${pHead()}
     ${meRow ? `<div class="cert">
       <p class="tag">${fin ? VI('Friendship certificate', 'Chứng nhận tình bạn') : VI(`After round ${st().round}`, `Sau vòng ${st().round}`)}</p>
