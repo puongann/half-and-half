@@ -19,7 +19,7 @@
 }
 *{box-sizing:border-box}
 html,body{min-height:100%;margin:0}
-body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 2px,transparent 2px),linear-gradient(90deg,var(--grid) 2px,transparent 2px);background-size:44px 44px;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body{background-color:#fbe8f1;background-image:linear-gradient(rgba(255,255,255,.55) 2px,transparent 2px),linear-gradient(90deg,rgba(255,255,255,.55) 2px,transparent 2px),linear-gradient(160deg,#ffe3ee 0%,#f3e5ff 45%,#e0f0ff 100%);background-size:44px 44px,44px 44px,100% 100%;background-attachment:fixed;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
 h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
 p{margin:0}
 [hidden]{display:none!important}
@@ -52,14 +52,21 @@ details summary{cursor:pointer;font-weight:800}
 .err{background:#fff0f0;border:3px solid var(--red);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .err .ans{font-weight:900;color:var(--red)}
 .err .hint{font-size:15px;color:var(--ink-soft)}
+.warn{background:#fff8e6;border:3px solid #e0a100;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.warn .who{font:800 14px/1.2 var(--display);color:#9a6b00}
+.warn .ans{font-weight:900;color:#9a6b00}
+.warn .hint{font-size:15px;color:var(--ink-soft)}
+.warn .note{font-size:14px;color:var(--ink-soft);border-top:2px dashed #e8c66a;padding-top:6px}
+.warn .row{display:flex;gap:8px;flex-wrap:wrap}
+.warn .row .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:800;z-index:99;max-width:90vw;text-align:center}
 /* Vietnamese on hover / tap */
 .vi{position:absolute;left:0;top:calc(100% + 6px);transform:translateY(4px);z-index:50;width:max-content;max-width:min(320px,86vw);padding:.35em .7em;border-radius:10px;background:rgba(67,48,63,.9);color:#fff;font:600 13px/1.35 var(--body);text-align:center;white-space:normal;letter-spacing:0;text-transform:none;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,transform .2s,visibility .2s}
 :where(h1,h2,h3,p,li,label,legend,summary,button,.btn,span,b,div):has(> .vi){position:relative}
-:where(h1,h2,h3,p,li,label,legend,summary,button,.btn,span,div):hover > .vi,.show-vi > .vi{opacity:.95;visibility:visible;transform:translateY(0)}
+.show-vi > .vi{opacity:.95;visibility:visible;transform:translateY(0)}
 :where(button,.btn) > .vi{left:50%;transform:translate(-50%,4px)}
-:where(button,.btn):hover > .vi,:where(button,.btn).show-vi > .vi{transform:translate(-50%,0)}
-.err .vi,.vi-below .vi{position:static;display:block;opacity:1;visibility:visible;transform:none;background:none;color:var(--ink-soft);padding:0;width:auto;max-width:none;text-align:left;font-size:.85em}
+:where(button,.btn).show-vi > .vi{transform:translate(-50%,0)}
+.err .vi,.warn .vi,.vi-below .vi{position:static;display:block;opacity:1;visibility:visible;transform:none;background:none;color:var(--ink-soft);padding:0;width:auto;max-width:none;text-align:left;font-size:.85em}
 
 /* ---- tables grid ---- */
 .tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
@@ -67,6 +74,9 @@ details summary{cursor:pointer;font-weight:800}
 .tbl h3{font-size:18px;display:flex;justify-content:space-between;align-items:center}
 .tbl.full{background:#f3eef1} .tbl.ready{background:#eafaf0} .tbl.solo{background:#fff8e6}
 .chip{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:15px;padding:3px 10px;border-radius:999px;background:var(--grid);border:2px solid transparent;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role .who{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px}
+.role .who .chip{cursor:default;font-size:14px}
+.role .who .chip.me{border-color:var(--ink);box-shadow:0 2px 0 var(--ink)}
 .chip.r-if{background:var(--pink)} .chip.r-main{background:var(--blue)} .chip.r-x{background:var(--lilac)}
 .chip .x{opacity:.5;font-size:13px}
 button.tbl{cursor:pointer;text-align:left;font:inherit}
@@ -74,6 +84,30 @@ button.tbl:disabled{opacity:.45;cursor:not-allowed}
 button.tbl.mine{background:var(--sun)}
 
 /* ---- teacher ---- */
+#rjq{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;max-width:min(460px,calc(100vw - 32px))}
+#rjq:empty,#rjq[hidden]{display:none}
+.rjrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff8e6;border:3px solid var(--ink);border-radius:16px;padding:10px 12px;box-shadow:0 4px 0 var(--ink);font-weight:700}
+#rjov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.55);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+#rjov > .card{width:min(560px,100%);max-height:100%;overflow:auto}
+#rjov .rjqr{display:flex;justify-content:center}
+#rjov .rjqr img,#rjov .rjqr canvas{width:min(300px,70vw)!important;height:auto!important}
+#rjov .rjlist{display:flex;flex-direction:column;gap:8px}
+/* demo mode */
+body.demo{padding-bottom:150px}
+body.demo-phone .wide{padding-right:350px}
+#demoBar{position:fixed;left:12px;right:12px;bottom:12px;z-index:70;display:flex;align-items:center;gap:14px;background:#fff;border:4px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:10px 14px}
+#demoBar .dnav{font-size:30px;line-height:1;padding:4px 16px 8px;background:var(--sun)}
+#demoBar .dtag{font:800 15px/1 var(--display);background:var(--sun);border:3px solid var(--ink);border-radius:999px;padding:7px 12px 5px;white-space:nowrap}
+#demoBar .dtxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+#demoBar .dtxt b{font:800 clamp(17px,1.7vw,24px)/1.2 var(--display)}
+#demoBar .dtxt span{color:var(--ink-soft);font-size:clamp(14px,1.2vw,17px)}
+#demoBar.bump{animation:bump .6s}
+@keyframes bump{30%{transform:scale(1.02)}}
+@media (max-width:700px){#demoBar{flex-wrap:wrap}#demoBar .dtxt{flex-basis:100%;order:5}}
+#demoPhone{position:fixed;right:16px;bottom:120px;z-index:60;display:flex;flex-direction:column;align-items:center;gap:6px}
+#demoPhone p{font:800 16px/1 var(--display)}
+#demoPhone .scr{width:316px;height:min(640px,calc(100vh - 200px));border:8px solid var(--ink);border-radius:36px;overflow:hidden;background:#fff;box-shadow:0 8px 0 var(--ink)}
+#demoPhone iframe{width:375px;height:calc((100vh - 200px) / .8);max-height:800px;border:0;transform:scale(.8);transform-origin:0 0}
 .t-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .lobby{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:24px;align-items:start}
 @media (max-width:860px){.lobby{grid-template-columns:1fr}}
@@ -101,9 +135,26 @@ button.tbl.mine{background:var(--sun)}
 .sent.closed .hx{transform:translateY(40vh);opacity:0}
 .sent.open .half{margin-left:0}
 .sent.open .hm{margin-left:-4px}
-.pop{position:absolute;left:50%;top:-34px;font-size:52px;transform:translateX(-50%) scale(0);transition:transform .5s cubic-bezier(.2,1.8,.4,1) .55s;z-index:2}
+.sent{padding-top:58px}
+.pop{position:absolute;left:50%;top:0;font-size:48px;line-height:1;transform:translateX(-50%) scale(0);transition:transform .5s cubic-bezier(.2,1.8,.4,1) .55s;z-index:2}
+.half .kw{font-weight:800;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+/* linking words: a chain link between the blocks */
+.lnk{position:relative;z-index:3;align-self:center;margin:0 -18px;display:flex;align-items:center;transition:transform .5s cubic-bezier(.2,1.8,.4,1) .6s,opacity .3s .6s}
+.lnk>span{font:800 clamp(20px,2.2vw,32px)/1 var(--display);text-transform:uppercase;letter-spacing:1px;background:var(--sun);border:4px solid var(--ink);border-radius:999px;padding:10px 18px 7px;box-shadow:0 5px 0 var(--ink);white-space:nowrap}
+.lnk::before,.lnk::after{content:'';width:14px;height:10px;border:4px solid var(--ink);border-radius:999px;background:var(--sun)}
+.lnk::before{margin-right:-4px} .lnk::after{margin-left:-4px}
+.lnkrow{flex-basis:100%;display:flex;justify-content:center;margin:10px 0 -22px;position:relative;z-index:3}
+.lnkrow .lnk{margin:0;flex-direction:column}
+.lnkrow .lnk::before,.lnkrow .lnk::after{width:10px;height:14px}
+.lnkrow .lnk::before{margin:0 0 -4px} .lnkrow .lnk::after{display:none}
+.sent.linked .hm{margin-left:0}
+.sent.closed .lnk{transform:scale(0);opacity:0}
+.half .lbl{opacity:1}
+.half.hi .lbl{color:#b8325b} .half.hm .lbl{color:#1f5f9e} .half.hx .lbl{color:#5a3cb0}
+.nm{font-weight:800} .nm.n0{color:#d4446f} .nm.n1{color:#2a78c2} .nm.n2{color:#6d4fcf}
 .sent.open .pop{transform:translateX(-50%) scale(1)}
-@media (max-width:700px){.half{max-width:100%;flex-basis:100%}.half.hm{margin-left:0;margin-top:-4px}.half.hi{border-radius:22px 22px 6px 6px}.half.hm{border-radius:6px 6px 22px 22px}.pop{top:auto;bottom:calc(50% - 20px);left:auto;right:6px}}
+@media (max-width:700px){.half{max-width:100%;flex-basis:100%}.half.hm{margin-left:0;margin-top:-4px}.half.hi{border-radius:22px 22px 6px 6px}.half.hm{border-radius:6px 6px 22px 22px}
+  .sent>.lnk{flex-basis:100%;justify-content:center;margin:-16px 0;flex-direction:column}.sent>.lnk::after{display:none}.sent>.lnk::before{width:10px;height:14px;margin:0 0 -4px}.sent.linked .hm{margin-top:0}.half.hx{max-width:100%}}
 .facedown{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
 .facedown div{width:min(300px,40vw);height:150px;border:4px solid var(--ink);border-radius:22px;box-shadow:0 7px 0 var(--ink);display:grid;place-items:center;font-size:56px;animation:wob 1.4s ease-in-out infinite}
 .facedown .a{background:var(--pink)} .facedown .b{background:var(--blue);animation-delay:.2s} .facedown .c{background:var(--lilac);animation-delay:.4s}
@@ -159,6 +210,8 @@ button.tbl.mine{background:var(--sun)}
 .vote button.on.k2{background:var(--pink)} .vote button.on.k1{background:var(--sun)} .vote button.on.k0{background:var(--lilac)}
 .vote button.on{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .psent{font:700 21px/1.35 var(--display);background:#fff;border:3px solid var(--ink);border-radius:18px;padding:14px}
+.psent .k{display:inline-block;font:800 .95em/1 var(--display);text-transform:uppercase;background:var(--sun);border:2px solid var(--ink);border-radius:999px;padding:4px 8px 2px;margin:2px 0}
+.psent .kw{font-weight:800;text-decoration:underline}
 .psent .i{background:var(--pink);border-radius:6px;padding:0 4px} .psent .m{background:var(--blue);border-radius:6px;padding:0 4px} .psent .xx{background:var(--lilac);border-radius:6px;padding:0 4px}
 .cert{background:linear-gradient(135deg,#fff1f6,#eef7ff);border:4px solid var(--ink);border-radius:26px;padding:22px;text-align:center;box-shadow:0 8px 0 var(--ink);display:flex;flex-direction:column;gap:10px;align-items:center}
 .cert .pct{font:800 64px/1 var(--display);color:var(--pink-deep)}
@@ -1290,17 +1343,23 @@ function lay(type, c, trio) {
 const roleKey = role => role === 'if' ? 'a' : role === 'twist' || role === 'link' ? 'x' : 'b';
 const formOf = (role, type) => lay(type)[roleKey(role)].form;
 // the three halves as shown on screen, with their joining words and punctuation
+// kb / kx = the linking word that joins the next block (shown as a chain link between blocks)
 function halfTexts(type, p) {
   if (isPass(type)) {
     const c1 = (p.c && p.c[0]) || 'so', c2 = (p.c && p.c[1]) || 'and', cm = w => /^(so|but)$/.test(w) ? ',' : '';
-    return { a: cap1(p.ifT) + cm(c1), b: c1 + ' ' + lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), x: p.tw ? c2 + ' ' + lowStart(p.xT) + '.' : '' };
+    return { a: cap1(p.ifT) + cm(c1), kb: c1, b: lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), kx: p.tw ? c2 : '', x: p.tw ? lowStart(p.xT) + '.' : '' };
   }
   if (p.tw && p.trio !== 'twist') {
     const c2 = (p.c && p.c[1]) || 'and', cm = /^(so|but)$/.test(c2) ? ',' : '';
-    return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + cm, x: c2 + ' ' + lowStart(p.xT) + '.' };
+    return { a: 'If ' + lowStart(p.ifT) + ',', kb: '', b: lowStart(p.mainT) + cm, kx: c2, x: lowStart(p.xT) + '.' };
   }
-  return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + (p.tw ? ',' : '.'), x: p.tw ? 'unless ' + lowStart(p.xT) + '.' : '' };
+  return { a: 'If ' + lowStart(p.ifT) + ',', kb: '', b: lowStart(p.mainT) + (p.tw ? ',' : '.'), kx: p.tw ? 'unless' : '', x: p.tw ? lowStart(p.xT) + '.' : '' };
 }
+// "If" in bold, the rest escaped
+const kwHTML = t => esc(t).replace(/^If\b/, '<b class="kw">If</b>');
+const linkHTML = w => w ? `<span class="lnk"><span>🔗 ${esc(w)}</span></span>` : '';
+// names in the colour of their block: 1st pink, 2nd blue, 3rd lilac
+const namesC = a => { const s = a.map((n, i) => `<span class="nm n${i % 3}">${esc(n)}</span>`); return s.length <= 1 ? (s[0] || '') : s.slice(0, -1).join(', ') + ' &amp; ' + s[s.length - 1]; };
 function frameHTML(type, trio, withX) {
   const L = lay(type, null, trio), xHTML = `${VI('Group of 3:', 'Nhóm 3:')} ${esc(L.x.form)}<small>${esc(L.x.ex)}</small>`;
   return `<div class="fi">${esc(L.a.form)}<small>${esc(L.a.ex)}${isPass(type) ? '' : ','}</small></div>
@@ -1320,7 +1379,7 @@ const P_OBJ = { i: 'me', he: 'him', she: 'her', we: 'us', they: 'them' };
 let passRole = 'if';
 function passErr(en, vi, type, ans) {
   const h = lay(type)[roleKey(passRole)];
-  return { ok: false, msg: VI(en, vi), ans: ans || '', hint: `Your half: <b>${esc(h.form)}</b><br>e.g. <i>${esc(h.ex)}</i>` };
+  return { ok: false, msg: VI(en, vi), ans: ans || '', hint: `Phần của bạn: <b>${esc(h.form.replace(/^Clause \d: /, '').replace(/something/g, 'vật / người'))}</b><br>Ví dụ: <i>${esc(h.ex)}</i>` };
 }
 function checkPass(raw, role, type) {
   const T = TYPES[type]; passRole = role;
@@ -1409,15 +1468,42 @@ function setAt(o, path, val) {
 }
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 // tap on touch screens shows the Vietnamese line
+// Vietnamese shows on hover (computer) or tap (phone), then hides by itself after 5 s
+let viTimer = null, viHost = null, viDone = null; // viDone: hover already timed out here, wait until the mouse leaves
+const hideVi = () => { clearTimeout(viTimer); document.querySelectorAll('.show-vi').forEach(x => x.classList.remove('show-vi')); viHost = null; };
+const showVi = host => { hideVi(); viHost = host; host.classList.add('show-vi'); viTimer = setTimeout(() => { viDone = viHost; hideVi(); }, 5000); };
+const viHostOf = el => el && el.closest ? el.closest('*:has(> .vi)') : null;
 document.addEventListener('click', e => {
-  const host = e.target.closest('*:has(> .vi)');
-  document.querySelectorAll('.show-vi').forEach(x => { if (x !== host) x.classList.remove('show-vi'); });
-  if (host && matchMedia('(hover:none)').matches) host.classList.toggle('show-vi');
+  const host = viHostOf(e.target);
+  if (!matchMedia('(hover:none)').matches) return;
+  if (host && host !== viHost) showVi(host); else hideVi();
+});
+document.addEventListener('mouseover', e => {
+  if (matchMedia('(hover:none)').matches) return;
+  const host = viHostOf(e.target);
+  if (host && host === viDone) return;
+  viDone = null;
+  if (host !== viHost) { if (host) showVi(host); else hideVi(); }
 });
 
 /* ---------- checking one half ---------- */
 const cleanHalf = s => String(s || '').replace(/\s+/g, ' ').trim().replace(/^[,;:\s]+/, '').replace(/[.,;:!?\s]+$/, '');
+// the half as it will be stored: tidy spaces/punctuation, drop a leading if / unless / linking word
+function plainHalf(raw, role, type) {
+  const t = cleanHalf(raw);
+  if (isPass(type) || role === 'link') return t.replace(/^(so|because|but|and)\b[,\s]*/i, '');
+  return role === 'if' || role === 'twist' ? t.replace(/^(if|unless)\b\s*/i, '') : t.replace(/^(then|so)\b\s*/i, '');
+}
+// the computer's check is only advice: students may lock in anyway (the class fixes sentences together later)
 function checkHalf(raw, role, type) {
+  const t = plainHalf(raw, role, type);
+  if (!t) return { ok: false, empty: true, msg: VI('Write something first! ✍️', 'Viết gì đó đã nhé!') };
+  let r;
+  try { r = checkHalf0(raw, role, type); } catch (e) { console.warn(e); r = { ok: true }; }
+  r.text = r.ok && r.text ? r.text : t;
+  return r;
+}
+function checkHalf0(raw, role, type) {
   if (isPass(type)) return checkPass(raw, role, type);
   if (role === 'link') { raw = String(raw || '').replace(/^\s*(and|so|but)\b[,\s]*/i, ''); role = 'main'; }
   const T = TYPES[type];
@@ -1435,6 +1521,9 @@ function checkHalf(raw, role, type) {
     const w = v3[2].toLowerCase(), b0 = IRR[w], pp = b0 && ({ come: 'come', run: 'run', become: 'become' }[b0] || partOf(b0));
     if (b0 && b0 !== 'have' && pp !== w) { const m = errText({ kind: 'cond-v3', aux: v3[1].toLowerCase(), wrong: { raw: v3[2] }, fix: pp }); return { ok: false, msg: m.msg, hint: m.hint, ans: m.ans }; }
   }
+  // modal + V3 with no "be": "will broken" → "will be broken"
+  const mb = t.match(/\b(will|would|can|could|might|may|must|should|won't|wouldn't|can't|couldn't)\s+(?:(?:not|never|also|really|probably|definitely|surely)\s+)*([a-z]+)\b/i);
+  if (mb) { const w = mb[2].toLowerCase(); if (PARTS[w] && PARTS[w] !== w && !BASE.has(w)) return { ok: false, msg: VI(`Missing “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`, `Thiếu “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`), ans: `${mb[1]} be ${mb[2]}`, hint: `Bị động: <b>${esc(mb[1])} be + V3</b> (ví dụ: <i>it will be broken</i>)` }; }
   // "would have a dog" = own, not would-have-V3 (only while checking)
   t = t.replace(/\b(would|could|might|will|can)(\s+not|n't)?\s+have\s+(?=(a|an|the|my|your|his|her|our|their|some|no|any|lots|many|much|more|\d+|fun|time|money|friends|breakfast|lunch|dinner)\b)/i, '$1$2 own ');
   const pre = role === 'main' ? T.dummy[0] + ', ' : role === 'if' ? 'If ' : 'Unless ';
@@ -1442,7 +1531,7 @@ function checkHalf(raw, role, type) {
   // "Ms Hoa", "Taylor Swift" → one name while checking
   const nm = t.match(/^(?:(?:Mr|Mrs|Ms|Miss|Dr|Mx)\.?\s+[A-Z][\w']*|[A-Z][\w']+(?:\s+[A-Z][\w']*)+)/);
   if (nm && !LOWER_START.test(nm[0]) && !/^I\b/.test(nm[0]) && !/\b(I|Will|Would|Had|Can|Could)\b/.test(nm[0].replace(/^\S+/, ''))) { t = 'Lan' + t.slice(nm[0].length); swapped = nm[0]; }
-  const body = role === 'main' ? t : lowStart(t);
+  const body = lowStart(t);
   const sent = pre + body + post, a = pre.length, b = a + body.length;
   let r, ci;
   try { r = checkGrammar(sent, [], [T.topic]); ci = condInfo(sent); } catch (e) { console.warn(e); return { ok: true, text: orig }; }
@@ -1452,7 +1541,7 @@ function checkHalf(raw, role, type) {
     return {
       ok: false,
       msg: VI(`The verb doesn’t fit the ${T.name.replace(/ \(.*/, '').toLowerCase()} yet.`, `Động từ chưa đúng dạng của ${T.vn.replace(/ \(.*/, '').toLowerCase()}.`),
-      hint: `Your half: <b>${esc(formOf(role, type))}</b><br>e.g. <i>${esc(role === 'main' ? T.ex[1] : (role === 'twist' ? 'unless ' : '') + (role === 'twist' ? T.ex[0].replace(/^If /, '') : T.ex[0]))}</i>`
+      hint: `Phần của bạn: <b>${esc(formOf(role, type))}</b><br>Ví dụ: <i>${esc(role === 'main' ? T.ex[1] : (role === 'twist' ? 'unless ' : '') + (role === 'twist' ? T.ex[0].replace(/^If /, '') : T.ex[0]))}</i>`
     };
   }
   return { ok: true, text: orig };
@@ -1536,7 +1625,8 @@ function makeApi(db) {
 let DB = normDb(QS.get('db')) || normDb(LS.get('cp_dbUrl', '')) || normDb(LS.get('dbUrl', '')) || normDb(CONFIG.DB_URL) || '';
 let CODE = (QS.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 let api = null, room = null, stopListen = null, view = null;
-const PID = (() => { let p = LS.get('cp_pid', ''); if (!p) { p = 'p' + Math.random().toString(36).slice(2, 10); LS.set('cp_pid', p); } return p; })();
+const DEMO = QS.get('demo') === '1', EMBED = DEMO && QS.get('embed') === '1';
+const PID = EMBED && QS.get('pid') ? QS.get('pid') : (() => { let p = LS.get('cp_pid', ''); if (!p) { p = 'p' + Math.random().toString(36).slice(2, 10); LS.set('cp_pid', p); } return p; })();
 const isHost = () => QS.get('host') === '1' && !!LS.get('cp_host_' + CODE, false);
 const st = () => (room && room.state) || {};
 const roundKey = n => 'r' + n;
@@ -1641,8 +1731,44 @@ function render() {
   if (!CODE) return showHome();
   if (!room) return show('loading', `<div class="wrap"><div class="card center"><p class="big-note"><span class="spin">🧑‍🤝‍🧑</span> Finding room ${esc(CODE)}…</p><p class="muted">If this takes long, check the link or the internet.</p></div></div>`);
   if (room.__missing) return show('missing', `<div class="wrap"><div class="card col center"><h2>Room ${esc(CODE)} not found 😿</h2><p>${VI('Check the code with your teacher.', 'Kiểm tra lại mã phòng với giáo viên nhé.')}</p><a class="btn" href="${location.pathname}">← Back</a></div></div>`);
-  return isHost() ? renderTeacher() : renderStudent();
+  if (isHost()) { renderTeacher(); drawRejoin(); if (DEMO) demoTeacher(); return; }
+  renderStudent(); if (EMBED) demoPhoneBot();
 }
+/* ---------- teacher: let a student back in on a new phone / browser ---------- */
+function rejoinLink() { const u = new URL(studentLink()); u.searchParams.set('rejoin', '1'); return u.toString(); }
+function rejoinReqs() { return Object.entries((room && room.rejoin) || {}).filter(([, r]) => r && r.target && !r.ok && players()[r.target]).sort((a, b) => (a[1].t || 0) - (b[1].t || 0)); }
+function reqRows() {
+  return rejoinReqs().map(([rid, r]) => `<div class="rjrow"><span>🔁 ${VI(`A phone wants to come back as <b>${esc(pname(r.target))}</b>`, `Một máy muốn vào lại với tên ${esc(pname(r.target))}`)}</span>
+    <span class="row"><button class="btn small primary" data-act="rjok" data-rid="${esc(rid)}">✓ ${VI('Yes', 'Đồng ý')}</button><button class="btn small" data-act="rjno" data-rid="${esc(rid)}">✕</button></span></div>`).join('');
+}
+function drawRejoin() {
+  let box = document.getElementById('rjq');
+  if (!box) { box = document.createElement('div'); box.id = 'rjq'; document.body.appendChild(box); }
+  const ov = document.getElementById('rjov'), rows = reqRows();
+  box.hidden = !rows || !!ov; box.innerHTML = rows;
+  if (ov) ov.querySelector('.rjlist').innerHTML = rows || `<p class="muted center">${VI('Students scan this, tap their old name, then you confirm here.', 'Học viên quét mã, chạm vào tên cũ, rồi bạn xác nhận ở đây.')}</p>`;
+}
+function openRejoinQR() {
+  if (document.getElementById('rjov')) return;
+  const ov = document.createElement('div'); ov.id = 'rjov';
+  ov.innerHTML = `<div class="card col" style="align-items:stretch">
+    <div class="row" style="justify-content:space-between"><h2>📱 ${VI('Lost the game? Scan to come back', 'Bị thoát? Quét để vào lại')}</h2><button class="btn small" data-act="rjclose">✕ ${VI('Close', 'Đóng')}</button></div>
+    <div class="rjqr"></div><div class="code">${esc(CODE.replace(/^HH/, 'HH-'))}</div>
+    <div class="rjlist"></div></div>`;
+  document.body.appendChild(ov);
+  const link = rejoinLink(), q = ov.querySelector('.rjqr');
+  if (window.QRCode) { try { new QRCode(q, { text: link, width: 300, height: 300, colorDark: '#43303f', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.L }); } catch (e) { q.textContent = link; } } else q.innerHTML = `<p style="word-break:break-all">${esc(link)}</p>`;
+  drawRejoin();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || !isHost()) return;
+  const act = b.dataset.act, rid = b.dataset.rid;
+  if (act === 'rjqr') openRejoinQR();
+  else if (act === 'demo') openDemo(room.meta.groups || ['1'], true);
+  else if (act === 'rjclose') { const ov = document.getElementById('rjov'); if (ov) ov.remove(); drawRejoin(); }
+  else if (act === 'rjok') put('rejoin/' + rid + '/ok', true);
+  else if (act === 'rjno') put('rejoin/' + rid, null);
+});
 
 /* ---------- HOME ---------- */
 function showHome() {
@@ -1667,6 +1793,7 @@ function showHome() {
           <p class="muted" style="font-size:14px">${VI('Same database as the Chó game is fine. Leave empty to test on this computer only (open the student link in another tab).', 'Dùng chung database với game Chó được. Để trống để thử trên máy này (mở link học sinh ở tab khác).')}</p>
         </div></details>
       <button class="btn primary" id="create">✨ ${VI('Create room', 'Tạo phòng')}</button>
+      <button class="btn" id="demo">🎬 ${VI('Demo for the class (pretend students)', 'Chơi thử cho cả lớp xem (học sinh ảo)')}</button>
       ${last ? `<button class="btn small" id="resume">↩︎ ${VI(`Back to room ${esc(last.code)}`, `Quay lại phòng ${esc(last.code)}`)}</button>` : ''}
     </div>
     <div class="card col">
@@ -1677,6 +1804,7 @@ function showHome() {
   </div>`, () => {
     $('#groups').querySelectorAll('[data-all]').forEach(b => b.onclick = () => GROUPS.filter(g => g.topic === b.dataset.all).forEach(g => ($('#groups').querySelector(`input[value="${g.id}"]`).checked = true)));
     $('#create').onclick = createRoom;
+    $('#demo').onclick = () => { const g = [...$('#groups').querySelectorAll('input:checked')].map(i => i.value); openDemo(g.length ? g : ['1'], false); };
     if ($('#resume')) $('#resume').onclick = () => go(last.code, last.db, true);
     $('#join').onclick = () => { const c = $('#code').value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (c) go(c.startsWith('HH') ? c : 'HH' + c, DB || 'local'); };
   });
@@ -1707,6 +1835,203 @@ async function createRoom() {
 }
 
 /* ======================================================================
+   DEMO: a practice round on the big screen with pretend students
+   (local only, never touches the real room or Firebase)
+   ====================================================================== */
+const DEMO_CODE = 'HHDEMO';
+const DEMO_BOTS = [['dmai', 'Mai'], ['dtu', 'Tú'], ['dlinh', 'Linh'], ['dkhoa', 'Khoa'], ['dvy', 'Vy']];
+const DEMO_PHONE = 'dmai'; // the student whose phone is shown
+const DEMO_BANK = {
+  '0': { if: ['you heat ice', 'you don’t sleep', 'my cat is hungry'], main: ['it melts', 'you feel tired', 'she bites my toes'], x: ['it turns into water', 'everybody gets grumpy', 'she sleeps all day'] },
+  '1': { if: ['it rains tomorrow', 'I pass the exam', 'my mom finds my phone'], main: ['I will stay at home', 'I will buy a pizza', 'she will be angry'], x: ['I will watch films all day', 'my dad will cook noodles', 'I will cry'] },
+  '2': { if: ['I were a cat', 'I had a million dollars', 'my teacher were a robot'], main: ['I would sleep all day', 'I would buy an island', 'we would have no homework'], x: ['I would chase mice', 'I would never go to school', 'we would travel the world'] },
+  '3': { if: ['I had studied harder', 'I had woken up earlier', 'she had called me'], main: ['I would have passed', 'I would have caught the bus', 'I would have been happy'], x: ['my parents would have been proud', 'I would have won the prize', 'we would have had fun'] },
+  mA: { if: ['I had slept earlier', 'I had saved money', 'I had learned Chinese'], main: ['I would be awake now', 'I would be rich now', 'I would live in Beijing now'], x: ['I would feel great', 'I would be happy', 'I would speak better'] },
+  mB: { if: ['I were braver', 'I were taller', 'I liked maths'], main: ['I would have asked her out', 'I would have played basketball', 'I would have become an engineer'], x: ['she would have said yes', 'I would have won the game', 'we would have been friends'] },
+  pS: { if: ['Pizza is eaten here every day', 'Our classroom is cleaned by robots', 'My homework is always eaten by the dog'], main: ['more pizza is ordered every morning', 'the windows are never opened', 'new homework is given every day'], x: ['the bill is never paid', 'nobody is told', 'the teacher is not informed'] },
+  pP: { if: ['My homework was eaten', 'The school was closed for a week', 'My phone was stolen yesterday'], main: ['a new one was written', 'the students were sent home', 'the thief was caught by a cat'], x: ['it was eaten again', 'the teachers were paid anyway', 'nothing was found'] },
+  pF: { if: ['Our school will be closed', 'A new park will be built', 'The test will be cancelled'], main: ['the students will be sent home', 'free ice cream will be given to everyone', 'the answers will be posted online'], x: ['the teachers will be paid anyway', 'the park will be opened in May', 'nobody will be punished'] },
+  pPP: { if: ['My phone has been stolen', 'The cake has been eaten', 'The exam has been cancelled'], main: ['the police have been called', 'the party has been ruined', 'the students have been told'], x: ['nothing has been found', 'a new cake has been ordered', 'a new date has been chosen'] },
+  pM: { if: ['Homework should be banned', 'Phones must be turned off', 'Snacks can be eaten in class'], main: ['students must be given more free time', 'the rules should be changed', 'the teacher must be told'], x: ['teachers can be paid more', 'nobody should be punished', 'pizza should be served every day'] }
+};
+function demoText(R, pid) {
+  const me = Object.values(R.meta.roles).find(ro => [ro.if, ro.main, ro.x].includes(pid)); if (!me) return '';
+  const role = me.if === pid ? 'if' : me.main === pid ? 'main' : 'x', B = DEMO_BANK[R.meta.type] || DEMO_BANK['1'];
+  const list = role === 'x' && R.meta.trio === 'twist' ? B.if : B[role];
+  // everyone with the same job gets a different sentence
+  const same = Object.values(R.meta.roles).map(ro => role === 'if' ? ro.if : role === 'main' ? ro.main : ro.x).filter(Boolean).sort();
+  return list[(same.indexOf(pid) + (st().round || 1)) % list.length];
+}
+function openDemo(groups, newTab) {
+  LS.set('cp_local_' + DEMO_CODE, { meta: { created: Date.now(), groups, v: 2, demo: true }, state: { phase: 'lobby', round: 0 } });
+  LS.set('cp_host_' + DEMO_CODE, true);
+  const u = new URL(location.href); u.search = ''; u.hash = '';
+  u.searchParams.set('room', DEMO_CODE); u.searchParams.set('db', 'local'); u.searchParams.set('host', '1'); u.searchParams.set('demo', '1');
+  if (newTab) window.open(u.toString(), '_blank'); else if (u.toString() === location.href) location.reload(); else location.href = u.toString();
+}
+// do something once, a little later (pretend students take their time)
+const demoDone = new Set();
+function demoLater(key, ms, fn) { key += '@' + ((room.meta && room.meta.created) || 0); if (demoDone.has(key)) return; demoDone.add(key); setTimeout(() => { try { fn(); } catch (e) { console.warn(e); } }, ms); }
+const demoVote = () => { const r = Math.random(); return r < .5 ? 2 : r < .8 ? 1 : 0; };
+function demoTeacher() {
+  demoChrome();
+  const s = st(), P = players(), R = curRound();
+  if (!s.phase || s.phase === 'lobby') {
+    DEMO_BOTS.forEach(([pid, name], i) => {
+      if (pid === DEMO_PHONE && demoPhoneOn()) demoLater('j-late' + pid, 12000, () => { if (!players()[pid]) put('players/' + pid, { name, t: Date.now() }); });
+      else demoLater('j' + pid, 1200 + i * 1100, () => { if (!players()[pid]) put('players/' + pid, { name, t: Date.now() }); });
+    });
+    if (DEMO_BOTS.every(([pid]) => P[pid] || pid === DEMO_PHONE)) {
+      demoLater('pLK', 1500, () => { if (!players().dlinh.table) joinGroup('dlinh', 'dkhoa'); });
+      demoLater('pV', 3200, () => { const t = players().dlinh.table; if (t && !players().dvy.table) joinGroup('dvy', 'dlinh'); });
+      demoLater('pMT', demoPhoneOn() ? 16000 : 2400, () => { if (players().dmai && !players().dmai.table) joinGroup('dmai', 'dtu'); });
+    }
+  }
+  if (s.phase === 'write' && R) {
+    const all = Object.values(R.meta.roles).flatMap(ro => [ro.if, ro.main, ro.x]).filter(Boolean);
+    all.filter(pid => !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => demoLater(`w${s.round}${pid}`, 2500 + i * 2200, () => {
+      const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[pid])) put(`rounds/${roundKey(st().round)}/h/${pid}`, { text: demoText(R2, pid), at: Date.now() });
+    }));
+    demoLater(`w${s.round}late`, 30000, () => { const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[DEMO_PHONE])) put(`rounds/${roundKey(st().round)}/h/${DEMO_PHONE}`, { text: demoText(R2, DEMO_PHONE), at: Date.now() }); });
+  }
+  if (s.phase === 'reveal' && s.flipped && R) {
+    const tk = R.meta.order[s.cur || 0], ro = R.meta.roles[tk];
+    DEMO_BOTS.map(b => b[0]).filter(pid => ![ro.if, ro.main, ro.x].includes(pid) && !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => slotsOf(R, tk).forEach(sl =>
+      demoLater(`v${s.round}${sl}${pid}`, 1800 + i * 1300, () => { if (st().phase === 'reveal' && st().flipped && curRound().meta.order[st().cur || 0] === tk) put(`rounds/${roundKey(st().round)}/v/${sl}/${pid}`, demoVote()); })));
+  }
+}
+const demoPhoneOn = () => LS.get('cp_demoPhone', true) && innerWidth >= 900;
+const DEMO_STEPS = {
+  join: ['1️⃣ Scan the QR code on the board and type your name.', 'Quét mã QR trên bảng và nhập tên của bạn.'],
+  pair: ['2️⃣ Tap the name of the person next to you to make a pair. A 3rd person taps a pair to join it.', 'Chạm vào tên bạn ngồi cạnh để ghép cặp. Bạn thứ 3 chạm vào một cặp để vào nhóm.'],
+  start: ['3️⃣ Everyone has a partner. Teacher, press ▶ Start round!', 'Mọi người đã có cặp. Giáo viên bấm ▶ Bắt đầu vòng!'],
+  write: ['4️⃣ Each of you writes a different part of ONE sentence, in secret. 🤐 No talking, only signs! The computer may give a hint, but you decide.', 'Mỗi bạn viết một phần của CÙNG một câu, giữ bí mật. 🤐 Không nói chuyện, chỉ ra hiệu! Máy có thể gợi ý, nhưng bạn tự quyết định.'],
+  ready: ['4️⃣ Everyone has locked in. Teacher, press 🎬 Reveal!', 'Mọi người đã khoá câu. Giáo viên bấm để lật bài!'],
+  flip: ['5️⃣ Whose halves go together? Teacher, press 🔄 Flip!', 'Các nửa câu có khớp nhau không? Giáo viên bấm 🔄 Lật!'],
+  vote: ['6️⃣ Read the whole sentence and vote on your phone: 🧑‍🤝‍🧑 Perfect match · 🙂 Kind of · 🤯 Total chaos. The teacher gives 0–5 🤝.', 'Đọc cả câu rồi bình chọn trên điện thoại. Không bầu cho nhóm mình. Giáo viên chấm 0–5 🤝.'],
+  results: ['7️⃣ Score = 50% class vote + 50% teacher. Next round, everyone gets a different part!', 'Điểm = 50% cả lớp + 50% giáo viên. Vòng sau mỗi bạn viết phần khác!'],
+  final: ['🏆 The group that reads each other’s minds best wins!', 'Nhóm hiểu ý nhau nhất sẽ thắng!']
+};
+function demoStep() {
+  const s = st(), P = players(), tm = tablesMap();
+  if (s.phase === 'write') { const R = curRound(); return R && Object.keys(R.meta.roles).every(tk => tableDone(R, tk)) ? 'ready' : 'write'; }
+  if (s.phase === 'reveal') return s.flipped ? 'vote' : 'flip';
+  if (s.phase === 'results') return 'results';
+  if (s.phase === 'final') return 'final';
+  if (Object.keys(P).length < DEMO_BOTS.length) return 'join';
+  return singles(tm).length ? 'pair' : 'start';
+}
+function demoChrome() {
+  document.body.classList.add('demo');
+  let bar = document.getElementById('demoBar');
+  if (!bar) {
+    bar = document.createElement('div'); bar.id = 'demoBar';
+    bar.innerHTML = `<button class="btn small dnav" id="dPrev" aria-label="Previous scene">‹</button><span class="dtag">🎬 <span id="dNum"></span></span><div class="dtxt"><b></b><span></span></div><button class="btn small dnav" id="dNext" aria-label="Next scene">›</button>
+      <div class="row"><button class="btn small" id="dPhone">📱</button><button class="btn small" id="dAgain">↺ ${VI('Restart', 'Chơi lại')}</button><button class="btn small" id="dExit">✕ ${VI('Exit demo', 'Thoát')}</button></div>`;
+    document.body.appendChild(bar);
+    $('#dPrev').onclick = () => demoGoto(demoScene() - 1);
+    $('#dNext').onclick = () => demoGoto(demoScene() + 1);
+    $('#dPhone').onclick = () => { LS.set('cp_demoPhone', !LS.get('cp_demoPhone', true)); demoChrome(); };
+    $('#dAgain').onclick = () => { openDemo(room.meta.groups || ['1'], false); };
+    $('#dExit').onclick = () => { LS.del('cp_local_' + DEMO_CODE); LS.del('cp_host_' + DEMO_CODE); window.close(); setTimeout(() => { location.href = location.pathname; }, 200); };
+  }
+  const k = demoStep(), t = DEMO_STEPS[k], sc = demoScene();
+  $('#dNum').textContent = `${sc + 1} / ${DEMO_SCENES}`; $('#dPrev').disabled = sc === 0; $('#dNext').disabled = sc === DEMO_SCENES - 1;
+  if (bar.dataset.k !== k) { bar.dataset.k = k; bar.querySelector('.dtxt b').textContent = t[0]; bar.querySelector('.dtxt span').textContent = t[1]; bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
+  let ph = document.getElementById('demoPhone');
+  const on = demoPhoneOn();
+  document.body.classList.toggle('demo-phone', on);
+  if (on && !ph) {
+    const u = new URL(location.href); u.searchParams.delete('host'); u.searchParams.set('embed', '1'); u.searchParams.set('pid', DEMO_PHONE);
+    ph = document.createElement('div'); ph.id = 'demoPhone';
+    ph.innerHTML = `<p>📱 ${VI('Mai’s phone', 'Điện thoại của Mai')}</p><div class="scr"><iframe src="${esc(u.toString())}" title="Student phone"></iframe></div>`;
+    document.body.appendChild(ph);
+  }
+  if (ph) ph.hidden = !on;
+}
+// ‹ › jump between scenes: each scene is rebuilt from scratch, so going back works too
+const DEMO_PAIR = 'tgdmai_dtu', DEMO_TRIO = 'tgdkhoa_dlinh';
+const DEMO_SCENES = 11; // join, pair, start, write, ready, flip 1, vote 1, flip 2, vote 2, results, final
+function demoScene() {
+  const s = st(), k = demoStep();
+  if (s.phase === 'write') return k === 'ready' ? 4 : 3;
+  if (s.phase === 'reveal') return 5 + 2 * Math.min(s.cur || 0, 1) + (s.flipped ? 1 : 0);
+  if (s.phase === 'results') return 9;
+  if (s.phase === 'final') return 10;
+  return { join: 0, pair: 1 }[k] ?? 2;
+}
+function demoGoto(i) {
+  i = Math.max(0, Math.min(DEMO_SCENES - 1, i));
+  const now = Date.now(), groups = (room.meta && room.meta.groups) || ['1'];
+  const types = GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.types);
+  const old = room.rounds && room.rounds.r1 && room.rounds.r1.meta;
+  let type = old ? old.type : ($('#rtype') && $('#rtype').value) || LS.get('cp_lastType_' + DEMO_CODE, types[0]);
+  if (!TYPES[type]) type = types[Math.floor(Math.random() * types.length)];
+  const snap = { meta: { created: now, groups, v: 2, demo: true }, state: { phase: 'lobby', round: 0 }, players: {} };
+  if (i >= 1) DEMO_BOTS.forEach(([pid, name], k) => { snap.players[pid] = { name, t: now - 60000 + k * 1000 }; });
+  if (i >= 2) { ['dmai', 'dtu'].forEach(p => snap.players[p].table = DEMO_PAIR.slice(1)); ['dkhoa', 'dlinh', 'dvy'].forEach(p => snap.players[p].table = DEMO_TRIO.slice(1)); }
+  if (i >= 3) {
+    const pass = isPass(type);
+    const roles = old && old.type === type ? old.roles : {
+      [DEMO_PAIR]: Object.assign({ if: 'dtu', main: 'dmai', x: null }, pass ? { c: shuffle(['so', 'because', 'but']).slice(0, 1) } : {}),
+      [DEMO_TRIO]: { if: 'dkhoa', main: 'dlinh', x: 'dvy', c: pass ? shuffle(['and', 'so', 'but']).slice(0, 2) : ['', shuffle(['and', 'so', 'but'])[0]] }
+    };
+    const R = { meta: { type, theme: '', trio: 'link', roles, at: now } };
+    snap.rounds = { r1: R }; snap.state = { phase: 'write', round: 1 };
+    if (i >= 4) { R.h = {}; DEMO_BOTS.forEach(([pid]) => { R.h[pid] = { text: demoText(R, pid), at: now }; }); }
+    if (i >= 5) {
+      R.meta.order = [DEMO_PAIR, DEMO_TRIO];
+      snap.state = i >= 9 ? { phase: i === 9 ? 'results' : 'final', round: 1 } : { phase: 'reveal', round: 1, cur: i >= 7 ? 1 : 0, flipped: i % 2 === 0 };
+      // groups already shown get their votes and handshakes
+      const shown = i >= 9 ? 2 : i >= 7 ? 1 : 0;
+      R.v = {}; R.hearts = {};
+      R.meta.order.slice(0, shown).forEach(tk => {
+        const ro = roles[tk]; R.v[tk] = {};
+        DEMO_BOTS.map(b => b[0]).filter(p => ![ro.if, ro.main, ro.x].includes(p)).forEach(p => { R.v[tk][p] = demoVote(); });
+        R.hearts[tk] = 3 + Math.floor(Math.random() * 3);
+      });
+    }
+  }
+  LS.del('cp_draft_' + DEMO_CODE + '_1');
+  api.set(DEMO_CODE, snap);
+}
+// arrow keys / presenter clicker: ← → (or Page Up / Page Down), also when the phone frame has focus
+function demoKey(key) {
+  if (key === 'ArrowRight' || key === 'PageDown') { demoGoto(demoScene() + 1); return true; }
+  if (key === 'ArrowLeft' || key === 'PageUp') { demoGoto(demoScene() - 1); return true; }
+  return false;
+}
+window.demoKey = demoKey;
+document.addEventListener('keydown', e => {
+  if (!DEMO || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  if (EMBED) { try { if (parent.demoKey && parent.demoKey(e.key)) e.preventDefault(); } catch (x) {} return; }
+  if (isHost() && demoKey(e.key)) e.preventDefault();
+});
+// inside the demo phone: Mai plays by herself (types slowly so the class can watch)
+const phoneDone = new Set();
+function phoneLater(key, ms, fn) { key += '@' + ((room.meta && room.meta.created) || 0); if (phoneDone.has(key)) return; phoneDone.add(key); setTimeout(() => { try { fn(); } catch (e) { console.warn(e); } }, ms); }
+function typeInto(el, text, done) {
+  let i = 0; // no focus(): the teacher's arrow keys must stay with the big screen
+  const step = () => { if (!el.isConnected) return; el.value = text.slice(0, ++i); el.dispatchEvent(new Event('input')); if (el.oninput) el.oninput(); if (i < text.length) setTimeout(step, 70 + Math.random() * 60); else setTimeout(done, 700); };
+  step();
+}
+function demoPhoneBot() {
+  const s = st(), me = players()[PID], R = curRound();
+  if (!me) return phoneLater('join', 2500, () => { const nm = $('#nm'); if (nm) typeInto(nm, 'Mai', () => $('#go') && $('#go').click()); });
+  if ((!s.phase || s.phase === 'lobby') && !me.table) {
+    if (players().dtu) phoneLater('pair', 2500, () => { const b = ROOT.querySelector('button[data-pid="dtu"]'); if (b) b.click(); else if (!players()[PID].table) joinGroup(PID, 'dtu'); });
+    return;
+  }
+  if (s.phase === 'write' && R && myRole(R) && !(R.h && R.h[PID])) {
+    return phoneLater('w' + s.round, 3500, () => {
+      const inp = $('#inp'); if (!inp) return;
+      typeInto(inp, demoText(R, PID), () => { $('#send').click(); setTimeout(() => { if ($('#anyway')) $('#anyway').click(); }, 2500); });
+    });
+  }
+  if (s.phase === 'reveal' && s.flipped) phoneLater('v' + s.round + '_' + (s.cur || 0), 3000, () => { const bs = ROOT.querySelectorAll('.vote button'); if (bs.length) bs[[0, 0, 1, 2][Math.floor(Math.random() * 4)] % bs.length].click(); });
+}
+
+/* ======================================================================
    TEACHER
    ====================================================================== */
 function roundTypes() { return GROUPS.filter(g => (room.meta.groups || []).includes(g.id)).flatMap(g => g.types); }
@@ -1725,7 +2050,7 @@ function studentLink() {
 }
 function topBar(extra = '') {
   return `<div class="t-top"><div class="logo" style="font-size:clamp(24px,2.6vw,36px)"><span class="h">Half</span> &amp; <span class="b">Half</span> 🧑‍🤝‍🧑</div>
-    <div class="row">${extra}<span class="tag sun">${esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
+    <div class="row">${extra}${DEMO ? '' : `<button class="btn small" data-act="demo">🎬 ${VI('Demo', 'Chơi thử')}</button><button class="btn small" data-act="rjqr">📱 ${VI('Rejoin QR', 'QR vào lại')}</button>`}<span class="tag sun">${DEMO ? '🎬 DEMO' : esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local && !DEMO ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
 }
 // a pair's id comes from both players, so two people tapping each other at the same time land in the same pair
 const pairId = (a, b) => 'g' + [a, b].sort().join('_');
@@ -1887,7 +2212,7 @@ function tWrite() {
     $('#tables').innerHTML = tableCards('write'); bindChips();
   });
 }
-function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class="lbl">${lbl}</span>${esc(text)}</div>`; }
+function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class="lbl">${lbl}</span>${kwHTML(text)}</div>`; }
 function tReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta || !R.meta.order) return tLobby();
   const order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], roles = R.meta.roles, ro = roles[tk];
@@ -1895,16 +2220,16 @@ function tReveal() {
   const flipped = !!s.flipped;
   show(`trv${s.round}_${i}_${flipped}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
     <div class="stage">
-      <p class="who">${namesJoin(names)}</p>
+      <p class="who">${namesC(names)}</p>
       ${!flipped ? `<div class="facedown"><div class="a">❓</div><div class="b">❓</div>${ro.x ? '<div class="c">❓</div>' : ''}</div>
         <p class="big-note muted">${ro.x ? VI('Do these three think alike? Let’s see…', 'Ba bạn này có hiểu ý nhau không? Cùng xem nào…') : VI('Do these two think alike? Let’s see…', 'Hai bạn này có hiểu ý nhau không? Cùng xem nào…')}</p>
         <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
       : `<div class="pairs">${slots.map(sl => {
-          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c, R.meta.trio), H = halfTexts(R.meta.type, p), lb = (l, n) => (l ? l + ' · ' : '') + esc(pname(n));
-          return `<div class="sent closed" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
-            ${halfCard('hi', lb(L.a.lbl, ro.if), H.a)}
-            ${halfCard('hm', lb(L.b.lbl, p.mainPid), H.b)}
-            ${twist ? halfCard('hx', lb(L.x.lbl, ro.x), H.x) : ''}</div>
+          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c, R.meta.trio), H = halfTexts(R.meta.type, p), lb = n => esc(pname(n));
+          return `<div class="sent closed${H.kb ? ' linked' : ''}" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
+            ${halfCard('hi', lb(ro.if), H.a)}${linkHTML(H.kb)}
+            ${halfCard('hm', lb(p.mainPid), H.b)}
+            ${twist ? `<span class="lnkrow">${linkHTML(H.kx)}</span>${halfCard('hx', lb(ro.x), H.x)}` : ''}</div>
             <div id="mr_${sl}"></div>
             <div class="score" id="sc_${sl}"></div>`;
         }).join('')}</div>
@@ -1945,7 +2270,7 @@ function tReveal() {
 }
 function rankTable(rows, roundR) {
   return `<table class="rank"><tr><th></th><th>${VI('Pair', 'Cặp')}</th>${roundR ? `<th class="num">${VI('This round', 'Vòng này')}</th>` : ''}<th class="num">🧑‍🤝‍🧑 ${VI('Compatible', 'Hợp nhau')}</th><th class="num">🤯 ${VI('Chaos', 'Loạn')}</th></tr>
-    ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td><b>${namesJoin(r.names)}</b></td>
+    ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td><b>${namesC(r.names)}</b></td>
       ${roundR ? `<td class="num">${roundR.meta.roles[r.tk] && roundR.meta.order.includes(r.tk) ? pct(tableScore(roundR, r.tk).compat) : '–'}</td>` : ''}
       <td class="num">${pct(r.compat)}</td><td class="num">${pct(r.chaos)}</td></tr>`).join('')}</table>`;
 }
@@ -1956,7 +2281,7 @@ function tResults() {
     <div class="row" style="justify-content:space-between;margin-bottom:14px">
       <h1 style="font-size:clamp(30px,3.6vw,52px)">${VI(`After round ${st().round}`, `Sau vòng ${st().round}`)}</h1>
       <div class="row"><button class="btn" id="back">◀ ${VI('Back to reveal', 'Quay lại')}</button><button class="btn blue" id="again">▶ ${VI('Next round', 'Vòng tiếp')}</button><button class="btn primary" id="fin">🏆 ${VI('Finish & crown winners', 'Kết thúc & trao giải')}</button></div></div>
-    ${best && best.c >= 0 ? `<p class="big-note" style="margin-bottom:12px">⭐ ${VI(`Best match this round: ${namesJoin(groupNames(best.tk))} (${pct(best.c)})`, 'Cặp hợp nhất vòng này')}</p>` : ''}
+    ${best && best.c >= 0 ? `<p class="big-note" style="margin-bottom:12px">⭐ ${VI(`Best match this round: ${namesC(groupNames(best.tk))} (${pct(best.c)})`, 'Cặp hợp nhất vòng này')}</p>` : ''}
     ${rankTable(rows, R)}</div>`, () => {
     $('#back').onclick = () => patch({ 'state/phase': 'reveal', 'state/cur': Math.max(0, (R.meta.order || []).length - 1), 'state/flipped': true });
     $('#again').onclick = () => patch({ 'state/phase': 'lobby' });
@@ -2016,21 +2341,52 @@ function renderStudent() {
   if (s.phase === 'results' || s.phase === 'final') return sResults();
   return sWait();
 }
+// came back on a new browser / lost the page: pick your old name, the teacher confirms, this phone becomes you again
+let rejoinPick = QS.get('rejoin') === '1';
+function sRejoin() {
+  const req = room.rejoin && room.rejoin[PID];
+  if (req && req.ok && players()[req.target]) {
+    LS.set('cp_pid', req.target); LS.set('cp_name', pname(req.target));
+    api.del(CODE + '/rejoin/' + PID).catch(() => {}).finally(() => { const u = new URL(location.href); u.searchParams.delete('rejoin'); location.replace(u.toString()); });
+    return show('rjok', `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px">🎉</p><h2>${VI(`Welcome back, ${esc(pname(req.target))}!`, 'Chào mừng bạn trở lại!')}</h2></div></div>`);
+  }
+  if (req) return show('rjw', `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px"><span class="spin">⏳</span></p>
+      <h2>${VI(`Coming back as ${esc(pname(req.target))}…`, `Đang vào lại với tên ${esc(pname(req.target))}…`)}</h2>
+      <p class="big-note">${VI('Ask your teacher to tap ✓ on the big screen.', 'Nhờ giáo viên bấm ✓ trên màn hình lớn.')}</p>
+      <button class="btn small ghost" id="rjCancel">${VI('Cancel', 'Huỷ')}</button></div></div>`, () => {
+      $('#rjCancel').onclick = () => { rejoinPick = false; put('rejoin/' + PID, null); };
+    });
+  const list = Object.entries(players()).filter(([, p]) => p && p.name).sort((a, b) => a[1].name.localeCompare(b[1].name));
+  show('rjp' + list.length, `<div class="wrap">${pHead()}<div class="card col">
+      <h2>${VI('Which one is you?', 'Bạn là ai trong danh sách?')}</h2>
+      <p class="muted" style="font-size:15px">${VI('Tap your name. Your teacher will confirm, then you’re back in with your partner and your points.', 'Chạm vào tên của bạn. Giáo viên xác nhận xong là bạn vào lại đúng cặp và giữ nguyên điểm.')}</p>
+      <div class="vote">${list.map(([pid, p]) => `<button data-pid="${pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${VI('Nobody has joined yet.', 'Chưa có ai vào phòng.')}</p>`}</div>
+      <button class="btn small ghost" id="rjBack">← ${VI('I’m new, join with a new name', 'Mình mới vào, nhập tên mới')}</button></div></div>`, () => {
+      $('#rjBack').onclick = () => { rejoinPick = false; render(); };
+      ROOT.querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => {
+        if (!confirm(`Come back as “${pname(b.dataset.pid)}”?`)) return;
+        put('rejoin/' + PID, { target: b.dataset.pid, t: Date.now() });
+      });
+    });
+}
 function sJoin(changing) {
   const me = players()[PID];
+  if (!me && (rejoinPick || (room.rejoin && room.rejoin[PID]))) return sRejoin();
   show('sj' + (changing ? 'c' : ''), `<div class="wrap">${pHead()}
     <div class="card col">
       <h2>${VI('Hi! What’s your name?', 'Chào bạn! Bạn tên gì?')}</h2>
-      <input type="text" id="nm" maxlength="20" autocomplete="off" placeholder="Your name" value="${esc((me && me.name) || LS.get('cp_name', ''))}">
+      <input type="text" id="nm" maxlength="20" autocomplete="off" placeholder="Your name" value="${esc((me && me.name) || (DEMO ? '' : LS.get('cp_name', '')))}">
       <button class="btn primary" id="go">${changing ? VI('Save', 'Lưu') : VI('Join ▶', 'Vào ▶')}</button>
       ${changing ? `<button class="btn ghost" id="cancelChg">${VI('Cancel', 'Huỷ')}</button>` : ''}
-    </div></div>`, () => {
+    </div>
+    ${!changing && Object.keys(players()).length ? `<button class="btn ghost" id="rejoin">🔁 ${VI('I was already in the game', 'Mình đã vào rồi, bị thoát ra')}</button>` : ''}</div>`, () => {
+    if ($('#rejoin')) $('#rejoin').onclick = () => { rejoinPick = true; render(); };
     const go = () => {
       const name = $('#nm').value.replace(/\s+/g, ' ').trim().slice(0, 20);
       if (!name) { $('#nm').focus(); return toast('Type your name first 🙂'); }
       const taken = Object.entries(players()).some(([pid, p]) => pid !== PID && p && p.name.toLowerCase() === name.toLowerCase());
-      if (taken) return toast(`Someone is already called “${esc(name)}”. Add your last initial, e.g. ${esc(name)} N.`, 3500);
-      LS.set('cp_name', name); joinChanging = false;
+      if (taken) return toast(`Someone is already called “${esc(name)}”. If that’s you, tap “I was already in the game”. If not, add your last initial, e.g. ${esc(name)} N.`, 5000);
+      if (!DEMO) LS.set('cp_name', name); joinChanging = false;
       if (me) put('players/' + PID + '/name', name); else put('players/' + PID, { name, t: Date.now() });
     };
     $('#go').onclick = go; $('#nm').onkeydown = e => { if (e.key === 'Enter') go(); };
@@ -2052,7 +2408,7 @@ function sWait() {
     if (mates.length) {
       const canGrow = mates.length + 1 < MAX_PER_TABLE;
       $('#box').innerHTML = `<div class="card col center"><p style="font-size:54px;line-height:1">${mates.length >= 2 ? '🫂' : '🧑‍🤝‍🧑'}</p>
-        <p class="big-note">${VI(`You & ${namesJoin(mates.map(p => p.name))}`, 'Bạn và bạn cùng cặp')}</p>
+        <p class="big-note">${VI(namesJoin(['You', ...mates.map(p => p.name)]), mates.length >= 2 ? 'Nhóm 3 của bạn' : 'Bạn và bạn cùng cặp')}</p>
         <p class="muted">${VI('Wait for your teacher to start the round.', 'Chờ giáo viên bắt đầu vòng chơi nhé.')}</p>
         ${canGrow ? `<p class="muted" style="font-size:14px">${VI('Only if your teacher says so, a 3rd classmate can tap your name to join you.', 'Nếu giáo viên cho phép, bạn thứ 3 có thể chạm vào tên bạn để vào nhóm.')}</p>` : ''}
         <button class="btn small" id="leave">✂️ ${VI('Wrong partner? Unpair', 'Ghép nhầm? Tách cặp')}</button></div>`;
@@ -2062,9 +2418,11 @@ function sWait() {
     const solo = singles(tm).filter(p => p.pid !== PID);
     const groups = groupsSorted(tm).filter(([, m]) => m.length >= 2 && m.length < MAX_PER_TABLE && !m.some(p => p.pid === PID));
     $('#box').innerHTML = `<div class="card col"><h2>${VI('Tap your partner’s name', 'Chạm vào tên bạn cùng cặp')}</h2>
-      <p class="muted" style="font-size:15px">${VI('The person sitting next to you. They should tap your name too (or just one of you is enough).', 'Bạn ngồi cạnh bạn. Chỉ cần một người chạm là được.')}</p>
-      <div class="vote">${solo.map(p => `<button data-pid="${p.pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${VI('Nobody else yet… waiting for classmates 👀', 'Chưa có ai khác… đang chờ các bạn 👀')}</p>`}</div>
-      ${groups.length ? `<details><summary>${VI('Group of 3? Join a pair', 'Nhóm 3 người? Vào một cặp')}</summary><div class="vote" style="margin-top:10px">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">🧑‍🤝‍🧑</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div></details>` : ''}
+      <p class="muted" style="font-size:15px">${VI('The person sitting next to you. Just one of you needs to tap.', 'Bạn ngồi cạnh bạn. Chỉ cần một người chạm là được.')}</p>
+      <div class="vote">${solo.map(p => `<button data-pid="${p.pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${groups.length ? VI('Everyone else is already paired.', 'Các bạn khác đã có cặp hết rồi.') : VI('Nobody else yet… waiting for classmates 👀', 'Chưa có ai khác… đang chờ các bạn 👀')}</p>`}</div>
+      ${groups.length ? `<h3 style="margin-top:8px">${VI('Group of 3? Tap your pair', 'Nhóm 3 người? Chạm vào cặp của bạn')}</h3>
+      <p class="muted" style="font-size:15px">${VI('If your teacher put you with a pair, tap their names to join them.', 'Nếu giáo viên xếp bạn vào một cặp, chạm vào tên cặp đó để vào nhóm.')}</p>
+      <div class="vote pairs">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">🧑‍🤝‍🧑</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div>` : ''}
     </div>`;
     $('#box').querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => joinGroup(PID, b.dataset.pid));
   });
@@ -2073,6 +2431,20 @@ function roleUI(role, type, c, trio) {
   const L = lay(type, c, trio), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x', link: 'x' }[role];
   const d = L[roleKey(role)], t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
   return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
+}
+// everyone's job in my group, e.g. "IF: you · MAIN: Lan · BUT: Chi"
+// keep only the Vietnamese of a bilingual message (VI / BI → the .vi part)
+function viOnly(html) {
+  const t = document.createElement('template'); t.innerHTML = html || '';
+  const pars = new Set([...t.content.querySelectorAll('.vi')].map(v => v.parentNode));
+  pars.forEach(par => { const out = []; [...par.childNodes].filter(n => n.classList && n.classList.contains('vi')).forEach((v, i) => { if (i) out.push(document.createTextNode(' ')); out.push(...v.childNodes); }); par.replaceChildren(...out); });
+  return t.innerHTML;
+}
+function whoLine(R, me) {
+  const ro = me.ro, pass = isPass(R.meta.type), c = ro.c || [];
+  const xl = R.meta.trio === 'twist' ? 'UNLESS' : R.meta.trio === 'two' ? 'MAIN 2' : (c[1] || 'and / so / but').toUpperCase();
+  const rows = [['if', ro.if, pass ? 'Clause 1' : 'IF'], ['main', ro.main, pass ? 'Clause 2' : 'MAIN'], ['x', ro.x, pass ? 'Clause 3' : xl]].filter(r => r[1]);
+  return `<div class="who">${rows.map(([k, pid, l]) => `<span class="chip r-${k}${pid === PID ? ' me' : ''}"><b>${esc(l)}:</b>${pid === PID ? '👉 YOU' : esc(pname(pid))}</span>`).join('')}</div>`;
 }
 function sWrite() {
   const R = curRound(), me = myRole(R);
@@ -2084,6 +2456,7 @@ function sWrite() {
     <p class="muted center"><b>${VI(`Round ${st().round} · ${T.name}`, `Vòng ${st().round} · ${T.vn}`)}</b>${R.meta.theme ? ` · ${esc(R.meta.theme)}` : ''}</p>
     <div class="role ${ui.cls}">
       <h2>${VI(ui.en, ui.vi)}</h2>
+      ${whoLine(R, me)}
       <p class="form">${esc(ui.form)}</p>
       <p class="ex">e.g. ${esc(ex)}</p>
       ${me.ro.c && me.ro.c.some(Boolean) ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.filter(Boolean).length > 1 ? 's' : ''}: ${me.ro.c.filter(Boolean).map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
@@ -2109,14 +2482,23 @@ function sWrite() {
     const draftKey = 'cp_draft_' + CODE + '_' + st().round; inp.value = inp.value || LS.get(draftKey, '');
     inp.oninput = () => { LS.set(draftKey, inp.value); $('#msg').innerHTML = ''; };
     inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('#send').click(); } };
+    const lockIn = (text, warned) => {
+      editing = false; LS.del(draftKey);
+      put(`rounds/${roundKey(st().round)}/h/${PID}`, Object.assign({ text, at: Date.now() }, warned ? { warned: true } : {}));
+    };
     $('#send').onclick = () => {
       const res = checkHalf(inp.value, checkRole, R.meta.type);
-      if (!res.ok) {
-        $('#msg').innerHTML = `<div class="err"><b>${res.msg}</b>${res.ans ? `<span class="ans">${esc(res.ans)}</span>` : ''}${res.hint ? `<span class="hint">${res.hint}</span>` : ''}</div>`;
-        return;
-      }
-      editing = false; LS.del(draftKey);
-      put(`rounds/${roundKey(st().round)}/h/${PID}`, { text: res.text, at: Date.now() });
+      if (res.empty) { $('#msg').innerHTML = `<div class="err"><b>${res.msg}</b></div>`; return; }
+      if (res.ok) return lockIn(res.text);
+      // only a suggestion: show it, let them fix or lock in anyway
+      $('#msg').innerHTML = `<div class="warn">
+        <span class="who">🤖 Máy gợi ý: câu này có thể chưa đúng</span>
+        <b>${viOnly(res.msg)}</b>${res.ans ? `<span class="ans">Gợi ý sửa: ${esc(res.ans)}</span>` : ''}${res.hint ? `<span class="hint">${viOnly(res.hint)}</span>` : ''}
+        <span class="note">Đây chỉ là gợi ý của máy, có thể sai. Bạn đọc kỹ lại câu nhé. Nếu chắc là đúng rồi thì cứ bấm khoá. Cả lớp sẽ cùng sửa câu sau.</span>
+        <div class="row"><button class="btn small" id="fix">✏️ ${VI('Let me fix it', 'Để mình sửa')}</button><button class="btn small primary" id="anyway">🔒 ${VI('It’s right, lock it in', 'Đúng rồi, khoá luôn')}</button></div></div>`;
+      $('#fix').onclick = () => { $('#msg').innerHTML = ''; inp.focus(); };
+      $('#anyway').onclick = () => lockIn(res.text, true);
+      $('#msg').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
   });
 }
@@ -2126,13 +2508,13 @@ function sReveal() {
   const own = [ro.if, ro.main, ro.x].includes(PID), slots = slotsOf(R, tk);
   const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname);
   if (!s.flipped) return show(`srv${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">🧑‍🤝‍🧑</p>
-    <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesJoin(names)}</p>
+    <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesC(names)}</p>
     <p class="muted">${VI('Look at the screen 👀', 'Nhìn lên màn hình nào 👀')}</p></div></div>`);
   show(`srv${s.round}_${i}_1`, `<div class="wrap">${pHead()}
-    <p class="center"><b>${namesJoin(names)}</b></p>
+    <p class="center"><b>${namesC(names)}</b></p>
     ${slots.map(sl => {
       const p = sentenceParts(R, R.meta.roles, tk, sl), H = halfTexts(R.meta.type, p);
-      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${esc(H.a)}</span> <span class="m">${esc(H.b)}</span>${p.tw ? ` <span class="xx">${esc(H.x)}</span>` : ''}</p>
+      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${kwHTML(H.a)}</span>${H.kb ? ` <b class="k">${esc(H.kb)}</b>` : ''} <span class="m">${esc(H.b)}</span>${p.tw ? ` <b class="k">${esc(H.kx)}</b> <span class="xx">${esc(H.x)}</span>` : ''}</p>
         ${own ? '' : `<div class="vote" data-slot="${sl}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}</div>`;
     }).join('<hr style="border:0;border-top:2px dashed var(--line);width:100%">')}
     ${own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>` : `<p class="muted center">${VI('Do the two halves match?', 'Hai vế có hợp nhau không?')}</p>`}
