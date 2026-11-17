@@ -19,7 +19,7 @@
 }
 *{box-sizing:border-box}
 html,body{min-height:100%;margin:0}
-body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 2px,transparent 2px),linear-gradient(90deg,var(--grid) 2px,transparent 2px);background-size:44px 44px;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body{background-color:#fbe8f1;background-image:linear-gradient(rgba(255,255,255,.55) 2px,transparent 2px),linear-gradient(90deg,rgba(255,255,255,.55) 2px,transparent 2px),linear-gradient(160deg,#ffe3ee 0%,#f3e5ff 45%,#e0f0ff 100%);background-size:44px 44px,44px 44px,100% 100%;background-attachment:fixed;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
 h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
 p{margin:0}
 [hidden]{display:none!important}
@@ -63,9 +63,9 @@ details summary{cursor:pointer;font-weight:800}
 /* Vietnamese on hover / tap */
 .vi{position:absolute;left:0;top:calc(100% + 6px);transform:translateY(4px);z-index:50;width:max-content;max-width:min(320px,86vw);padding:.35em .7em;border-radius:10px;background:rgba(67,48,63,.9);color:#fff;font:600 13px/1.35 var(--body);text-align:center;white-space:normal;letter-spacing:0;text-transform:none;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,transform .2s,visibility .2s}
 :where(h1,h2,h3,p,li,label,legend,summary,button,.btn,span,b,div):has(> .vi){position:relative}
-:where(h1,h2,h3,p,li,label,legend,summary,button,.btn,span,div):hover > .vi,.show-vi > .vi{opacity:.95;visibility:visible;transform:translateY(0)}
+.show-vi > .vi{opacity:.95;visibility:visible;transform:translateY(0)}
 :where(button,.btn) > .vi{left:50%;transform:translate(-50%,4px)}
-:where(button,.btn):hover > .vi,:where(button,.btn).show-vi > .vi{transform:translate(-50%,0)}
+:where(button,.btn).show-vi > .vi{transform:translate(-50%,0)}
 .err .vi,.warn .vi,.vi-below .vi{position:static;display:block;opacity:1;visibility:visible;transform:none;background:none;color:var(--ink-soft);padding:0;width:auto;max-width:none;text-align:left;font-size:.85em}
 
 /* ---- tables grid ---- */
@@ -119,9 +119,26 @@ button.tbl.mine{background:var(--sun)}
 .sent.closed .hx{transform:translateY(40vh);opacity:0}
 .sent.open .half{margin-left:0}
 .sent.open .hm{margin-left:-4px}
-.pop{position:absolute;left:50%;top:-34px;font-size:52px;transform:translateX(-50%) scale(0);transition:transform .5s cubic-bezier(.2,1.8,.4,1) .55s;z-index:2}
+.sent{padding-top:58px}
+.pop{position:absolute;left:50%;top:0;font-size:48px;line-height:1;transform:translateX(-50%) scale(0);transition:transform .5s cubic-bezier(.2,1.8,.4,1) .55s;z-index:2}
+.half .kw{font-weight:800;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+/* linking words: a chain link between the blocks */
+.lnk{position:relative;z-index:3;align-self:center;margin:0 -18px;display:flex;align-items:center;transition:transform .5s cubic-bezier(.2,1.8,.4,1) .6s,opacity .3s .6s}
+.lnk>span{font:800 clamp(20px,2.2vw,32px)/1 var(--display);text-transform:uppercase;letter-spacing:1px;background:var(--sun);border:4px solid var(--ink);border-radius:999px;padding:10px 18px 7px;box-shadow:0 5px 0 var(--ink);white-space:nowrap}
+.lnk::before,.lnk::after{content:'';width:14px;height:10px;border:4px solid var(--ink);border-radius:999px;background:var(--sun)}
+.lnk::before{margin-right:-4px} .lnk::after{margin-left:-4px}
+.lnkrow{flex-basis:100%;display:flex;justify-content:center;margin:10px 0 -22px;position:relative;z-index:3}
+.lnkrow .lnk{margin:0;flex-direction:column}
+.lnkrow .lnk::before,.lnkrow .lnk::after{width:10px;height:14px}
+.lnkrow .lnk::before{margin:0 0 -4px} .lnkrow .lnk::after{display:none}
+.sent.linked .hm{margin-left:0}
+.sent.closed .lnk{transform:scale(0);opacity:0}
+.half .lbl{opacity:1}
+.half.hi .lbl{color:#b8325b} .half.hm .lbl{color:#1f5f9e} .half.hx .lbl{color:#5a3cb0}
+.nm{font-weight:800} .nm.n0{color:#d4446f} .nm.n1{color:#2a78c2} .nm.n2{color:#6d4fcf}
 .sent.open .pop{transform:translateX(-50%) scale(1)}
-@media (max-width:700px){.half{max-width:100%;flex-basis:100%}.half.hm{margin-left:0;margin-top:-4px}.half.hi{border-radius:22px 22px 6px 6px}.half.hm{border-radius:6px 6px 22px 22px}.pop{top:auto;bottom:calc(50% - 20px);left:auto;right:6px}}
+@media (max-width:700px){.half{max-width:100%;flex-basis:100%}.half.hm{margin-left:0;margin-top:-4px}.half.hi{border-radius:22px 22px 6px 6px}.half.hm{border-radius:6px 6px 22px 22px}
+  .sent>.lnk{flex-basis:100%;justify-content:center;margin:-16px 0;flex-direction:column}.sent>.lnk::after{display:none}.sent>.lnk::before{width:10px;height:14px;margin:0 0 -4px}.sent.linked .hm{margin-top:0}.half.hx{max-width:100%}}
 .facedown{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
 .facedown div{width:min(300px,40vw);height:150px;border:4px solid var(--ink);border-radius:22px;box-shadow:0 7px 0 var(--ink);display:grid;place-items:center;font-size:56px;animation:wob 1.4s ease-in-out infinite}
 .facedown .a{background:var(--pink)} .facedown .b{background:var(--blue);animation-delay:.2s} .facedown .c{background:var(--lilac);animation-delay:.4s}
@@ -177,6 +194,8 @@ button.tbl.mine{background:var(--sun)}
 .vote button.on.k2{background:var(--pink)} .vote button.on.k1{background:var(--sun)} .vote button.on.k0{background:var(--lilac)}
 .vote button.on{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .psent{font:700 21px/1.35 var(--display);background:#fff;border:3px solid var(--ink);border-radius:18px;padding:14px}
+.psent .k{display:inline-block;font:800 .95em/1 var(--display);text-transform:uppercase;background:var(--sun);border:2px solid var(--ink);border-radius:999px;padding:4px 8px 2px;margin:2px 0}
+.psent .kw{font-weight:800;text-decoration:underline}
 .psent .i{background:var(--pink);border-radius:6px;padding:0 4px} .psent .m{background:var(--blue);border-radius:6px;padding:0 4px} .psent .xx{background:var(--lilac);border-radius:6px;padding:0 4px}
 .cert{background:linear-gradient(135deg,#fff1f6,#eef7ff);border:4px solid var(--ink);border-radius:26px;padding:22px;text-align:center;box-shadow:0 8px 0 var(--ink);display:flex;flex-direction:column;gap:10px;align-items:center}
 .cert .pct{font:800 64px/1 var(--display);color:var(--pink-deep)}
@@ -1308,17 +1327,23 @@ function lay(type, c, trio) {
 const roleKey = role => role === 'if' ? 'a' : role === 'twist' || role === 'link' ? 'x' : 'b';
 const formOf = (role, type) => lay(type)[roleKey(role)].form;
 // the three halves as shown on screen, with their joining words and punctuation
+// kb / kx = the linking word that joins the next block (shown as a chain link between blocks)
 function halfTexts(type, p) {
   if (isPass(type)) {
     const c1 = (p.c && p.c[0]) || 'so', c2 = (p.c && p.c[1]) || 'and', cm = w => /^(so|but)$/.test(w) ? ',' : '';
-    return { a: cap1(p.ifT) + cm(c1), b: c1 + ' ' + lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), x: p.tw ? c2 + ' ' + lowStart(p.xT) + '.' : '' };
+    return { a: cap1(p.ifT) + cm(c1), kb: c1, b: lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), kx: p.tw ? c2 : '', x: p.tw ? lowStart(p.xT) + '.' : '' };
   }
   if (p.tw && p.trio !== 'twist') {
     const c2 = (p.c && p.c[1]) || 'and', cm = /^(so|but)$/.test(c2) ? ',' : '';
-    return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + cm, x: c2 + ' ' + lowStart(p.xT) + '.' };
+    return { a: 'If ' + lowStart(p.ifT) + ',', kb: '', b: lowStart(p.mainT) + cm, kx: c2, x: lowStart(p.xT) + '.' };
   }
-  return { a: 'If ' + lowStart(p.ifT) + ',', b: lowStart(p.mainT) + (p.tw ? ',' : '.'), x: p.tw ? 'unless ' + lowStart(p.xT) + '.' : '' };
+  return { a: 'If ' + lowStart(p.ifT) + ',', kb: '', b: lowStart(p.mainT) + (p.tw ? ',' : '.'), kx: p.tw ? 'unless' : '', x: p.tw ? lowStart(p.xT) + '.' : '' };
 }
+// "If" in bold, the rest escaped
+const kwHTML = t => esc(t).replace(/^If\b/, '<b class="kw">If</b>');
+const linkHTML = w => w ? `<span class="lnk"><span>🔗 ${esc(w)}</span></span>` : '';
+// names in the colour of their block: 1st pink, 2nd blue, 3rd lilac
+const namesC = a => { const s = a.map((n, i) => `<span class="nm n${i % 3}">${esc(n)}</span>`); return s.length <= 1 ? (s[0] || '') : s.slice(0, -1).join(', ') + ' &amp; ' + s[s.length - 1]; };
 function frameHTML(type, trio, withX) {
   const L = lay(type, null, trio), xHTML = `${VI('Group of 3:', 'Nhóm 3:')} ${esc(L.x.form)}<small>${esc(L.x.ex)}</small>`;
   return `<div class="fi">${esc(L.a.form)}<small>${esc(L.a.ex)}${isPass(type) ? '' : ','}</small></div>
@@ -1338,7 +1363,7 @@ const P_OBJ = { i: 'me', he: 'him', she: 'her', we: 'us', they: 'them' };
 let passRole = 'if';
 function passErr(en, vi, type, ans) {
   const h = lay(type)[roleKey(passRole)];
-  return { ok: false, msg: VI(en, vi), ans: ans || '', hint: `Your half: <b>${esc(h.form)}</b><br>e.g. <i>${esc(h.ex)}</i>` };
+  return { ok: false, msg: VI(en, vi), ans: ans || '', hint: `Phần của bạn: <b>${esc(h.form.replace(/^Clause \d: /, '').replace(/something/g, 'vật / người'))}</b><br>Ví dụ: <i>${esc(h.ex)}</i>` };
 }
 function checkPass(raw, role, type) {
   const T = TYPES[type]; passRole = role;
@@ -1427,10 +1452,22 @@ function setAt(o, path, val) {
 }
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 // tap on touch screens shows the Vietnamese line
+// Vietnamese shows on hover (computer) or tap (phone), then hides by itself after 5 s
+let viTimer = null, viHost = null, viDone = null; // viDone: hover already timed out here, wait until the mouse leaves
+const hideVi = () => { clearTimeout(viTimer); document.querySelectorAll('.show-vi').forEach(x => x.classList.remove('show-vi')); viHost = null; };
+const showVi = host => { hideVi(); viHost = host; host.classList.add('show-vi'); viTimer = setTimeout(() => { viDone = viHost; hideVi(); }, 5000); };
+const viHostOf = el => el && el.closest ? el.closest('*:has(> .vi)') : null;
 document.addEventListener('click', e => {
-  const host = e.target.closest('*:has(> .vi)');
-  document.querySelectorAll('.show-vi').forEach(x => { if (x !== host) x.classList.remove('show-vi'); });
-  if (host && matchMedia('(hover:none)').matches) host.classList.toggle('show-vi');
+  const host = viHostOf(e.target);
+  if (!matchMedia('(hover:none)').matches) return;
+  if (host && host !== viHost) showVi(host); else hideVi();
+});
+document.addEventListener('mouseover', e => {
+  if (matchMedia('(hover:none)').matches) return;
+  const host = viHostOf(e.target);
+  if (host && host === viDone) return;
+  viDone = null;
+  if (host !== viHost) { if (host) showVi(host); else hideVi(); }
 });
 
 /* ---------- checking one half ---------- */
@@ -1470,7 +1507,7 @@ function checkHalf0(raw, role, type) {
   }
   // modal + V3 with no "be": "will broken" → "will be broken"
   const mb = t.match(/\b(will|would|can|could|might|may|must|should|won't|wouldn't|can't|couldn't)\s+(?:(?:not|never|also|really|probably|definitely|surely)\s+)*([a-z]+)\b/i);
-  if (mb) { const w = mb[2].toLowerCase(); if (PARTS[w] && PARTS[w] !== w && !BASE.has(w)) return { ok: false, msg: VI(`Missing “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`, `Thiếu “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`), ans: `${mb[1]} be ${mb[2]}`, hint: `Passive: <b>${esc(mb[1])} be + V3</b> (e.g. <i>it will be broken</i>)` }; }
+  if (mb) { const w = mb[2].toLowerCase(); if (PARTS[w] && PARTS[w] !== w && !BASE.has(w)) return { ok: false, msg: VI(`Missing “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`, `Thiếu “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`), ans: `${mb[1]} be ${mb[2]}`, hint: `Bị động: <b>${esc(mb[1])} be + V3</b> (ví dụ: <i>it will be broken</i>)` }; }
   // "would have a dog" = own, not would-have-V3 (only while checking)
   t = t.replace(/\b(would|could|might|will|can)(\s+not|n't)?\s+have\s+(?=(a|an|the|my|your|his|her|our|their|some|no|any|lots|many|much|more|\d+|fun|time|money|friends|breakfast|lunch|dinner)\b)/i, '$1$2 own ');
   const pre = role === 'main' ? T.dummy[0] + ', ' : role === 'if' ? 'If ' : 'Unless ';
@@ -1488,7 +1525,7 @@ function checkHalf0(raw, role, type) {
     return {
       ok: false,
       msg: VI(`The verb doesn’t fit the ${T.name.replace(/ \(.*/, '').toLowerCase()} yet.`, `Động từ chưa đúng dạng của ${T.vn.replace(/ \(.*/, '').toLowerCase()}.`),
-      hint: `Your half: <b>${esc(formOf(role, type))}</b><br>e.g. <i>${esc(role === 'main' ? T.ex[1] : (role === 'twist' ? 'unless ' : '') + (role === 'twist' ? T.ex[0].replace(/^If /, '') : T.ex[0]))}</i>`
+      hint: `Phần của bạn: <b>${esc(formOf(role, type))}</b><br>Ví dụ: <i>${esc(role === 'main' ? T.ex[1] : (role === 'twist' ? 'unless ' : '') + (role === 'twist' ? T.ex[0].replace(/^If /, '') : T.ex[0]))}</i>`
     };
   }
   return { ok: true, text: orig };
@@ -1958,7 +1995,7 @@ function tWrite() {
     $('#tables').innerHTML = tableCards('write'); bindChips();
   });
 }
-function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class="lbl">${lbl}</span>${esc(text)}</div>`; }
+function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class="lbl">${lbl}</span>${kwHTML(text)}</div>`; }
 function tReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta || !R.meta.order) return tLobby();
   const order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], roles = R.meta.roles, ro = roles[tk];
@@ -1966,16 +2003,16 @@ function tReveal() {
   const flipped = !!s.flipped;
   show(`trv${s.round}_${i}_${flipped}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
     <div class="stage">
-      <p class="who">${namesJoin(names)}</p>
+      <p class="who">${namesC(names)}</p>
       ${!flipped ? `<div class="facedown"><div class="a">❓</div><div class="b">❓</div>${ro.x ? '<div class="c">❓</div>' : ''}</div>
         <p class="big-note muted">${ro.x ? VI('Do these three think alike? Let’s see…', 'Ba bạn này có hiểu ý nhau không? Cùng xem nào…') : VI('Do these two think alike? Let’s see…', 'Hai bạn này có hiểu ý nhau không? Cùng xem nào…')}</p>
         <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
       : `<div class="pairs">${slots.map(sl => {
-          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c, R.meta.trio), H = halfTexts(R.meta.type, p), lb = (l, n) => (l ? l + ' · ' : '') + esc(pname(n));
-          return `<div class="sent closed" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
-            ${halfCard('hi', lb(L.a.lbl, ro.if), H.a)}
-            ${halfCard('hm', lb(L.b.lbl, p.mainPid), H.b)}
-            ${twist ? halfCard('hx', lb(L.x.lbl, ro.x), H.x) : ''}</div>
+          const p = sentenceParts(R, roles, tk, sl), L = lay(R.meta.type, p.c, R.meta.trio), H = halfTexts(R.meta.type, p), lb = n => esc(pname(n));
+          return `<div class="sent closed${H.kb ? ' linked' : ''}" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
+            ${halfCard('hi', lb(ro.if), H.a)}${linkHTML(H.kb)}
+            ${halfCard('hm', lb(p.mainPid), H.b)}
+            ${twist ? `<span class="lnkrow">${linkHTML(H.kx)}</span>${halfCard('hx', lb(ro.x), H.x)}` : ''}</div>
             <div id="mr_${sl}"></div>
             <div class="score" id="sc_${sl}"></div>`;
         }).join('')}</div>
@@ -2016,7 +2053,7 @@ function tReveal() {
 }
 function rankTable(rows, roundR) {
   return `<table class="rank"><tr><th></th><th>${VI('Pair', 'Cặp')}</th>${roundR ? `<th class="num">${VI('This round', 'Vòng này')}</th>` : ''}<th class="num">🧑‍🤝‍🧑 ${VI('Compatible', 'Hợp nhau')}</th><th class="num">🤯 ${VI('Chaos', 'Loạn')}</th></tr>
-    ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td><b>${namesJoin(r.names)}</b></td>
+    ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td><b>${namesC(r.names)}</b></td>
       ${roundR ? `<td class="num">${roundR.meta.roles[r.tk] && roundR.meta.order.includes(r.tk) ? pct(tableScore(roundR, r.tk).compat) : '–'}</td>` : ''}
       <td class="num">${pct(r.compat)}</td><td class="num">${pct(r.chaos)}</td></tr>`).join('')}</table>`;
 }
@@ -2027,7 +2064,7 @@ function tResults() {
     <div class="row" style="justify-content:space-between;margin-bottom:14px">
       <h1 style="font-size:clamp(30px,3.6vw,52px)">${VI(`After round ${st().round}`, `Sau vòng ${st().round}`)}</h1>
       <div class="row"><button class="btn" id="back">◀ ${VI('Back to reveal', 'Quay lại')}</button><button class="btn blue" id="again">▶ ${VI('Next round', 'Vòng tiếp')}</button><button class="btn primary" id="fin">🏆 ${VI('Finish & crown winners', 'Kết thúc & trao giải')}</button></div></div>
-    ${best && best.c >= 0 ? `<p class="big-note" style="margin-bottom:12px">⭐ ${VI(`Best match this round: ${namesJoin(groupNames(best.tk))} (${pct(best.c)})`, 'Cặp hợp nhất vòng này')}</p>` : ''}
+    ${best && best.c >= 0 ? `<p class="big-note" style="margin-bottom:12px">⭐ ${VI(`Best match this round: ${namesC(groupNames(best.tk))} (${pct(best.c)})`, 'Cặp hợp nhất vòng này')}</p>` : ''}
     ${rankTable(rows, R)}</div>`, () => {
     $('#back').onclick = () => patch({ 'state/phase': 'reveal', 'state/cur': Math.max(0, (R.meta.order || []).length - 1), 'state/flipped': true });
     $('#again').onclick = () => patch({ 'state/phase': 'lobby' });
@@ -2179,6 +2216,13 @@ function roleUI(role, type, c, trio) {
   return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
 }
 // everyone's job in my group, e.g. "IF: you · MAIN: Lan · BUT: Chi"
+// keep only the Vietnamese of a bilingual message (VI / BI → the .vi part)
+function viOnly(html) {
+  const t = document.createElement('template'); t.innerHTML = html || '';
+  const pars = new Set([...t.content.querySelectorAll('.vi')].map(v => v.parentNode));
+  pars.forEach(par => { const out = []; [...par.childNodes].filter(n => n.classList && n.classList.contains('vi')).forEach((v, i) => { if (i) out.push(document.createTextNode(' ')); out.push(...v.childNodes); }); par.replaceChildren(...out); });
+  return t.innerHTML;
+}
 function whoLine(R, me) {
   const ro = me.ro, pass = isPass(R.meta.type), c = ro.c || [];
   const xl = R.meta.trio === 'twist' ? 'UNLESS' : R.meta.trio === 'two' ? 'MAIN 2' : (c[1] || 'and / so / but').toUpperCase();
@@ -2231,9 +2275,9 @@ function sWrite() {
       if (res.ok) return lockIn(res.text);
       // only a suggestion: show it, let them fix or lock in anyway
       $('#msg').innerHTML = `<div class="warn">
-        <span class="who">🤖 ${VI('The computer thinks something may be off', 'Máy nghĩ câu này có thể chưa đúng')}</span>
-        <b>${res.msg}</b>${res.ans ? `<span class="ans">${esc(res.ans)}</span>` : ''}${res.hint ? `<span class="hint">${res.hint}</span>` : ''}
-        <span class="note">${VI('This is only the computer’s suggestion, and it can be wrong. Read your half again carefully. If you’re sure it’s right, lock it in anyway. The class will check all the sentences together later.', 'Đây chỉ là gợi ý của máy, có thể sai. Đọc kỹ lại câu của bạn. Nếu chắc là đúng rồi thì cứ khoá. Cả lớp sẽ cùng sửa câu sau.')}</span>
+        <span class="who">🤖 Máy gợi ý: câu này có thể chưa đúng</span>
+        <b>${viOnly(res.msg)}</b>${res.ans ? `<span class="ans">Gợi ý sửa: ${esc(res.ans)}</span>` : ''}${res.hint ? `<span class="hint">${viOnly(res.hint)}</span>` : ''}
+        <span class="note">Đây chỉ là gợi ý của máy, có thể sai. Bạn đọc kỹ lại câu nhé. Nếu chắc là đúng rồi thì cứ bấm khoá. Cả lớp sẽ cùng sửa câu sau.</span>
         <div class="row"><button class="btn small" id="fix">✏️ ${VI('Let me fix it', 'Để mình sửa')}</button><button class="btn small primary" id="anyway">🔒 ${VI('It’s right, lock it in', 'Đúng rồi, khoá luôn')}</button></div></div>`;
       $('#fix').onclick = () => { $('#msg').innerHTML = ''; inp.focus(); };
       $('#anyway').onclick = () => lockIn(res.text, true);
@@ -2247,13 +2291,13 @@ function sReveal() {
   const own = [ro.if, ro.main, ro.x].includes(PID), slots = slotsOf(R, tk);
   const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname);
   if (!s.flipped) return show(`srv${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">🧑‍🤝‍🧑</p>
-    <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesJoin(names)}</p>
+    <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesC(names)}</p>
     <p class="muted">${VI('Look at the screen 👀', 'Nhìn lên màn hình nào 👀')}</p></div></div>`);
   show(`srv${s.round}_${i}_1`, `<div class="wrap">${pHead()}
-    <p class="center"><b>${namesJoin(names)}</b></p>
+    <p class="center"><b>${namesC(names)}</b></p>
     ${slots.map(sl => {
       const p = sentenceParts(R, R.meta.roles, tk, sl), H = halfTexts(R.meta.type, p);
-      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${esc(H.a)}</span> <span class="m">${esc(H.b)}</span>${p.tw ? ` <span class="xx">${esc(H.x)}</span>` : ''}</p>
+      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${kwHTML(H.a)}</span>${H.kb ? ` <b class="k">${esc(H.kb)}</b>` : ''} <span class="m">${esc(H.b)}</span>${p.tw ? ` <b class="k">${esc(H.kx)}</b> <span class="xx">${esc(H.x)}</span>` : ''}</p>
         ${own ? '' : `<div class="vote" data-slot="${sl}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}</div>`;
     }).join('<hr style="border:0;border-top:2px dashed var(--line);width:100%">')}
     ${own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>` : `<p class="muted center">${VI('Do the two halves match?', 'Hai vế có hợp nhau không?')}</p>`}
