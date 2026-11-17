@@ -52,6 +52,13 @@ details summary{cursor:pointer;font-weight:800}
 .err{background:#fff0f0;border:3px solid var(--red);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .err .ans{font-weight:900;color:var(--red)}
 .err .hint{font-size:15px;color:var(--ink-soft)}
+.warn{background:#fff8e6;border:3px solid #e0a100;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.warn .who{font:800 14px/1.2 var(--display);color:#9a6b00}
+.warn .ans{font-weight:900;color:#9a6b00}
+.warn .hint{font-size:15px;color:var(--ink-soft)}
+.warn .note{font-size:14px;color:var(--ink-soft);border-top:2px dashed #e8c66a;padding-top:6px}
+.warn .row{display:flex;gap:8px;flex-wrap:wrap}
+.warn .row .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:800;z-index:99;max-width:90vw;text-align:center}
 /* Vietnamese on hover / tap */
 .vi{position:absolute;left:0;top:calc(100% + 6px);transform:translateY(4px);z-index:50;width:max-content;max-width:min(320px,86vw);padding:.35em .7em;border-radius:10px;background:rgba(67,48,63,.9);color:#fff;font:600 13px/1.35 var(--body);text-align:center;white-space:normal;letter-spacing:0;text-transform:none;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,transform .2s,visibility .2s}
@@ -59,7 +66,7 @@ details summary{cursor:pointer;font-weight:800}
 :where(h1,h2,h3,p,li,label,legend,summary,button,.btn,span,div):hover > .vi,.show-vi > .vi{opacity:.95;visibility:visible;transform:translateY(0)}
 :where(button,.btn) > .vi{left:50%;transform:translate(-50%,4px)}
 :where(button,.btn):hover > .vi,:where(button,.btn).show-vi > .vi{transform:translate(-50%,0)}
-.err .vi,.vi-below .vi{position:static;display:block;opacity:1;visibility:visible;transform:none;background:none;color:var(--ink-soft);padding:0;width:auto;max-width:none;text-align:left;font-size:.85em}
+.err .vi,.warn .vi,.vi-below .vi{position:static;display:block;opacity:1;visibility:visible;transform:none;background:none;color:var(--ink-soft);padding:0;width:auto;max-width:none;text-align:left;font-size:.85em}
 
 /* ---- tables grid ---- */
 .tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
@@ -67,6 +74,9 @@ details summary{cursor:pointer;font-weight:800}
 .tbl h3{font-size:18px;display:flex;justify-content:space-between;align-items:center}
 .tbl.full{background:#f3eef1} .tbl.ready{background:#eafaf0} .tbl.solo{background:#fff8e6}
 .chip{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:15px;padding:3px 10px;border-radius:999px;background:var(--grid);border:2px solid transparent;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role .who{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px}
+.role .who .chip{cursor:default;font-size:14px}
+.role .who .chip.me{border-color:var(--ink);box-shadow:0 2px 0 var(--ink)}
 .chip.r-if{background:var(--pink)} .chip.r-main{background:var(--blue)} .chip.r-x{background:var(--lilac)}
 .chip .x{opacity:.5;font-size:13px}
 button.tbl{cursor:pointer;text-align:left;font:inherit}
@@ -74,6 +84,14 @@ button.tbl:disabled{opacity:.45;cursor:not-allowed}
 button.tbl.mine{background:var(--sun)}
 
 /* ---- teacher ---- */
+#rjq{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;max-width:min(460px,calc(100vw - 32px))}
+#rjq:empty,#rjq[hidden]{display:none}
+.rjrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff8e6;border:3px solid var(--ink);border-radius:16px;padding:10px 12px;box-shadow:0 4px 0 var(--ink);font-weight:700}
+#rjov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.55);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+#rjov > .card{width:min(560px,100%);max-height:100%;overflow:auto}
+#rjov .rjqr{display:flex;justify-content:center}
+#rjov .rjqr img,#rjov .rjqr canvas{width:min(300px,70vw)!important;height:auto!important}
+#rjov .rjlist{display:flex;flex-direction:column;gap:8px}
 .t-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .lobby{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:24px;align-items:start}
 @media (max-width:860px){.lobby{grid-template-columns:1fr}}
@@ -1417,7 +1435,22 @@ document.addEventListener('click', e => {
 
 /* ---------- checking one half ---------- */
 const cleanHalf = s => String(s || '').replace(/\s+/g, ' ').trim().replace(/^[,;:\s]+/, '').replace(/[.,;:!?\s]+$/, '');
+// the half as it will be stored: tidy spaces/punctuation, drop a leading if / unless / linking word
+function plainHalf(raw, role, type) {
+  const t = cleanHalf(raw);
+  if (isPass(type) || role === 'link') return t.replace(/^(so|because|but|and)\b[,\s]*/i, '');
+  return role === 'if' || role === 'twist' ? t.replace(/^(if|unless)\b\s*/i, '') : t.replace(/^(then|so)\b\s*/i, '');
+}
+// the computer's check is only advice: students may lock in anyway (the class fixes sentences together later)
 function checkHalf(raw, role, type) {
+  const t = plainHalf(raw, role, type);
+  if (!t) return { ok: false, empty: true, msg: VI('Write something first! ✍️', 'Viết gì đó đã nhé!') };
+  let r;
+  try { r = checkHalf0(raw, role, type); } catch (e) { console.warn(e); r = { ok: true }; }
+  r.text = r.ok && r.text ? r.text : t;
+  return r;
+}
+function checkHalf0(raw, role, type) {
   if (isPass(type)) return checkPass(raw, role, type);
   if (role === 'link') { raw = String(raw || '').replace(/^\s*(and|so|but)\b[,\s]*/i, ''); role = 'main'; }
   const T = TYPES[type];
@@ -1435,6 +1468,9 @@ function checkHalf(raw, role, type) {
     const w = v3[2].toLowerCase(), b0 = IRR[w], pp = b0 && ({ come: 'come', run: 'run', become: 'become' }[b0] || partOf(b0));
     if (b0 && b0 !== 'have' && pp !== w) { const m = errText({ kind: 'cond-v3', aux: v3[1].toLowerCase(), wrong: { raw: v3[2] }, fix: pp }); return { ok: false, msg: m.msg, hint: m.hint, ans: m.ans }; }
   }
+  // modal + V3 with no "be": "will broken" → "will be broken"
+  const mb = t.match(/\b(will|would|can|could|might|may|must|should|won't|wouldn't|can't|couldn't)\s+(?:(?:not|never|also|really|probably|definitely|surely)\s+)*([a-z]+)\b/i);
+  if (mb) { const w = mb[2].toLowerCase(); if (PARTS[w] && PARTS[w] !== w && !BASE.has(w)) return { ok: false, msg: VI(`Missing “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`, `Thiếu “be”? ${mb[1]} ${mb[2]} → ${mb[1]} be ${mb[2]}`), ans: `${mb[1]} be ${mb[2]}`, hint: `Passive: <b>${esc(mb[1])} be + V3</b> (e.g. <i>it will be broken</i>)` }; }
   // "would have a dog" = own, not would-have-V3 (only while checking)
   t = t.replace(/\b(would|could|might|will|can)(\s+not|n't)?\s+have\s+(?=(a|an|the|my|your|his|her|our|their|some|no|any|lots|many|much|more|\d+|fun|time|money|friends|breakfast|lunch|dinner)\b)/i, '$1$2 own ');
   const pre = role === 'main' ? T.dummy[0] + ', ' : role === 'if' ? 'If ' : 'Unless ';
@@ -1442,7 +1478,7 @@ function checkHalf(raw, role, type) {
   // "Ms Hoa", "Taylor Swift" → one name while checking
   const nm = t.match(/^(?:(?:Mr|Mrs|Ms|Miss|Dr|Mx)\.?\s+[A-Z][\w']*|[A-Z][\w']+(?:\s+[A-Z][\w']*)+)/);
   if (nm && !LOWER_START.test(nm[0]) && !/^I\b/.test(nm[0]) && !/\b(I|Will|Would|Had|Can|Could)\b/.test(nm[0].replace(/^\S+/, ''))) { t = 'Lan' + t.slice(nm[0].length); swapped = nm[0]; }
-  const body = role === 'main' ? t : lowStart(t);
+  const body = lowStart(t);
   const sent = pre + body + post, a = pre.length, b = a + body.length;
   let r, ci;
   try { r = checkGrammar(sent, [], [T.topic]); ci = condInfo(sent); } catch (e) { console.warn(e); return { ok: true, text: orig }; }
@@ -1641,8 +1677,43 @@ function render() {
   if (!CODE) return showHome();
   if (!room) return show('loading', `<div class="wrap"><div class="card center"><p class="big-note"><span class="spin">🧑‍🤝‍🧑</span> Finding room ${esc(CODE)}…</p><p class="muted">If this takes long, check the link or the internet.</p></div></div>`);
   if (room.__missing) return show('missing', `<div class="wrap"><div class="card col center"><h2>Room ${esc(CODE)} not found 😿</h2><p>${VI('Check the code with your teacher.', 'Kiểm tra lại mã phòng với giáo viên nhé.')}</p><a class="btn" href="${location.pathname}">← Back</a></div></div>`);
-  return isHost() ? renderTeacher() : renderStudent();
+  if (isHost()) { renderTeacher(); drawRejoin(); return; }
+  return renderStudent();
 }
+/* ---------- teacher: let a student back in on a new phone / browser ---------- */
+function rejoinLink() { const u = new URL(studentLink()); u.searchParams.set('rejoin', '1'); return u.toString(); }
+function rejoinReqs() { return Object.entries((room && room.rejoin) || {}).filter(([, r]) => r && r.target && !r.ok && players()[r.target]).sort((a, b) => (a[1].t || 0) - (b[1].t || 0)); }
+function reqRows() {
+  return rejoinReqs().map(([rid, r]) => `<div class="rjrow"><span>🔁 ${VI(`A phone wants to come back as <b>${esc(pname(r.target))}</b>`, `Một máy muốn vào lại với tên ${esc(pname(r.target))}`)}</span>
+    <span class="row"><button class="btn small primary" data-act="rjok" data-rid="${esc(rid)}">✓ ${VI('Yes', 'Đồng ý')}</button><button class="btn small" data-act="rjno" data-rid="${esc(rid)}">✕</button></span></div>`).join('');
+}
+function drawRejoin() {
+  let box = document.getElementById('rjq');
+  if (!box) { box = document.createElement('div'); box.id = 'rjq'; document.body.appendChild(box); }
+  const ov = document.getElementById('rjov'), rows = reqRows();
+  box.hidden = !rows || !!ov; box.innerHTML = rows;
+  if (ov) ov.querySelector('.rjlist').innerHTML = rows || `<p class="muted center">${VI('Students scan this, tap their old name, then you confirm here.', 'Học viên quét mã, chạm vào tên cũ, rồi bạn xác nhận ở đây.')}</p>`;
+}
+function openRejoinQR() {
+  if (document.getElementById('rjov')) return;
+  const ov = document.createElement('div'); ov.id = 'rjov';
+  ov.innerHTML = `<div class="card col" style="align-items:stretch">
+    <div class="row" style="justify-content:space-between"><h2>📱 ${VI('Lost the game? Scan to come back', 'Bị thoát? Quét để vào lại')}</h2><button class="btn small" data-act="rjclose">✕ ${VI('Close', 'Đóng')}</button></div>
+    <div class="rjqr"></div><div class="code">${esc(CODE.replace(/^HH/, 'HH-'))}</div>
+    <div class="rjlist"></div></div>`;
+  document.body.appendChild(ov);
+  const link = rejoinLink(), q = ov.querySelector('.rjqr');
+  if (window.QRCode) { try { new QRCode(q, { text: link, width: 300, height: 300, colorDark: '#43303f', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.L }); } catch (e) { q.textContent = link; } } else q.innerHTML = `<p style="word-break:break-all">${esc(link)}</p>`;
+  drawRejoin();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || !isHost()) return;
+  const act = b.dataset.act, rid = b.dataset.rid;
+  if (act === 'rjqr') openRejoinQR();
+  else if (act === 'rjclose') { const ov = document.getElementById('rjov'); if (ov) ov.remove(); drawRejoin(); }
+  else if (act === 'rjok') put('rejoin/' + rid + '/ok', true);
+  else if (act === 'rjno') put('rejoin/' + rid, null);
+});
 
 /* ---------- HOME ---------- */
 function showHome() {
@@ -1725,7 +1796,7 @@ function studentLink() {
 }
 function topBar(extra = '') {
   return `<div class="t-top"><div class="logo" style="font-size:clamp(24px,2.6vw,36px)"><span class="h">Half</span> &amp; <span class="b">Half</span> 🧑‍🤝‍🧑</div>
-    <div class="row">${extra}<span class="tag sun">${esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
+    <div class="row">${extra}<button class="btn small" data-act="rjqr">📱 ${VI('Rejoin QR', 'QR vào lại')}</button><span class="tag sun">${esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
 }
 // a pair's id comes from both players, so two people tapping each other at the same time land in the same pair
 const pairId = (a, b) => 'g' + [a, b].sort().join('_');
@@ -2016,20 +2087,51 @@ function renderStudent() {
   if (s.phase === 'results' || s.phase === 'final') return sResults();
   return sWait();
 }
+// came back on a new browser / lost the page: pick your old name, the teacher confirms, this phone becomes you again
+let rejoinPick = QS.get('rejoin') === '1';
+function sRejoin() {
+  const req = room.rejoin && room.rejoin[PID];
+  if (req && req.ok && players()[req.target]) {
+    LS.set('cp_pid', req.target); LS.set('cp_name', pname(req.target));
+    api.del(CODE + '/rejoin/' + PID).catch(() => {}).finally(() => { const u = new URL(location.href); u.searchParams.delete('rejoin'); location.replace(u.toString()); });
+    return show('rjok', `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px">🎉</p><h2>${VI(`Welcome back, ${esc(pname(req.target))}!`, 'Chào mừng bạn trở lại!')}</h2></div></div>`);
+  }
+  if (req) return show('rjw', `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px"><span class="spin">⏳</span></p>
+      <h2>${VI(`Coming back as ${esc(pname(req.target))}…`, `Đang vào lại với tên ${esc(pname(req.target))}…`)}</h2>
+      <p class="big-note">${VI('Ask your teacher to tap ✓ on the big screen.', 'Nhờ giáo viên bấm ✓ trên màn hình lớn.')}</p>
+      <button class="btn small ghost" id="rjCancel">${VI('Cancel', 'Huỷ')}</button></div></div>`, () => {
+      $('#rjCancel').onclick = () => { rejoinPick = false; put('rejoin/' + PID, null); };
+    });
+  const list = Object.entries(players()).filter(([, p]) => p && p.name).sort((a, b) => a[1].name.localeCompare(b[1].name));
+  show('rjp' + list.length, `<div class="wrap">${pHead()}<div class="card col">
+      <h2>${VI('Which one is you?', 'Bạn là ai trong danh sách?')}</h2>
+      <p class="muted" style="font-size:15px">${VI('Tap your name. Your teacher will confirm, then you’re back in with your partner and your points.', 'Chạm vào tên của bạn. Giáo viên xác nhận xong là bạn vào lại đúng cặp và giữ nguyên điểm.')}</p>
+      <div class="vote">${list.map(([pid, p]) => `<button data-pid="${pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${VI('Nobody has joined yet.', 'Chưa có ai vào phòng.')}</p>`}</div>
+      <button class="btn small ghost" id="rjBack">← ${VI('I’m new, join with a new name', 'Mình mới vào, nhập tên mới')}</button></div></div>`, () => {
+      $('#rjBack').onclick = () => { rejoinPick = false; render(); };
+      ROOT.querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => {
+        if (!confirm(`Come back as “${pname(b.dataset.pid)}”?`)) return;
+        put('rejoin/' + PID, { target: b.dataset.pid, t: Date.now() });
+      });
+    });
+}
 function sJoin(changing) {
   const me = players()[PID];
+  if (!me && (rejoinPick || (room.rejoin && room.rejoin[PID]))) return sRejoin();
   show('sj' + (changing ? 'c' : ''), `<div class="wrap">${pHead()}
     <div class="card col">
       <h2>${VI('Hi! What’s your name?', 'Chào bạn! Bạn tên gì?')}</h2>
       <input type="text" id="nm" maxlength="20" autocomplete="off" placeholder="Your name" value="${esc((me && me.name) || LS.get('cp_name', ''))}">
       <button class="btn primary" id="go">${changing ? VI('Save', 'Lưu') : VI('Join ▶', 'Vào ▶')}</button>
       ${changing ? `<button class="btn ghost" id="cancelChg">${VI('Cancel', 'Huỷ')}</button>` : ''}
-    </div></div>`, () => {
+    </div>
+    ${!changing && Object.keys(players()).length ? `<button class="btn ghost" id="rejoin">🔁 ${VI('I was already in the game', 'Mình đã vào rồi, bị thoát ra')}</button>` : ''}</div>`, () => {
+    if ($('#rejoin')) $('#rejoin').onclick = () => { rejoinPick = true; render(); };
     const go = () => {
       const name = $('#nm').value.replace(/\s+/g, ' ').trim().slice(0, 20);
       if (!name) { $('#nm').focus(); return toast('Type your name first 🙂'); }
       const taken = Object.entries(players()).some(([pid, p]) => pid !== PID && p && p.name.toLowerCase() === name.toLowerCase());
-      if (taken) return toast(`Someone is already called “${esc(name)}”. Add your last initial, e.g. ${esc(name)} N.`, 3500);
+      if (taken) return toast(`Someone is already called “${esc(name)}”. If that’s you, tap “I was already in the game”. If not, add your last initial, e.g. ${esc(name)} N.`, 5000);
       LS.set('cp_name', name); joinChanging = false;
       if (me) put('players/' + PID + '/name', name); else put('players/' + PID, { name, t: Date.now() });
     };
@@ -2052,7 +2154,7 @@ function sWait() {
     if (mates.length) {
       const canGrow = mates.length + 1 < MAX_PER_TABLE;
       $('#box').innerHTML = `<div class="card col center"><p style="font-size:54px;line-height:1">${mates.length >= 2 ? '🫂' : '🧑‍🤝‍🧑'}</p>
-        <p class="big-note">${VI(`You & ${namesJoin(mates.map(p => p.name))}`, 'Bạn và bạn cùng cặp')}</p>
+        <p class="big-note">${VI(namesJoin(['You', ...mates.map(p => p.name)]), mates.length >= 2 ? 'Nhóm 3 của bạn' : 'Bạn và bạn cùng cặp')}</p>
         <p class="muted">${VI('Wait for your teacher to start the round.', 'Chờ giáo viên bắt đầu vòng chơi nhé.')}</p>
         ${canGrow ? `<p class="muted" style="font-size:14px">${VI('Only if your teacher says so, a 3rd classmate can tap your name to join you.', 'Nếu giáo viên cho phép, bạn thứ 3 có thể chạm vào tên bạn để vào nhóm.')}</p>` : ''}
         <button class="btn small" id="leave">✂️ ${VI('Wrong partner? Unpair', 'Ghép nhầm? Tách cặp')}</button></div>`;
@@ -2062,9 +2164,11 @@ function sWait() {
     const solo = singles(tm).filter(p => p.pid !== PID);
     const groups = groupsSorted(tm).filter(([, m]) => m.length >= 2 && m.length < MAX_PER_TABLE && !m.some(p => p.pid === PID));
     $('#box').innerHTML = `<div class="card col"><h2>${VI('Tap your partner’s name', 'Chạm vào tên bạn cùng cặp')}</h2>
-      <p class="muted" style="font-size:15px">${VI('The person sitting next to you. They should tap your name too (or just one of you is enough).', 'Bạn ngồi cạnh bạn. Chỉ cần một người chạm là được.')}</p>
-      <div class="vote">${solo.map(p => `<button data-pid="${p.pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${VI('Nobody else yet… waiting for classmates 👀', 'Chưa có ai khác… đang chờ các bạn 👀')}</p>`}</div>
-      ${groups.length ? `<details><summary>${VI('Group of 3? Join a pair', 'Nhóm 3 người? Vào một cặp')}</summary><div class="vote" style="margin-top:10px">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">🧑‍🤝‍🧑</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div></details>` : ''}
+      <p class="muted" style="font-size:15px">${VI('The person sitting next to you. Just one of you needs to tap.', 'Bạn ngồi cạnh bạn. Chỉ cần một người chạm là được.')}</p>
+      <div class="vote">${solo.map(p => `<button data-pid="${p.pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${groups.length ? VI('Everyone else is already paired.', 'Các bạn khác đã có cặp hết rồi.') : VI('Nobody else yet… waiting for classmates 👀', 'Chưa có ai khác… đang chờ các bạn 👀')}</p>`}</div>
+      ${groups.length ? `<h3 style="margin-top:8px">${VI('Group of 3? Tap your pair', 'Nhóm 3 người? Chạm vào cặp của bạn')}</h3>
+      <p class="muted" style="font-size:15px">${VI('If your teacher put you with a pair, tap their names to join them.', 'Nếu giáo viên xếp bạn vào một cặp, chạm vào tên cặp đó để vào nhóm.')}</p>
+      <div class="vote pairs">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">🧑‍🤝‍🧑</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div>` : ''}
     </div>`;
     $('#box').querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => joinGroup(PID, b.dataset.pid));
   });
@@ -2073,6 +2177,13 @@ function roleUI(role, type, c, trio) {
   const L = lay(type, c, trio), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x', link: 'x' }[role];
   const d = L[roleKey(role)], t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
   return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
+}
+// everyone's job in my group, e.g. "IF: you · MAIN: Lan · BUT: Chi"
+function whoLine(R, me) {
+  const ro = me.ro, pass = isPass(R.meta.type), c = ro.c || [];
+  const xl = R.meta.trio === 'twist' ? 'UNLESS' : R.meta.trio === 'two' ? 'MAIN 2' : (c[1] || 'and / so / but').toUpperCase();
+  const rows = [['if', ro.if, pass ? 'Clause 1' : 'IF'], ['main', ro.main, pass ? 'Clause 2' : 'MAIN'], ['x', ro.x, pass ? 'Clause 3' : xl]].filter(r => r[1]);
+  return `<div class="who">${rows.map(([k, pid, l]) => `<span class="chip r-${k}${pid === PID ? ' me' : ''}"><b>${esc(l)}:</b>${pid === PID ? '👉 YOU' : esc(pname(pid))}</span>`).join('')}</div>`;
 }
 function sWrite() {
   const R = curRound(), me = myRole(R);
@@ -2084,6 +2195,7 @@ function sWrite() {
     <p class="muted center"><b>${VI(`Round ${st().round} · ${T.name}`, `Vòng ${st().round} · ${T.vn}`)}</b>${R.meta.theme ? ` · ${esc(R.meta.theme)}` : ''}</p>
     <div class="role ${ui.cls}">
       <h2>${VI(ui.en, ui.vi)}</h2>
+      ${whoLine(R, me)}
       <p class="form">${esc(ui.form)}</p>
       <p class="ex">e.g. ${esc(ex)}</p>
       ${me.ro.c && me.ro.c.some(Boolean) ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.filter(Boolean).length > 1 ? 's' : ''}: ${me.ro.c.filter(Boolean).map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
@@ -2109,14 +2221,23 @@ function sWrite() {
     const draftKey = 'cp_draft_' + CODE + '_' + st().round; inp.value = inp.value || LS.get(draftKey, '');
     inp.oninput = () => { LS.set(draftKey, inp.value); $('#msg').innerHTML = ''; };
     inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('#send').click(); } };
+    const lockIn = (text, warned) => {
+      editing = false; LS.del(draftKey);
+      put(`rounds/${roundKey(st().round)}/h/${PID}`, Object.assign({ text, at: Date.now() }, warned ? { warned: true } : {}));
+    };
     $('#send').onclick = () => {
       const res = checkHalf(inp.value, checkRole, R.meta.type);
-      if (!res.ok) {
-        $('#msg').innerHTML = `<div class="err"><b>${res.msg}</b>${res.ans ? `<span class="ans">${esc(res.ans)}</span>` : ''}${res.hint ? `<span class="hint">${res.hint}</span>` : ''}</div>`;
-        return;
-      }
-      editing = false; LS.del(draftKey);
-      put(`rounds/${roundKey(st().round)}/h/${PID}`, { text: res.text, at: Date.now() });
+      if (res.empty) { $('#msg').innerHTML = `<div class="err"><b>${res.msg}</b></div>`; return; }
+      if (res.ok) return lockIn(res.text);
+      // only a suggestion: show it, let them fix or lock in anyway
+      $('#msg').innerHTML = `<div class="warn">
+        <span class="who">🤖 ${VI('The computer thinks something may be off', 'Máy nghĩ câu này có thể chưa đúng')}</span>
+        <b>${res.msg}</b>${res.ans ? `<span class="ans">${esc(res.ans)}</span>` : ''}${res.hint ? `<span class="hint">${res.hint}</span>` : ''}
+        <span class="note">${VI('This is only the computer’s suggestion, and it can be wrong. Read your half again carefully. If you’re sure it’s right, lock it in anyway. The class will check all the sentences together later.', 'Đây chỉ là gợi ý của máy, có thể sai. Đọc kỹ lại câu của bạn. Nếu chắc là đúng rồi thì cứ khoá. Cả lớp sẽ cùng sửa câu sau.')}</span>
+        <div class="row"><button class="btn small" id="fix">✏️ ${VI('Let me fix it', 'Để mình sửa')}</button><button class="btn small primary" id="anyway">🔒 ${VI('It’s right, lock it in', 'Đúng rồi, khoá luôn')}</button></div></div>`;
+      $('#fix').onclick = () => { $('#msg').innerHTML = ''; inp.focus(); };
+      $('#anyway').onclick = () => lockIn(res.text, true);
+      $('#msg').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
   });
 }
