@@ -145,6 +145,24 @@ body.demo-phone .wide{padding-right:350px}
 .lnk::before{margin-right:-4px} .lnk::after{margin-left:-4px}
 .lnkrow{flex-basis:100%;display:flex;justify-content:center;margin:10px 0 -22px;position:relative;z-index:3}
 .lnkrow .lnk{margin:0;flex-direction:column}
+.lnkrow:empty{margin:6px 0 0}
+.half.he{border-radius:6px 26px 26px 6px}
+/* relative clauses: whole sentences stacked, relative word in bold; Make A Guess cards */
+.story{display:flex;flex-direction:column;gap:12px;width:100%;max-width:1100px;margin:0 auto}
+.story .half{max-width:100%;border-radius:22px;animation:storyIn .5s cubic-bezier(.2,1.4,.4,1) backwards}
+@keyframes storyIn{from{opacity:0;transform:translateY(24px) scale(.96)}}
+b.rw{background:var(--sun);border:3px solid var(--ink);border-radius:999px;padding:0 10px;box-shadow:0 3px 0 var(--ink);white-space:nowrap}
+.psent b.rw{border-width:2px;padding:0 6px;box-shadow:none}
+.gwcard{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:8px;margin:6px 0 10px}
+.gwcard b{display:block;font:800 24px/1.1 var(--display)} .gwcard small{color:var(--muted,#7a6a76)}
+.gwimg{width:84px;height:84px;object-fit:cover;border-radius:12px;border:2px solid var(--ink);background:#f3eef3;flex:none}
+.gwbig{width:min(200px,30vw);height:min(200px,30vw);object-fit:cover;border-radius:22px;border:4px solid var(--ink);box-shadow:0 7px 0 var(--ink);background:#fff}
+.gwemo{font-size:64px;line-height:1;flex:none}
+.gans{display:flex;align-items:center;justify-content:center;gap:24px;margin:14px auto;animation:storyIn .6s cubic-bezier(.2,1.6,.4,1) backwards}
+.gans h2{font-size:clamp(34px,4vw,60px)} .gans small{font-weight:800;color:var(--muted,#7a6a76)}
+.gans.small{justify-content:flex-start;gap:12px;margin:12px 0} .gans.small h2{font-size:26px}
+.vote.guess button.on{background:var(--sun)}
+ol.plan{margin:8px 0;padding-left:22px;text-align:left;font-weight:600} ol.plan li{margin:4px 0} ol.plan li.me{font-weight:900}
 .lnkrow .lnk::before,.lnkrow .lnk::after{width:10px;height:14px}
 .lnkrow .lnk::before{margin:0 0 -4px} .lnkrow .lnk::after{display:none}
 .sent.linked .hm{margin-left:0}
@@ -1285,8 +1303,131 @@ const TYPES = {
   pPP: { kind: 'pass', tense: 'pPP', name: 'Passive · present perfect', vn: 'Bị động · hiện tại hoàn thành', short: 'Passive', mood: 'It just happened!', moodVi: 'Vừa mới xảy ra!',
     verbF: 'has / have been + V3', ex: ['My phone has been stolen', 'the police have been called', 'nothing has been found'] },
   pM: { kind: 'pass', tense: 'pM', name: 'Passive · modals', vn: 'Bị động · động từ khuyết thiếu', short: 'Passive', mood: 'Rules are rules', moodVi: 'Luật là luật',
-    verbF: 'can / must / should + be + V3', ex: ['Homework should be banned', 'students must be given more free time', 'teachers can be paid more'] }
+    verbF: 'can / must / should + be + V3', ex: ['Homework should be banned', 'students must be given more free time', 'teachers can be paid more'] },
+  /* relative clauses: every student writes ONE whole sentence with a relative clause */
+  rA: { kind: 'rel', mode: 'cards', name: 'Relative clauses · story cards', vn: 'Mệnh đề quan hệ · thẻ gợi ý', short: 'Relative', mood: 'One story, many writers', moodVi: 'Một câu chuyện, nhiều người viết' },
+  rG: { kind: 'rel', mode: 'guess', name: 'Relative clauses · Make A Guess', vn: 'Mệnh đề quan hệ · Make A Guess', short: 'Relative', mood: 'Can the class guess it?', moodVi: 'Cả lớp có đoán ra không?' }
 };
+// a prompt: en / vi = the task, w = relative words that fit (shown in the hint), fr = sentence frame (easy level), ex = example
+const RP = (en, vi, w, fr, ex) => ({ en, vi, w, fr, ex });
+// story cards: each student in the group gets the next prompt, without knowing what the others write
+const REL_SETS = {
+  star: { e: '🌟', en: 'A famous person', vi: 'Người nổi tiếng', p: [
+    RP('Write about a famous person you like.', 'Viết về một người nổi tiếng bạn thích.', ['who', 'that'], '____ is a ____ who ____.', 'Sơn Tùng is a singer who has millions of fans.'),
+    RP('Write about his / her TALENT.', 'Viết về tài năng của anh ấy / cô ấy.', ['which', 'that', 'whose'], 'He / She has a ____ which ____.', 'She has a voice which can break glass.'),
+    RP('Write about the PLACE where he / she became famous.', 'Viết về nơi anh ấy / cô ấy trở nên nổi tiếng.', ['where', 'which'], '____ is the place where ____.', 'Seoul is the city where he became a star.')] },
+  house: { e: '🏠', en: 'My dream house', vi: 'Ngôi nhà mơ ước', p: [
+    RP('Describe your dream HOUSE.', 'Tả ngôi nhà mơ ước của bạn.', ['which', 'that'], 'My dream house is a house which ____.', 'My dream house is a house which floats on the sea.'),
+    RP('Describe your favourite ROOM in it.', 'Tả căn phòng bạn thích nhất trong nhà.', ['where', 'which'], 'The ____ is the room where ____.', 'The kitchen is the room where robots cook for me.'),
+    RP('Describe the PERSON who lives there with you.', 'Tả người sống cùng bạn ở đó.', ['who', 'that', 'whose'], 'I live with a ____ who ____.', 'I live with a friend who never stops singing.')] },
+  day: { e: '🎉', en: 'The best day ever', vi: 'Ngày tuyệt nhất', p: [
+    RP('Describe the best DAY of your life.', 'Tả ngày tuyệt nhất trong đời bạn.', ['when', 'that'], '____ was the day when ____.', 'My 10th birthday was the day when I got a puppy.'),
+    RP('Describe the PLACE you went to that day.', 'Tả nơi bạn đã đến hôm đó.', ['where', 'which'], 'We went to a ____ where ____.', 'We went to a beach where the water was pink.'),
+    RP('Describe the PERSON who was with you.', 'Tả người đi cùng bạn hôm đó.', ['who', 'that', 'whose'], 'I was with ____ who ____.', 'I was with my uncle who can juggle eggs.')] },
+  animal: { e: '🐉', en: 'A strange animal', vi: 'Con vật kỳ lạ', p: [
+    RP('Invent a strange ANIMAL.', 'Nghĩ ra một con vật kỳ lạ.', ['which', 'that'], 'A ____ is an animal which ____.', 'A glorp is an animal which eats only socks.'),
+    RP('Describe something special it HAS.', 'Tả một bộ phận đặc biệt của nó.', ['whose', 'which'], 'It is an animal whose ____ ____.', 'It is an animal whose tail can play the piano.'),
+    RP('Describe the PLACE where it lives.', 'Tả nơi nó sống.', ['where', 'which'], 'It lives in a ____ where ____.', 'It lives in a cave where nobody goes.')] },
+  school: { e: '🏫', en: 'Our school', vi: 'Trường mình', p: [
+    RP('Describe a TEACHER at our school (no names!).', 'Tả một thầy / cô ở trường mình (không ghi tên!).', ['who', 'that', 'whose'], 'Our ____ teacher is a person who ____.', 'Our maths teacher is a person who loves cats.'),
+    RP('Describe a ROOM in our school.', 'Tả một phòng trong trường mình.', ['where', 'which'], 'The ____ is the room where ____.', 'The library is the room where everybody sleeps.'),
+    RP('Describe a SUBJECT you study.', 'Tả một môn học.', ['which', 'that'], '____ is the subject which ____.', 'Maths is the subject which gives me headaches.')] }
+};
+// Make A Guess: each group gets a secret card, writes clues, the class guesses. wiki = Vietnamese Wikipedia page (for the picture), al = names that give it away
+const GW_KINDS = {
+  person: { e: '🧑', en: 'People & characters', vi: 'Nhân vật', p: [
+    RP('Who is it? Say what this person / character IS or DOES.', 'Đây là ai? Nói người / nhân vật này là gì, làm gì.', ['who', 'that'], 'This person is a ____ who ____.', 'This person is a singer who has millions of fans.'),
+    RP('Something special they HAVE or are famous for.', 'Một điều đặc biệt họ có hoặc nổi tiếng nhờ nó.', ['whose', 'which', 'that'], 'It is someone whose ____ ____.', 'He is a star whose songs are everywhere on TikTok.'),
+    RP('A PLACE or a TIME in their life.', 'Một nơi chốn hoặc thời điểm trong cuộc đời họ.', ['where', 'when'], '____ is the place where ____.', 'Vietnam is the country where she was born.')] },
+  place: { e: '📍', en: 'Places', vi: 'Địa danh', p: [
+    RP('What kind of PLACE is it?', 'Đây là nơi như thế nào?', ['which', 'that'], 'It is a ____ which ____.', 'It is a city which is famous for its beaches.'),
+    RP('What can people DO there?', 'Người ta làm gì ở đó?', ['where'], 'It is a place where ____.', 'It is a place where you can eat amazing food.'),
+    RP('WHO goes there, or WHEN is the best time to go?', 'Ai hay đến đó, hoặc lúc nào đến là đẹp nhất?', ['who', 'when'], '____ is the time when ____.', 'Summer is the time when it is full of tourists.')] },
+  object: { e: '🎁', en: 'Objects & food', vi: 'Đồ vật, đồ ăn', p: [
+    RP('What kind of THING is it?', 'Đây là đồ vật / món ăn gì?', ['which', 'that'], 'It is a thing which ____.', 'It is a thing which people wear on their heads.'),
+    RP('WHO uses it, or what is it FOR?', 'Ai dùng nó, hoặc nó dùng để làm gì?', ['who', 'which', 'that'], '____ are the people who ____.', 'Farmers are the people who use it the most.'),
+    RP('WHERE or WHEN do people use it?', 'Người ta dùng nó ở đâu, lúc nào?', ['where', 'when'], '____ is the time when ____.', 'Rainy days are the times when you need it.')] },
+  time: { e: '⏰', en: 'Holidays & times', vi: 'Dịp lễ, thời điểm', p: [
+    RP('What kind of DAY or TIME is it?', 'Đây là ngày / dịp gì?', ['which', 'that', 'when'], 'It is a ____ which ____.', 'It is a holiday which comes once a year.'),
+    RP('What do people DO then?', 'Lúc đó mọi người làm gì?', ['when', 'where'], 'It is the time when ____.', 'It is the time when families eat together.'),
+    RP('WHO do you spend it with, or WHERE do people go?', 'Bạn đón dịp đó cùng ai, hoặc mọi người đi đâu?', ['who', 'where', 'whose'], '____ are the people who ____.', 'Grandparents are the people who give us lucky money.')] },
+  any: { e: '🎭', en: 'Your own cards', vi: 'Thẻ của GV', p: [
+    RP('What or who is it?', 'Đây là ai / cái gì?', ['who', 'which', 'that'], 'It is a ____ which / who ____.', 'It is something which everybody knows.'),
+    RP('Something special about it.', 'Một điều đặc biệt về nó.', ['whose', 'which', 'that'], 'It has a ____ which ____.', 'It has a name which is hard to say.'),
+    RP('A place or a time connected to it.', 'Một nơi chốn / thời điểm liên quan đến nó.', ['where', 'when'], '____ is the place where ____.', 'School is the place where you see it.')] }
+};
+const GC = (k, name, wiki, al) => ({ k, name, wiki: wiki === undefined ? name : wiki, al: al || [] });
+const GW_CARDS = [
+  GC('person', 'HIEUTHUHAI', 'HIEUTHUHAI', ['hieu thu hai']), GC('person', 'Sơn Tùng M-TP', undefined, ['son tung', 'mtp', 'm tp']), GC('person', 'Mỹ Tâm'), GC('person', 'Đen Vâu', undefined, ['den vau']),
+  GC('person', 'Hòa Minzy', undefined, ['minzy']), GC('person', 'Trấn Thành'), GC('person', 'Hoàng Thùy Linh'), GC('person', 'Soobin Hoàng Sơn', undefined, ['soobin']), GC('person', 'Độ Mixi', undefined, ['mixi']),
+  GC('person', 'Quang Hải', 'Nguyễn Quang Hải (sinh 1997)'), GC('person', 'Cristiano Ronaldo', undefined, ['ronaldo', 'cr7']), GC('person', 'Lionel Messi', undefined, ['messi']), GC('person', 'Taylor Swift', undefined, ['taylor', 'swift']),
+  GC('person', 'Lisa (BLACKPINK)', 'Lisa (rapper)', ['lisa', 'blackpink']), GC('person', 'MrBeast', undefined, ['mr beast', 'beast']), GC('person', 'Albert Einstein', undefined, ['einstein']),
+  GC('person', 'Doraemon', 'Doraemon (nhân vật)'), GC('person', 'Pikachu'), GC('person', 'Harry Potter', 'Harry Potter (nhân vật)', ['harry', 'potter']), GC('person', 'Spider-Man', 'Người Nhện', ['spider', 'nguoi nhen']),
+  GC('person', 'Conan', 'Edogawa Conan'), GC('person', 'Tôn Ngộ Không', undefined, ['ngo khong', 'monkey king']), GC('person', 'Thánh Gióng', undefined, ['giong']), GC('person', 'Mickey Mouse', 'Chuột Mickey', ['mickey']),
+  GC('person', 'SpongeBob', 'SpongeBob SquarePants', ['sponge bob']), GC('person', 'Santa Claus', 'Ông già Noel', ['santa', 'noel']),
+  GC('place', 'Đà Nẵng', undefined, ['danang']), GC('place', 'Hà Nội', undefined, ['hanoi']), GC('place', 'Hồ Chí Minh City', 'Thành phố Hồ Chí Minh', ['ho chi minh', 'sai gon', 'saigon']), GC('place', 'Hội An', undefined, ['hoian']),
+  GC('place', 'Hạ Long Bay', 'Vịnh Hạ Long', ['ha long', 'halong']), GC('place', 'Đà Lạt', undefined, ['dalat']), GC('place', 'Phú Quốc'), GC('place', 'Huế'), GC('place', 'Hoàn Kiếm Lake', 'Hồ Gươm', ['hoan kiem', 'ho guom', 'sword lake']),
+  GC('place', 'Dragon Bridge', 'Cầu Rồng', ['dragon bridge', 'cau rong']), GC('place', 'Paris'), GC('place', 'Tokyo'), GC('place', 'Seoul'), GC('place', 'London', 'Luân Đôn'), GC('place', 'New York', 'Thành phố New York'),
+  GC('place', 'Eiffel Tower', 'Tháp Eiffel', ['eiffel']), GC('place', 'The Pyramids of Giza', 'Kim tự tháp Giza', ['pyramid', 'pyramids', 'giza']),
+  GC('object', 'Phở', undefined, ['pho']), GC('object', 'Bánh mì', 'Bánh mì Việt Nam', ['banh mi']), GC('object', 'Bún chả'), GC('object', 'Bubble tea', 'Trà sữa trân châu', ['milk tea', 'tra sua', 'bubble']), GC('object', 'Pizza'), GC('object', 'Sushi'),
+  GC('object', 'Bánh chưng'), GC('object', 'Mooncake', 'Bánh trung thu', ['moon cake', 'banh trung thu']), GC('object', 'Áo dài', undefined, ['ao dai']), GC('object', 'Conical hat (nón lá)', 'Nón lá', ['non la', 'conical']),
+  GC('object', 'Motorbike', 'Xe máy', ['motorbike', 'motorcycle', 'xe may']), GC('object', 'Smartphone', 'Điện thoại thông minh', ['smartphone', 'phone']), GC('object', 'Laptop', 'Máy tính xách tay', ['laptop']), GC('object', 'Bicycle', 'Xe đạp', ['bicycle', 'bike']),
+  GC('object', 'Lantern', 'Đèn lồng', ['lantern']), GC('object', 'Teddy bear', 'Gấu bông', ['teddy']), GC('object', 'Umbrella', 'Ô (dù)', ['umbrella']), GC('object', 'Robot'), GC('object', 'Fireworks', 'Pháo hoa', ['firework', 'fireworks']),
+  GC('object', 'Lucky money (lì xì)', 'Lì xì', ['li xi', 'lucky money']), GC('object', 'Christmas tree', 'Cây thông Noel', ['christmas tree']),
+  GC('time', 'Tết (Lunar New Year)', 'Tết Nguyên Đán', ['tet', 'lunar new year']), GC('time', 'Christmas', 'Lễ Giáng Sinh', ['christmas', 'xmas', 'noel']), GC('time', 'Halloween'),
+  GC('time', 'Mid-Autumn Festival', 'Tết Trung thu', ['mid autumn', 'trung thu']), GC('time', 'Valentine’s Day', 'Ngày Valentine', ['valentine', 'valentines']), GC('time', 'New Year’s Eve', 'Giao thừa', ['new year', 'giao thua']),
+  GC('time', 'Children’s Day', 'Ngày Quốc tế Thiếu nhi', ['children s day', 'childrens day']), GC('time', 'Women’s Day (8/3)', 'Ngày Quốc tế Phụ nữ', ['women s day', 'womens day']), GC('time', 'Easter', 'Lễ Phục Sinh', ['easter']),
+  GC('time', 'Summer holiday', 'Mùa hè', ['summer']), GC('time', 'Birthday', 'Sinh nhật', ['birthday'])
+].map((c, i) => Object.assign(c, { id: 'g' + i }));
+const REL_TENSES = ['ps', 'past', 'pp', 'fut', 'near'];
+const noAccent = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+// the prompt for one student: role if / main / x(link) = 1st / 2nd / 3rd prompt
+const relRoleIdx = role => role === 'if' ? 0 : role === 'main' ? 1 : 2;
+function relPrompt(ro, role) {
+  const set = ro && ro.card ? GW_KINDS[ro.card.k] || GW_KINDS.any : REL_SETS[ro && ro.set] || REL_SETS.star;
+  return set.p[relRoleIdx(role)];
+}
+// teacher's own Make A Guess cards: "Name" or "Name | Wikipedia page or picture link"
+function parseGwMine(txt) {
+  return String(txt || '').split('\n').map(l => l.trim()).filter(Boolean).slice(0, 60).map((l, i) => {
+    const [name, link] = l.split('|').map(x => x.trim()), c = { id: 'm' + i, k: 'any', name: name.slice(0, 60), al: [] };
+    if (link) { const m = link.match(/wikipedia\.org\/wiki\/([^?#]+)/); if (m) c.wiki = decodeURIComponent(m[1]).replace(/_/g, ' '); else if (/^https?:\/\//.test(link)) c.img = link; else c.wiki = link; }
+    return c;
+  }).filter(c => c.name);
+}
+// hand out a card (or a prompt set) to each group; Make A Guess also gets 4 answer choices
+function relDeal(type, opt, used) {
+  const lvl = opt.lvl || 'hard';
+  if (TYPES[type].mode !== 'guess') return { set: opt.set && REL_SETS[opt.set] ? opt.set : shuffle(Object.keys(REL_SETS))[0], lvl };
+  const mine = parseGwMine(opt.mine), all = GW_CARDS.concat(mine);
+  let pool = opt.pack === 'mine' ? mine : opt.pack && GW_KINDS[opt.pack] ? GW_CARDS.filter(c => c.k === opt.pack) : all;
+  if (!pool.length) pool = GW_CARDS;
+  const fresh = pool.filter(c => !used.has(c.name)), card = shuffle((fresh.length ? fresh : pool).slice())[0]; used.add(card.name);
+  const same = all.filter(c => c.name !== card.name && (card.k === 'any' || c.k === card.k));
+  const opts = shuffle([card.name].concat(shuffle(same.slice()).slice(0, 3).map(c => c.name)));
+  const keep = { k: card.k, name: card.name, al: card.al || [] }; if (card.wiki) keep.wiki = card.wiki; if (card.img) keep.img = card.img;
+  return { card: keep, opts, lvl };
+}
+// pictures: from Vietnamese Wikipedia (page summary thumbnail), or the teacher's own link
+const WIMG = new Map();
+function wikiImg(title) {
+  if (!WIMG.has(title)) WIMG.set(title, fetch('https://vi.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(String(title).replace(/ /g, '_')))
+    .then(r => r.ok ? r.json() : {}).then(j => (j.thumbnail && j.thumbnail.source) || '').catch(() => ''));
+  return WIMG.get(title);
+}
+function cardImg(c, cls) {
+  const emo = (GW_KINDS[c.k] || GW_KINDS.any).e;
+  if (c.img) return `<img class="${cls}" src="${esc(c.img)}" alt="" data-emo="${emo}" onerror="this.outerHTML='<span class=&quot;gwemo&quot;>${emo}</span>'">`;
+  if (c.wiki) return `<img class="${cls}" data-wiki="${esc(c.wiki)}" data-emo="${emo}" alt="">`;
+  return `<span class="gwemo">${emo}</span>`;
+}
+function fillImgs() {
+  document.querySelectorAll('img[data-wiki]:not([data-done])').forEach(im => {
+    im.dataset.done = '1';
+    wikiImg(im.dataset.wiki).then(u => { if (u) im.src = u; else { const sp = document.createElement('span'); sp.className = 'gwemo'; sp.textContent = im.dataset.emo || '🎭'; im.replaceWith(sp); } });
+  });
+}
+const gwCardHTML = c => `<div class="gwcard">${cardImg(c, 'gwimg')}<div><small>${VI('Your group’s secret card 🤫', 'Thẻ bí mật của nhóm bạn 🤫')}</small><b>${esc(c.name)}</b></div></div>`;
 const GROUPS = [
   { id: '0', topic: 'cond', label: 'Type 0', vi: 'Loại 0', types: ['0'] },
   { id: '1', topic: 'cond', label: 'Type 1', vi: 'Loại 1', types: ['1'] },
@@ -1297,11 +1438,14 @@ const GROUPS = [
   { id: 'pP', topic: 'pass', label: 'Past simple', vi: 'Quá khứ đơn', types: ['pP'] },
   { id: 'pF', topic: 'pass', label: 'Future (will)', vi: 'Tương lai (will)', types: ['pF'] },
   { id: 'pPP', topic: 'pass', label: 'Present perfect', vi: 'Hiện tại hoàn thành', types: ['pPP'] },
-  { id: 'pM', topic: 'pass', label: 'Modals', vi: 'Động từ khuyết thiếu', types: ['pM'] }
+  { id: 'pM', topic: 'pass', label: 'Modals', vi: 'Động từ khuyết thiếu', types: ['pM'] },
+  { id: 'rA', topic: 'rel', label: 'Story cards', vi: 'Thẻ gợi ý: mỗi bạn 1 câu', types: ['rA'] },
+  { id: 'rG', topic: 'rel', label: 'Make A Guess', vi: 'Viết câu gợi ý, cả lớp đoán', types: ['rG'] }
 ];
 const GTOPICS = [
   { id: 'cond', en: 'Conditionals', vi: 'Câu điều kiện' },
-  { id: 'pass', en: 'Passive voice', vi: 'Câu bị động' }
+  { id: 'pass', en: 'Passive voice', vi: 'Câu bị động' },
+  { id: 'rel', en: 'Relative clauses', vi: 'Mệnh đề quan hệ' }
 ];
 const THEMES = [
   ['', 'No theme', 'Không chủ đề'], ['📚 Exams', 'Exams', 'Thi cử'], ['💘 Crush', 'Crush', 'Crush'], ['🏝️ Holiday', 'Holiday', 'Kỳ nghỉ'],
@@ -1314,14 +1458,26 @@ const VOTES = [
   { k: 0, e: '🤯', en: 'Total chaos', vi: 'Loạn hết cả lên' }
 ];
 // "Clause 1, so [clause 2]" — where my clause sits in the group's sentence
-function linkPreview(role, c, type) {
+function linkPreview(role, c, type, three) {
   const slot = n => n === roleKey(role) ? '[YOUR PART]' : '[…]';
   return (isPass(type) ? '' : 'If ') + slot('a') + (c[0] ? ' ' + c[0] + ' ' : ', ') + slot('b') + (c[1] ? ' ' + c[1] + ' ' + slot('x') : '') + '.';
 }
 const isPass = type => TYPES[type] && TYPES[type].kind === 'pass';
+const isRel = type => TYPES[type] && TYPES[type].kind === 'rel';
+// what each student writes: one whole sentence for their prompt (ro = the group's roles + card)
+function relLay(ro) {
+  const lvl = (ro && ro.lvl) || 'hard', part = role => {
+    const P = relPrompt(ro, role);
+    return { pre: '', en: P.en, vi: P.vi, ex: lvl === 'easy' ? P.ex : '', ph: lvl === 'easy' ? P.fr : 'One whole sentence…',
+      form: lvl === 'easy' ? '✍️ ' + P.fr : lvl === 'mid' ? `✍️ One sentence with ${P.w.join(' / ')} …` : '✍️ One whole sentence with a relative clause' };
+  };
+  const b = part('main');
+  return { a: part('if'), b, b2: b, x: part('link') };
+}
 // what each half looks like for a round type: a = first half (If… / Something was V3), b = second (main / by…), x = trio twist
-function lay(type, c, trio) {
+function lay(type, c, trio, three) {
   const T = TYPES[type];
+  if (isRel(type)) return relLay(c);
   if (isPass(type)) {
     const c1 = c && c[0], c2 = c && c[1], f = T.verbF;
     return {
@@ -1345,6 +1501,7 @@ const formOf = (role, type) => lay(type)[roleKey(role)].form;
 // the three halves as shown on screen, with their joining words and punctuation
 // kb / kx = the linking word that joins the next block (shown as a chain link between blocks)
 function halfTexts(type, p) {
+  if (isRel(type)) return { a: cap1(p.ifT || ''), kb: '', b: p.mainT || '', kx: '', x: p.xT || '', e: '' };
   if (isPass(type)) {
     const c1 = (p.c && p.c[0]) || 'so', c2 = (p.c && p.c[1]) || 'and', cm = w => /^(so|but)$/.test(w) ? ',' : '';
     return { a: cap1(p.ifT) + cm(c1), kb: c1, b: lowStart(p.mainT) + (p.tw ? cm(c2) : '.'), kx: p.tw ? c2 : '', x: p.tw ? lowStart(p.xT) + '.' : '' };
@@ -1361,6 +1518,14 @@ const linkHTML = w => w ? `<span class="lnk"><span>🔗 ${esc(w)}</span></span>`
 // names in the colour of their block: 1st pink, 2nd blue, 3rd lilac
 const namesC = a => { const s = a.map((n, i) => `<span class="nm n${i % 3}">${esc(n)}</span>`); return s.length <= 1 ? (s[0] || '') : s.slice(0, -1).join(', ') + ' &amp; ' + s[s.length - 1]; };
 function frameHTML(type, trio, withX) {
+  if (isRel(type)) {
+    if (TYPES[type].mode === 'guess') return `<div class="fi">${VI('Each group gets a SECRET card', 'Mỗi nhóm nhận 1 thẻ bí mật')}<small>${['person', 'place', 'object', 'time'].map(k => GW_KINDS[k].e + ' ' + GW_KINDS[k].en).join(' · ')}</small></div>
+    <div class="fm">${VI('Each student writes 1 clue sentence with a relative clause (no names!)', 'Mỗi bạn viết 1 câu gợi ý có mệnh đề quan hệ (không ghi tên!)')}<small>This person is a singer who has millions of fans.</small></div>
+    <div class="fx" id="fx">${VI('The class guesses on their phones', 'Cả lớp đoán trên điện thoại')}<small>${VI('More right guesses = the class understands you!', 'Càng nhiều bạn đoán đúng = lớp càng hiểu ý nhóm!')}</small></div>`;
+    const S = REL_SETS.star;
+    return `<div class="fi">${VI('Student 1: one sentence for prompt 1', 'Bạn 1: viết 1 câu theo gợi ý 1')}<small>${esc(S.p[0].ex)}</small></div>
+    <div class="fm">${VI('Student 2: one sentence for prompt 2, without knowing sentence 1', 'Bạn 2: viết 1 câu theo gợi ý 2, không biết câu của bạn 1')}<small>${esc(S.p[1].ex)}</small></div>${withX ? `<div class="fx" id="fx">${VI('Group of 3: student 3 writes prompt 3', 'Nhóm 3: bạn 3 viết theo gợi ý 3')}<small>${esc(S.p[2].ex)}</small></div>` : ''}`;
+  }
   const L = lay(type, null, trio), xHTML = `${VI('Group of 3:', 'Nhóm 3:')} ${esc(L.x.form)}<small>${esc(L.x.ex)}</small>`;
   return `<div class="fi">${esc(L.a.form)}<small>${esc(L.a.ex)}${isPass(type) ? '' : ','}</small></div>
     <div class="fm">${esc(L.b.form)}<small>${esc(L.b.ex)}.</small></div>${withX ? `<div class="fx" id="fx">${xHTML}</div>` : ''}`;
@@ -1486,20 +1651,42 @@ document.addEventListener('mouseover', e => {
   if (host !== viHost) { if (host) showVi(host); else hideVi(); }
 });
 
+/* ---------- relative clause checker (advice only): one whole sentence, checked by the shared Chó checker ---------- */
+function checkRelSentence(raw, role, ctx) {
+  const ro = ctx.ro || {}, P = relPrompt(ro, role), t = cleanHalf(raw);
+  const hint = `Đề bài: <b>${esc(P.vi)}</b><br>Từ quan hệ có thể dùng: <b>${P.w.join(' / ')}</b><br>Ví dụ: <i>${esc(P.ex)}</i>`;
+  if (t.length > 200) return { ok: false, msg: VI('That’s a novel! Keep it under 200 characters.', 'Dài quá! Viết dưới 200 ký tự thôi nhé.'), hint };
+  if (t.split(/\s+/).length < 4) return { ok: false, msg: VI('Write a whole sentence!', 'Viết cả một câu hoàn chỉnh nhé!'), hint };
+  if (ro.card) {
+    const nt = ' ' + noAccent(t).replace(/[^a-z0-9]+/g, ' ') + ' ';
+    const names = [ro.card.name].concat(ro.card.al || []).map(a => noAccent(a).replace(/\(.*?\)/g, '').replace(/[^a-z0-9]+/g, ' ').trim()).filter(a => a.length >= 3);
+    if (names.some(a => nt.includes(' ' + a + ' '))) return { ok: false, msg: VI('Don’t give away the name! The class has to guess it.', 'Đừng viết tên ra nhé! Cả lớp phải tự đoán.'), hint };
+  }
+  let g; try { g = checkGrammar(t, REL_TENSES, ['rel']); } catch (e) { console.warn(e); g = { error: false }; }
+  if (g.error) { const x = errText(g); return { ok: false, msg: x.msg, ans: x.ans, hint: (x.hint && g.kind !== 'need-rel' ? x.hint + '<br>' : '') + hint }; }
+  // two common slips the shared checker lets through
+  const wd = t.match(/\bwhose\s+(the|a|an|my|his|her|their|its|our|your)\s+/i);
+  if (wd) return { ok: false, msg: VI(`No “${wd[1]}” after “whose”: whose + noun.`, `Sau “whose” không dùng “${wd[1]}”: whose + danh từ.`), ans: `whose ${wd[1]} → whose`, hint };
+  const wt = t.match(/\b(animal|creature|cat|cats|dog|dogs|bird|fish|monster|thing|robot|phone|house|room|city|place|country|day|holiday|time|food|dish|song|book|game|car|bike|tree|festival)\s+who\b/i);
+  if (wt) return { ok: false, msg: VI(`“${wt[1]}” is not a person, so no “who”.`, `“${wt[1]}” không phải là người nên không dùng “who”.`), ans: `${wt[1]} who → ${wt[1]} which / that`, hint };
+  return { ok: true, text: t };
+}
+
 /* ---------- checking one half ---------- */
 const cleanHalf = s => String(s || '').replace(/\s+/g, ' ').trim().replace(/^[,;:\s]+/, '').replace(/[.,;:!?\s]+$/, '');
 // the half as it will be stored: tidy spaces/punctuation, drop a leading if / unless / linking word
 function plainHalf(raw, role, type) {
   const t = cleanHalf(raw);
+  if (isRel(type)) return t;
   if (isPass(type) || role === 'link') return t.replace(/^(so|because|but|and)\b[,\s]*/i, '');
   return role === 'if' || role === 'twist' ? t.replace(/^(if|unless)\b\s*/i, '') : t.replace(/^(then|so)\b\s*/i, '');
 }
 // the computer's check is only advice: students may lock in anyway (the class fixes sentences together later)
-function checkHalf(raw, role, type) {
+function checkHalf(raw, role, type, ctx) {
   const t = plainHalf(raw, role, type);
   if (!t) return { ok: false, empty: true, msg: VI('Write something first! ✍️', 'Viết gì đó đã nhé!') };
   let r;
-  try { r = checkHalf0(raw, role, type); } catch (e) { console.warn(e); r = { ok: true }; }
+  try { r = isRel(type) ? checkRelSentence(raw, role, ctx || {}) : checkHalf0(raw, role, type); } catch (e) { console.warn(e); r = { ok: true }; }
   r.text = r.ok && r.text ? r.text : t;
   return r;
 }
@@ -1552,7 +1739,7 @@ function sentenceParts(R, roles, tk, slot) {
   const tw = R.meta.trio !== 'two' && ro.x;
   const mainPid = slot && slot === tk + 'b' ? ro.x : ro.main;
   const ifT = g(ro.if), mainT = g(mainPid), xT = tw ? g(ro.x) : null;
-  return { ifT, mainT, xT, tw, mainPid, c: ro.c || [], trio: R.meta.trio };
+  return { ifT, mainT, xT, tw, mainPid, c: ro.c || [], trio: R.meta.trio, mid: !!ro.mid, ifT2: H[ro.if] && H[ro.if].text2 };
 }
 // words both halves share (mind-readers!)
 const STOP = new Set(('i you he she it we they me him her us them my your his its our their mine yours a an the and or but so to of in on at for with from by about as into than then too very really just not no this that these those there here what who when where why how all some any every each more most much many lot lots will would could can might may must shall should have has had having do does did be am is are was were been being get got gets go goes went gone going make made one thing things up out off over now day if unless always never ever also every again still even only').split(' '));
@@ -1731,8 +1918,8 @@ function render() {
   if (!CODE) return showHome();
   if (!room) return show('loading', `<div class="wrap"><div class="card center"><p class="big-note"><span class="spin">🧑‍🤝‍🧑</span> Finding room ${esc(CODE)}…</p><p class="muted">If this takes long, check the link or the internet.</p></div></div>`);
   if (room.__missing) return show('missing', `<div class="wrap"><div class="card col center"><h2>Room ${esc(CODE)} not found 😿</h2><p>${VI('Check the code with your teacher.', 'Kiểm tra lại mã phòng với giáo viên nhé.')}</p><a class="btn" href="${location.pathname}">← Back</a></div></div>`);
-  if (isHost()) { renderTeacher(); drawRejoin(); if (DEMO) demoTeacher(); return; }
-  renderStudent(); if (EMBED) demoPhoneBot();
+  if (isHost()) { renderTeacher(); drawRejoin(); fillImgs(); if (DEMO) demoTeacher(); return; }
+  renderStudent(); fillImgs(); if (EMBED) demoPhoneBot();
 }
 /* ---------- teacher: let a student back in on a new phone / browser ---------- */
 function rejoinLink() { const u = new URL(studentLink()); u.searchParams.set('rejoin', '1'); return u.toString(); }
@@ -1854,9 +2041,60 @@ const DEMO_BANK = {
   pPP: { if: ['My phone has been stolen', 'The cake has been eaten', 'The exam has been cancelled'], main: ['the police have been called', 'the party has been ruined', 'the students have been told'], x: ['nothing has been found', 'a new cake has been ordered', 'a new date has been chosen'] },
   pM: { if: ['Homework should be banned', 'Phones must be turned off', 'Snacks can be eaten in class'], main: ['students must be given more free time', 'the rules should be changed', 'the teacher must be told'], x: ['teachers can be paid more', 'nobody should be punished', 'pizza should be served every day'] }
 };
+// relative clauses: what the bots write for each prompt (story cards by set, Make A Guess by kind of card)
+const DEMO_STORY = {
+  star: [['Sơn Tùng is a singer who has millions of fans.', 'Taylor Swift is a woman who writes songs about her exes.', 'Ronaldo is a footballer who never stops training.'],
+    ['He has a voice which can break glass.', 'She is a person whose dance moves are crazy.', 'He has a smile that makes everyone happy.'],
+    ['Seoul is the city where he became a star.', 'TikTok is the place where she got famous.', 'Hà Nội is the city where he sang his first song.']],
+  house: [['My dream house is a house which floats on the sea.', 'I want a house that has a slide in every room.', 'My dream house is a castle which is made of candy.'],
+    ['The kitchen is the room where robots cook for me.', 'The bathroom is the place where I sing every morning.', 'My bedroom is the room which has a secret door.'],
+    ['I live with a friend who never stops singing.', 'I live with a cat whose name is Boss.', 'My grandma is the person who lives with me.']],
+  day: [['My 10th birthday was the day when I got a puppy.', 'Last Tết was the time when I got the most lucky money.', 'Yesterday was the day when I didn’t have homework.'],
+    ['We went to a beach where the water was pink.', 'We went to a restaurant which served giant pizzas.', 'We visited a zoo where the monkeys stole our hats.'],
+    ['I was with my uncle who can juggle eggs.', 'I was with my best friend whose dog can sing.', 'My parents were the people who took me there.']],
+  animal: [['A glorp is an animal which eats only socks.', 'A zibzab is an animal that sleeps 23 hours a day.', 'A fluffo is a creature which can fly backwards.'],
+    ['It is an animal whose tail can play the piano.', 'It has ears which can hear your thoughts.', 'It is a creature whose eyes glow at night.'],
+    ['It lives in a cave where nobody goes.', 'It lives in a lake which is full of milk tea.', 'It lives in a school where students never study.']],
+  school: [['Our maths teacher is a person who loves cats.', 'Our PE teacher is a man who can run very fast.', 'Our English teacher is someone who always smiles.'],
+    ['The library is the room where everybody sleeps.', 'The canteen is the place where we eat noodles.', 'The music room is the room which is always noisy.'],
+    ['Maths is the subject which gives me headaches.', 'English is the subject that I like the most.', 'PE is the subject which makes us tired.']]
+};
+const DEMO_GUESS = {
+  person: [['This person is a star who has millions of fans.', 'It is someone who everybody in Vietnam knows.', 'It is a famous person who appears on TV a lot.'],
+    ['It is a star whose videos are everywhere on TikTok.', 'This person has a talent which surprises everyone.', 'It is someone whose fans are very loud.'],
+    ['Vietnam is the country where this person is very famous.', 'The stage is the place where this person feels happy.', 'Childhood was the time when this star started.']],
+  place: [['It is a place which is famous for its beaches.', 'It is a city that has a lot of motorbikes.', 'It is a place which tourists love.'],
+    ['It is a place where you can eat amazing food.', 'It is a city where you can take great photos.', 'It is a place where people go swimming.'],
+    ['Summer is the time when it is full of tourists.', 'Tourists are the people who love going there.', 'Spring is the season when it looks beautiful.']],
+  object: [['It is a thing which people use every day.', 'It is something that many Vietnamese people love.', 'It is a thing which you can buy easily.'],
+    ['Students are the people who use it a lot.', 'It is a thing which makes life easier.', 'It is something that you can share with friends.'],
+    ['Morning is the time when people use it the most.', 'Home is the place where you can find it.', 'Tết is the time when you see it everywhere.']],
+  time: [['It is a holiday which comes once a year.', 'It is a special day that everybody waits for.', 'It is a time which children love.'],
+    ['It is the time when families eat together.', 'It is a day when people give presents.', 'It is the time when streets are full of lights.'],
+    ['Grandparents are the people who make it special.', 'Home is the place where most people spend it.', 'Friends are the people who we celebrate it with.']],
+  any: [['It is something which everybody knows.', 'It is a thing that we talk about a lot.', 'It is someone who is very famous.'],
+    ['It has a name which is easy to remember.', 'It is something that makes people smile.', 'It is something whose picture is everywhere.'],
+    ['School is the place where we hear about it.', 'Weekends are the times when we think about it.', 'Vietnam is the country where it is famous.']]
+};
+// what a bot locks in
+function demoHalf(R, pid) {
+  if (!isRel(R.meta.type)) return { text: demoText(R, pid) };
+  const all = Object.values(R.meta.roles), ro = all.find(r => [r.if, r.main, r.x].includes(pid)); if (!ro) return { text: '' };
+  const k = relRoleIdx(ro.if === pid ? 'if' : ro.main === pid ? 'main' : 'link'), i = (all.indexOf(ro) + (st().round || 1)) % 3;
+  const B = ro.card ? DEMO_GUESS[ro.card.k] || DEMO_GUESS.any : DEMO_STORY[ro.set] || DEMO_STORY.star;
+  return { text: B[k][i] };
+}
+// a bot's vote; in Make A Guess it guesses (right 2 times out of 3)
+function demoCast(R, tk, pid) {
+  const ro = R.meta.roles[tk];
+  if (!ro || !ro.card) return { v: demoVote() };
+  const right = (ro.opts || []).indexOf(ro.card.name), gi = Math.random() < 0.67 ? right : Math.floor(Math.random() * (ro.opts || [1]).length);
+  return { g: gi, v: (ro.opts || [])[gi] === ro.card.name ? 2 : 0 };
+}
 function demoText(R, pid) {
   const me = Object.values(R.meta.roles).find(ro => [ro.if, ro.main, ro.x].includes(pid)); if (!me) return '';
-  const role = me.if === pid ? 'if' : me.main === pid ? 'main' : 'x', B = DEMO_BANK[R.meta.type] || DEMO_BANK['1'];
+  const role = me.if === pid ? 'if' : me.main === pid ? 'main' : 'x';
+  const B = DEMO_BANK[R.meta.type] || DEMO_BANK['1'];
   const list = role === 'x' && R.meta.trio === 'twist' ? B.if : B[role];
   // everyone with the same job gets a different sentence
   const same = Object.values(R.meta.roles).map(ro => role === 'if' ? ro.if : role === 'main' ? ro.main : ro.x).filter(Boolean).sort();
@@ -1890,14 +2128,14 @@ function demoTeacher() {
   if (s.phase === 'write' && R) {
     const all = Object.values(R.meta.roles).flatMap(ro => [ro.if, ro.main, ro.x]).filter(Boolean);
     all.filter(pid => !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => demoLater(`w${s.round}${pid}`, 2500 + i * 2200, () => {
-      const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[pid])) put(`rounds/${roundKey(st().round)}/h/${pid}`, { text: demoText(R2, pid), at: Date.now() });
+      const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[pid])) put(`rounds/${roundKey(st().round)}/h/${pid}`, Object.assign({ at: Date.now() }, demoHalf(R2, pid)));
     }));
-    demoLater(`w${s.round}late`, 30000, () => { const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[DEMO_PHONE])) put(`rounds/${roundKey(st().round)}/h/${DEMO_PHONE}`, { text: demoText(R2, DEMO_PHONE), at: Date.now() }); });
+    demoLater(`w${s.round}late`, 30000, () => { const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[DEMO_PHONE])) put(`rounds/${roundKey(st().round)}/h/${DEMO_PHONE}`, Object.assign({ at: Date.now() }, demoHalf(R2, DEMO_PHONE))); });
   }
   if (s.phase === 'reveal' && s.flipped && R) {
     const tk = R.meta.order[s.cur || 0], ro = R.meta.roles[tk];
     DEMO_BOTS.map(b => b[0]).filter(pid => ![ro.if, ro.main, ro.x].includes(pid) && !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => slotsOf(R, tk).forEach(sl =>
-      demoLater(`v${s.round}${sl}${pid}`, 1800 + i * 1300, () => { if (st().phase === 'reveal' && st().flipped && curRound().meta.order[st().cur || 0] === tk) put(`rounds/${roundKey(st().round)}/v/${sl}/${pid}`, demoVote()); })));
+      demoLater(`v${s.round}${sl}${pid}`, 1800 + i * 1300, () => { if (st().phase === 'reveal' && st().flipped && curRound().meta.order[st().cur || 0] === tk) { const c = demoCast(curRound(), tk, pid); if (c.g != null) put(`rounds/${roundKey(st().round)}/g/${sl}/${pid}`, c.g); put(`rounds/${roundKey(st().round)}/v/${sl}/${pid}`, c.v); } })));
   }
 }
 const demoPhoneOn = () => LS.get('cp_demoPhone', true) && innerWidth >= 900;
@@ -1905,6 +2143,8 @@ const DEMO_STEPS = {
   join: ['1️⃣ Scan the QR code on the board and type your name.', 'Quét mã QR trên bảng và nhập tên của bạn.'],
   pair: ['2️⃣ Tap the name of the person next to you to make a pair. A 3rd person taps a pair to join it.', 'Chạm vào tên bạn ngồi cạnh để ghép cặp. Bạn thứ 3 chạm vào một cặp để vào nhóm.'],
   start: ['3️⃣ Everyone has a partner. Teacher, press ▶ Start round!', 'Mọi người đã có cặp. Giáo viên bấm ▶ Bắt đầu vòng!'],
+  writeRel: ['4️⃣ Each of you writes ONE whole sentence with a relative clause, in secret. 🤐 No talking! The computer may give a hint, but you decide.', 'Mỗi bạn viết MỘT câu hoàn chỉnh có mệnh đề quan hệ, giữ bí mật. 🤐 Không nói chuyện! Máy có thể gợi ý, nhưng bạn tự quyết định.'],
+  guess: ['6️⃣ Who or what is it? Guess on your phone! Then the teacher shows the answer and gives 0–5 🤝 for the sentences.', 'Đây là ai / cái gì? Đoán trên điện thoại! Sau đó giáo viên bấm xem đáp án và chấm 0–5 🤝 cho các câu.'],
   write: ['4️⃣ Each of you writes a different part of ONE sentence, in secret. 🤐 No talking, only signs! The computer may give a hint, but you decide.', 'Mỗi bạn viết một phần của CÙNG một câu, giữ bí mật. 🤐 Không nói chuyện, chỉ ra hiệu! Máy có thể gợi ý, nhưng bạn tự quyết định.'],
   ready: ['4️⃣ Everyone has locked in. Teacher, press 🎬 Reveal!', 'Mọi người đã khoá câu. Giáo viên bấm để lật bài!'],
   flip: ['5️⃣ Whose halves go together? Teacher, press 🔄 Flip!', 'Các nửa câu có khớp nhau không? Giáo viên bấm 🔄 Lật!'],
@@ -1935,7 +2175,8 @@ function demoChrome() {
     $('#dAgain').onclick = () => { openDemo(room.meta.groups || ['1'], false); };
     $('#dExit').onclick = () => { LS.del('cp_local_' + DEMO_CODE); LS.del('cp_host_' + DEMO_CODE); window.close(); setTimeout(() => { location.href = location.pathname; }, 200); };
   }
-  const k = demoStep(), t = DEMO_STEPS[k], sc = demoScene();
+  const k = demoStep(), R0 = curRound(), rel = R0 && R0.meta && isRel(R0.meta.type) && st().phase !== 'lobby';
+  const t = DEMO_STEPS[rel && k === 'write' ? 'writeRel' : rel && k === 'vote' && Object.values(R0.meta.roles).some(r => r.card) ? 'guess' : k], sc = demoScene();
   $('#dNum').textContent = `${sc + 1} / ${DEMO_SCENES}`; $('#dPrev').disabled = sc === 0; $('#dNext').disabled = sc === DEMO_SCENES - 1;
   if (bar.dataset.k !== k) { bar.dataset.k = k; bar.querySelector('.dtxt b').textContent = t[0]; bar.querySelector('.dtxt span').textContent = t[1]; bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
   let ph = document.getElementById('demoPhone');
@@ -1971,14 +2212,14 @@ function demoGoto(i) {
   if (i >= 1) DEMO_BOTS.forEach(([pid, name], k) => { snap.players[pid] = { name, t: now - 60000 + k * 1000 }; });
   if (i >= 2) { ['dmai', 'dtu'].forEach(p => snap.players[p].table = DEMO_PAIR.slice(1)); ['dkhoa', 'dlinh', 'dvy'].forEach(p => snap.players[p].table = DEMO_TRIO.slice(1)); }
   if (i >= 3) {
-    const pass = isPass(type);
+    const pass = isPass(type), rel = isRel(type), used = new Set(), relOpt = { set: LS.get('cp_relset', 'rand'), pack: LS.get('cp_gwpack', 'all'), lvl: LS.get('cp_rellvl', 'hard'), mine: LS.get('cp_gwmine', '') };
     const roles = old && old.type === type ? old.roles : {
-      [DEMO_PAIR]: Object.assign({ if: 'dtu', main: 'dmai', x: null }, pass ? { c: shuffle(['so', 'because', 'but']).slice(0, 1) } : {}),
-      [DEMO_TRIO]: { if: 'dkhoa', main: 'dlinh', x: 'dvy', c: pass ? shuffle(['and', 'so', 'but']).slice(0, 2) : ['', shuffle(['and', 'so', 'but'])[0]] }
+      [DEMO_PAIR]: Object.assign({ if: 'dtu', main: 'dmai', x: null }, pass ? { c: shuffle(['so', 'because', 'but']).slice(0, 1) } : rel ? relDeal(type, relOpt, used) : {}),
+      [DEMO_TRIO]: rel ? Object.assign({ if: 'dkhoa', main: 'dlinh', x: 'dvy' }, relDeal(type, relOpt, used)) : { if: 'dkhoa', main: 'dlinh', x: 'dvy', c: pass ? shuffle(['and', 'so', 'but']).slice(0, 2) : ['', shuffle(['and', 'so', 'but'])[0]] }
     };
     const R = { meta: { type, theme: '', trio: 'link', roles, at: now } };
     snap.rounds = { r1: R }; snap.state = { phase: 'write', round: 1 };
-    if (i >= 4) { R.h = {}; DEMO_BOTS.forEach(([pid]) => { R.h[pid] = { text: demoText(R, pid), at: now }; }); }
+    if (i >= 4) { R.h = {}; DEMO_BOTS.forEach(([pid]) => { R.h[pid] = Object.assign({ at: now }, demoHalf(R, pid)); }); }
     if (i >= 5) {
       R.meta.order = [DEMO_PAIR, DEMO_TRIO];
       snap.state = i >= 9 ? { phase: i === 9 ? 'results' : 'final', round: 1 } : { phase: 'reveal', round: 1, cur: i >= 7 ? 1 : 0, flipped: i % 2 === 0 };
@@ -1987,7 +2228,7 @@ function demoGoto(i) {
       R.v = {}; R.hearts = {};
       R.meta.order.slice(0, shown).forEach(tk => {
         const ro = roles[tk]; R.v[tk] = {};
-        DEMO_BOTS.map(b => b[0]).filter(p => ![ro.if, ro.main, ro.x].includes(p)).forEach(p => { R.v[tk][p] = demoVote(); });
+        DEMO_BOTS.map(b => b[0]).filter(p => ![ro.if, ro.main, ro.x].includes(p)).forEach(p => { const c = demoCast(R, tk, p); R.v[tk][p] = c.v; if (c.g != null) { R.g = R.g || {}; (R.g[tk] = R.g[tk] || {})[p] = c.g; } });
         R.hearts[tk] = 3 + Math.floor(Math.random() * 3);
       });
     }
@@ -2025,7 +2266,8 @@ function demoPhoneBot() {
   if (s.phase === 'write' && R && myRole(R) && !(R.h && R.h[PID])) {
     return phoneLater('w' + s.round, 3500, () => {
       const inp = $('#inp'); if (!inp) return;
-      typeInto(inp, demoText(R, PID), () => { $('#send').click(); setTimeout(() => { if ($('#anyway')) $('#anyway').click(); }, 2500); });
+      const hf = demoHalf(R, PID), go = () => { $('#send').click(); setTimeout(() => { if ($('#anyway')) $('#anyway').click(); }, 2500); };
+      typeInto(inp, hf.text, () => { const i2 = $('#inp2'); if (i2 && hf.text2) typeInto(i2, hf.text2, go); else go(); });
     });
   }
   if (s.phase === 'reveal' && s.flipped) phoneLater('v' + s.round + '_' + (s.cur || 0), 3000, () => { const bs = ROOT.querySelectorAll('.vote button'); if (bs.length) bs[[0, 0, 1, 2][Math.floor(Math.random() * 4)] % bs.length].click(); });
@@ -2087,7 +2329,8 @@ function tableCards(mode) {
     const tk = 't' + id, ro = roles && roles[tk];
     let cls = '', status = mem.length >= 3 ? '🫂' : '🧑‍🤝‍🧑';
     if (mode === 'write') { if (ro) { const done = tableDone(R, tk); if (done) cls = 'ready'; status = done ? '✅' : '✍️'; } else status = '⏳'; }
-    const link = mode === 'write' && ro && ro.c && ro.c.some(Boolean) ? `<div><span class="tag sun">🔗 ${ro.c.filter(Boolean).map(esc).join(' · ')}</span></div>` : '';
+    const link = mode === 'write' && ro && (ro.card || ro.set) ? `<div><span class="tag sun">${ro.card ? '🎭 ' + VI('secret card', 'thẻ bí mật') : esc(REL_SETS[ro.set].e + ' ' + REL_SETS[ro.set].en)}</span></div>`
+      : mode === 'write' && ro && ro.c && ro.c.some(Boolean) ? `<div><span class="tag sun">🔗 ${ro.c.filter(Boolean).map(esc).join(' · ')}</span></div>` : '';
     html += `<div class="tbl ${cls}"><h3><span>${mem.length >= 3 ? VI('Group of 3', 'Nhóm 3') : VI('Pair', 'Cặp')}</span><span>${status}</span></h3>${link}<div class="row" style="gap:6px">${mem.map(p => chip(p, ro)).join('')}</div></div>`;
   }
   const solo = singles(tm);
@@ -2129,11 +2372,19 @@ function tLobby() {
           <span class="tag" id="cnt"></span></div>
           <div class="row">
             <label class="field" style="flex:1;min-width:220px">${VI('Grammar this round', 'Ngữ pháp vòng này')}
-              <select id="rtype">${types.map(t => `<option value="${t}"${t === last ? ' selected' : ''}>${isPass(t) ? TYPES[t].name : TYPES[t].short + ' · ' + TYPES[t].name}</option>`).join('')}${types.length > 1 ? '<option value="?">🎲 Surprise me</option>' : ''}</select></label>
+              <select id="rtype">${types.map(t => `<option value="${t}"${t === last ? ' selected' : ''}>${TYPES[t].kind ? TYPES[t].name : TYPES[t].short + ' · ' + TYPES[t].name}</option>`).join('')}${types.length > 1 ? '<option value="?">🎲 Surprise me</option>' : ''}</select></label>
             <label class="field" style="flex:1;min-width:180px">${VI('Theme (optional)', 'Chủ đề (không bắt buộc)')}
               <select id="theme">${THEMES.map(t => `<option value="${esc(t[0])}">${t[0] ? esc(t[0]) : 'No theme'}</option>`).join('')}</select></label>
             <label class="field" id="trioBox" style="flex:1;min-width:220px">${VI('Groups of 3', 'Nhóm 3 người')}
               <select id="trio"><option value="link">3rd adds “and / so / but …”</option><option value="twist">Twist: 3rd adds “unless …”</option></select></label>
+            <label class="field" id="relBox" style="flex:1;min-width:200px">${VI('Story cards', 'Bộ thẻ gợi ý')}
+              <select id="relset"><option value="rand">🎲 Random (each group)</option>${Object.entries(REL_SETS).map(([k, v]) => `<option value="${k}">${v.e} ${v.en}</option>`).join('')}</select></label>
+            <label class="field" id="gwBox" style="flex:1;min-width:200px">${VI('Make A Guess cards', 'Thẻ Make A Guess')}
+              <select id="gwpack"><option value="all">🎲 Everything</option>${['person', 'place', 'object', 'time'].map(k => `<option value="${k}">${GW_KINDS[k].e} ${GW_KINDS[k].en}</option>`).join('')}<option value="mine">✍️ Only my own cards</option></select></label>
+            <label class="field" id="lvlBox" style="flex:1;min-width:200px">${VI('Help on phones', 'Mức gợi ý trên điện thoại')}
+              <select id="rellvl"><option value="hard">Hard: prompt only</option><option value="mid">Medium: + relative words</option><option value="easy">Easy: + sentence frame</option></select></label>
+            <label class="field" id="mineBox" style="flex-basis:100%">${VI('Your own cards (one per line, optional picture): Name | Wikipedia page or picture link', 'Thẻ của bạn (mỗi dòng 1 thẻ, ảnh không bắt buộc): Tên | trang Wikipedia hoặc link ảnh')}
+              <textarea id="gwmine" rows="3" placeholder="Ms Hoa&#10;Cát Bà | https://vi.wikipedia.org/wiki/Cát_Bà&#10;Our school | https://…/photo.jpg"></textarea></label>
           </div>
           <div class="frame" id="frame"></div>
           <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
@@ -2148,33 +2399,38 @@ function tLobby() {
     $('#copy').onclick = async () => { try { await navigator.clipboard.writeText(link); toast('Link copied ✓'); } catch (e) { prompt('Copy this link:', link); } };
     const drawFrame = () => {
       const t = $('#rtype').value;
-      $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || isPass(t);
+      $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || !!(TYPES[t] && TYPES[t].kind);
+      const anyT = k => t === k || (t === '?' && types.includes(k));
+      $('#relBox').hidden = !anyT('rA'); $('#gwBox').hidden = $('#mineBox').hidden = !anyT('rG'); $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
       $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t, $('#trio').value, Object.values(tablesMap()).some(m => m.length >= 3));
       LS.set('cp_lastType_' + CODE, t);
     };
+    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', '']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => LS.set('cp_' + id, el.value); });
     $('#rtype').onchange = drawFrame; $('#trio').onchange = drawFrame; drawFrame();
-    $('#start').onclick = () => startRound($('#rtype').value, $('#theme').value, $('#trio').value);
+    $('#start').onclick = () => startRound($('#rtype').value, $('#theme').value, $('#trio').value, { set: $('#relset').value, pack: $('#gwpack').value, lvl: $('#rellvl').value, mine: $('#gwmine').value });
     if ($('#toFinal')) $('#toFinal').onclick = () => { if (confirm('Finish the game and show the winners?')) patch({ 'state/phase': 'final' }); };
   }, () => {
     const tm2 = tablesMap(), np = Object.keys(players()).length, rdy = Object.values(tm2).filter(m => m.length >= 2).length;
     $('#cnt').textContent = `${np} student${np === 1 ? '' : 's'} · ${rdy} pair${rdy === 1 ? '' : 's'} ready`;
     $('#tables').innerHTML = tableCards('lobby'); bindChips();
-    $('#trioBox').hidden = !Object.values(tm2).some(m => m.length >= 3) || isPass($('#rtype').value);
+    $('#trioBox').hidden = !Object.values(tm2).some(m => m.length >= 3) || !!(TYPES[$('#rtype').value] && TYPES[$('#rtype').value].kind);
     $('#start').disabled = !rdy;
     const solo = singles(tm2).map(p => p.name);
     $('#startNote').textContent = !rdy ? 'Waiting for at least one pair…' : solo.length ? `Not paired: ${solo.join(', ')} — they’ll wait this round.` : '';
   });
 }
-async function startRound(type, theme, trio) {
+async function startRound(type, theme, trio, relOpt) {
   const types = roundTypes();
   if (type === '?') type = types[Math.floor(Math.random() * types.length)];
-  const r = (st().round || 0) + 1, tm = tablesMap(), roles = {}, pass = isPass(type);
-  if (pass || trio !== 'twist') trio = 'link'; // a group of 3 writes one sentence: 3rd part joined by and / so / but
+  const r = (st().round || 0) + 1, tm = tablesMap(), roles = {}, pass = isPass(type), rel = isRel(type);
+  const used = new Set(Object.values(room.rounds || {}).flatMap(R0 => Object.values((R0.meta && R0.meta.roles) || {}).map(ro => ro.card && ro.card.name).filter(Boolean)));
+  if (pass || rel || trio !== 'twist') trio = 'link'; // a group of 3 writes one sentence: 3rd part joined by and / so / but
   for (const [tb, mem0] of Object.entries(tm)) {
     const mem = mem0.slice(0, MAX_PER_TABLE); if (mem.length < 2) continue;
     const k = (r - 1) % mem.length, rot = mem.slice(k).concat(mem.slice(0, k)); // roles take turns each round
     roles['t' + tb] = { if: rot[0].pid, main: rot[1].pid, x: rot[2] ? rot[2].pid : null };
-    if (pass) roles['t' + tb].c = rot[2] ? shuffle(['and', 'so', 'but']).slice(0, 2) : shuffle(['so', 'because', 'but']).slice(0, 1);
+    if (rel) Object.assign(roles['t' + tb], relDeal(type, relOpt || {}, used)); // story prompts, or a secret Make A Guess card
+    else if (pass) roles['t' + tb].c = rot[2] ? shuffle(['and', 'so', 'but']).slice(0, 2) : shuffle(['so', 'because', 'but']).slice(0, 1);
     else if (rot[2] && trio === 'link') roles['t' + tb].c = ['', shuffle(['and', 'so', 'but'])[0]];
   }
   if (!Object.keys(roles).length) return toast('No pairs yet.');
@@ -2196,7 +2452,7 @@ function tWrite() {
       <div class="row"><span class="tag sun" id="prog"></span><button class="btn small ghost" id="cancel">${VI('Cancel round', 'Huỷ vòng')}</button><button class="btn primary" id="reveal">🎬 ${VI('Reveal!', 'Lật bài!')}</button></div>
     </div>
     <div class="tables" id="tables"></div></div>`, () => {
-    $('#fx').hidden = !Object.values(R.meta.roles).some(r => r.x);
+    if ($('#fx') && TYPES[R.meta.type].mode !== 'guess') $('#fx').hidden = !Object.values(R.meta.roles).some(r => r.x);
     $('#reveal').onclick = () => {
       const R2 = curRound(), done = Object.keys(R2.meta.roles).filter(tk => tableDone(R2, tk));
       const miss = Object.keys(R2.meta.roles).length - done.length;
@@ -2213,8 +2469,62 @@ function tWrite() {
   });
 }
 function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class="lbl">${lbl}</span>${kwHTML(text)}</div>`; }
+// relative clauses: the whole sentence, with its relative word in bold
+function relSentHTML(t) {
+  const x = cleanHalf(t || '');
+  if (!x) return '<span class="muted">…</span>';
+  return esc(cap1(x) + '.').replace(/(^|[^\w])(who|whom|which|that|whose|where|when)(?=[^\w])/i, '$1<b class="rw">$2</b>');
+}
+// scores under a group: class votes (or right / wrong guesses) + the teacher's handshakes
+function drawScore(sl, guess) {
+  const box = $('#sc_' + sl); if (!box) return;
+  const sc = slotScore(curRound(), sl), tot = Math.max(1, sc.n);
+  const bars = guess ? [['✅', 'Right', 'Đúng', 2], ['❌', 'Wrong', 'Sai', 0]] : VOTES.map(v => [v.e, v.en, v.vi, v.k]);
+  box.innerHTML = `<div class="votes"><b>${guess ? VI(`Guesses · ${sc.n}`, 'Lượt đoán') : VI(`Class vote · ${sc.n} vote${sc.n === 1 ? '' : 's'}`, 'Cả lớp bình chọn')}</b>
+      ${bars.map(([e, en, vi, k]) => `<div class="vbar k${k}"><span>${e} ${en}</span><span class="bar"><i style="width:${sc.counts[k] / tot * 100}%"></i></span><span>${sc.counts[k]}</span></div>`).join('')}</div>
+    <div class="meter"><div class="pct">${pct(guess ? sc.cls : sc.compat)}</div><b>${guess ? VI('guessed it', 'lớp đoán đúng') : VI('compatible', 'hợp nhau')}</b></div>
+    <div class="col" style="align-items:center"><b>${VI('Teacher’s handshakes', 'Bắt tay của giáo viên')}</b>
+      <div class="hearts" data-slot="${sl}">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${sc.h >= n ? 'on' : ''}" aria-label="${n} handshakes">🤝</button>`).join('')}</div>
+      <span class="muted" style="font-size:14px">${guess ? VI(`Total ${pct(sc.compat)} · class 50% · teacher 50%`, 'Tổng: cả lớp 50% · giáo viên 50%') : VI('Class 50% · Teacher 50%', 'Cả lớp 50% · Giáo viên 50%')}</span></div>`;
+  box.querySelectorAll('.hearts button').forEach(b => b.onclick = () => {
+    const n = +b.dataset.n, cur = (curRound().hearts || {})[sl];
+    sndPop(); put(`rounds/${roundKey(st().round)}/hearts/${sl}`, cur === n ? null : n);
+  });
+}
+function tRevealRel() {
+  const s = st(), R = curRound(), order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], ro = R.meta.roles[tk];
+  const pids = [ro.if, ro.main, ro.x].filter(Boolean), names = pids.map(pname), roles = ['if', 'main', 'link'], H = R.h || {};
+  const guess = !!ro.card, flipped = !!s.flipped, ans = guess && !!s.ans, set = REL_SETS[ro.set];
+  show(`trl${s.round}_${i}_${flipped}_${ans}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
+    <div class="stage">
+      <p class="who">${namesC(names)}</p>
+      ${guess ? `<p class="big-note">🎭 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</p>` : `<p class="big-note">${esc(set ? set.e + ' ' + set.en : '')}</p>`}
+      ${!flipped ? `<div class="facedown">${pids.map((p, k) => `<div class="${'abc'[k]}">❓</div>`).join('')}</div>
+        <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
+      : `<div class="story">${pids.map((p, k) => `<div class="half ${['hi', 'hm', 'hx'][k]}" style="animation-delay:${k * 0.35}s"><span class="lbl">${esc(pname(p))}${guess ? '' : ' · ' + esc(relPrompt(ro, roles[k]).en)}</span>${relSentHTML(H[p] && H[p].text)}</div>`).join('')}</div>
+        ${guess && !ans ? `<div class="card row" style="justify-content:space-between;margin-top:14px"><p class="big-note">🤔 ${VI('Guess on your phone!', 'Đoán trên điện thoại nhé!')} <span class="tag sun" id="gcount"></span></p>
+          <button class="btn primary" id="showAns">🎯 ${VI('Show the answer', 'Xem đáp án')}</button></div>` : ''}
+        ${ans ? `<div class="gans">${cardImg(ro.card, 'gwbig')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2></div></div>` : ''}
+        ${!guess || ans ? `<div class="score" id="sc_${tk}"></div>` : ''}
+        <div class="nav">
+          <button class="btn" id="prev"${i === 0 ? ' disabled' : ''}>◀ ${VI('Back', 'Lùi')}</button>
+          ${!guess || ans ? `<button class="btn primary" id="next">${i < order.length - 1 ? VI('Next group ▶', 'Nhóm tiếp ▶') : VI('See results 🏆', 'Xem kết quả 🏆')}</button>` : ''}
+        </div>`}
+    </div></div>`, () => {
+    if (!flipped) { $('#flip').onclick = () => { sndPop(); patch({ 'state/flipped': true, 'state/ans': false }); }; return; }
+    sndJoin();
+    if ($('#showAns')) $('#showAns').onclick = () => { sndWin(); patch({ 'state/ans': true }); };
+    $('#prev').onclick = () => patch({ 'state/cur': i - 1, 'state/flipped': true, 'state/ans': !!R.meta.roles[order[i - 1]].card });
+    if ($('#next')) $('#next').onclick = () => i < order.length - 1 ? patch({ 'state/cur': i + 1, 'state/flipped': false, 'state/ans': false }) : (sndWin(), patch({ 'state/phase': 'results' }));
+  }, () => {
+    if (!flipped) return;
+    if ($('#gcount')) { const n = Object.keys(((curRound().g || {})[tk]) || {}).length; $('#gcount').textContent = `${n} guess${n === 1 ? '' : 'es'}`; }
+    drawScore(tk, guess);
+  });
+}
 function tReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta || !R.meta.order) return tLobby();
+  if (isRel(R.meta.type)) return tRevealRel();
   const order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], roles = R.meta.roles, ro = roles[tk];
   const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname), slots = slotsOf(R, tk), twist = R.meta.trio !== 'two' && ro.x;
   const flipped = !!s.flipped;
@@ -2229,7 +2539,7 @@ function tReveal() {
           return `<div class="sent closed${H.kb ? ' linked' : ''}" data-slot="${sl}"><span class="pop">🧑‍🤝‍🧑</span>
             ${halfCard('hi', lb(ro.if), H.a)}${linkHTML(H.kb)}
             ${halfCard('hm', lb(p.mainPid), H.b)}
-            ${twist ? `<span class="lnkrow">${linkHTML(H.kx)}</span>${halfCard('hx', lb(ro.x), H.x)}` : ''}</div>
+            ${twist ? `<span class="lnkrow">${linkHTML(H.kx)}</span>${halfCard('hx', lb(ro.x), H.x)}` : ''}${H.e ? halfCard('hi he', lb(ro.if), H.e) : ''}</div>
             <div id="mr_${sl}"></div>
             <div class="score" id="sc_${sl}"></div>`;
         }).join('')}</div>
@@ -2427,8 +2737,8 @@ function sWait() {
     $('#box').querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => joinGroup(PID, b.dataset.pid));
   });
 }
-function roleUI(role, type, c, trio) {
-  const L = lay(type, c, trio), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x', link: 'x' }[role];
+function roleUI(role, type, c, trio, three) {
+  const L = lay(type, c, trio, three), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x', link: 'x' }[role];
   const d = L[roleKey(role)], t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
   return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
 }
@@ -2440,26 +2750,35 @@ function viOnly(html) {
   pars.forEach(par => { const out = []; [...par.childNodes].filter(n => n.classList && n.classList.contains('vi')).forEach((v, i) => { if (i) out.push(document.createTextNode(' ')); out.push(...v.childNodes); }); par.replaceChildren(...out); });
   return t.innerHTML;
 }
+// relative clauses: everyone's job, so each student knows what the noun before theirs is
+function relPlanHTML(ro) {
+  const who = pid => pid === PID ? '👉 YOU' : esc(pname(pid));
+  const rows = [[ro.if, 'if'], [ro.main, 'main'], [ro.x, 'link']].filter(r => r[0]).map(([pid, role]) => { const P = relPrompt(ro, role); return `<li${pid === PID ? ' class="me"' : ''}><b>${who(pid)}:</b> ${VI(esc(P.en), esc(P.vi))}</li>`; });
+  return `<ol class="plan">${rows.join('')}</ol>`;
+}
 function whoLine(R, me) {
-  const ro = me.ro, pass = isPass(R.meta.type), c = ro.c || [];
+  const ro = me.ro, pass = isPass(R.meta.type), rel = isRel(R.meta.type), c = ro.c || [];
+  if (rel) return relPlanHTML(ro);
   const xl = R.meta.trio === 'twist' ? 'UNLESS' : R.meta.trio === 'two' ? 'MAIN 2' : (c[1] || 'and / so / but').toUpperCase();
-  const rows = [['if', ro.if, pass ? 'Clause 1' : 'IF'], ['main', ro.main, pass ? 'Clause 2' : 'MAIN'], ['x', ro.x, pass ? 'Clause 3' : xl]].filter(r => r[1]);
+  const rows = rel ? [['if', ro.if, ro.x ? 'START' : 'MAIN'], ['main', ro.main, (c[0] || 'who').toUpperCase() + ' …'], ['x', ro.x, 'END']].filter(r => r[1])
+    : [['if', ro.if, pass ? 'Clause 1' : 'IF'], ['main', ro.main, pass ? 'Clause 2' : 'MAIN'], ['x', ro.x, pass ? 'Clause 3' : xl]].filter(r => r[1]);
   return `<div class="who">${rows.map(([k, pid, l]) => `<span class="chip r-${k}${pid === PID ? ' me' : ''}"><b>${esc(l)}:</b>${pid === PID ? '👉 YOU' : esc(pname(pid))}</span>`).join('')}</div>`;
 }
 function sWrite() {
   const R = curRound(), me = myRole(R);
   if (!me) return show('swx' + st().round, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:48px">⏳</p><h2>${VI('You’ll play next round!', 'Bạn sẽ chơi ở vòng sau!')}</h2><p class="muted">${VI('You need a partner when the round starts.', 'Bạn cần có cặp khi vòng bắt đầu.')}</p></div></div>`);
-  const T = TYPES[R.meta.type], ui = roleUI(me.role, R.meta.type, me.ro.c, R.meta.trio), checkRole = me.role === 'main2' ? 'main' : me.role;
-  const ex = ui.ex;
+  const T = TYPES[R.meta.type], ui = roleUI(me.role, R.meta.type, isRel(R.meta.type) ? me.ro : me.ro.c, R.meta.trio, !!me.ro.x), checkRole = me.role === 'main2' ? 'main' : me.role;
+  const ex = ui.ex, two = false; // (a second box for student 1: not used at the moment)
   let editing = false;
   show('swr' + st().round, `<div class="wrap">${pHead()}
     <p class="muted center"><b>${VI(`Round ${st().round} · ${T.name}`, `Vòng ${st().round} · ${T.vn}`)}</b>${R.meta.theme ? ` · ${esc(R.meta.theme)}` : ''}</p>
     <div class="role ${ui.cls}">
+      ${me.ro.card ? gwCardHTML(me.ro.card) : ''}
       <h2>${VI(ui.en, ui.vi)}</h2>
       ${whoLine(R, me)}
       <p class="form">${esc(ui.form)}</p>
-      <p class="ex">e.g. ${esc(ex)}</p>
-      ${me.ro.c && me.ro.c.some(Boolean) ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.filter(Boolean).length > 1 ? 's' : ''}: ${me.ro.c.filter(Boolean).map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
+      ${ex ? `<p class="ex">e.g. ${esc(ex)}</p>` : ''}
+      ${isRel(R.meta.type) ? '' : me.ro.c && me.ro.c.some(Boolean) ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.filter(Boolean).length > 1 ? 's' : ''}: ${me.ro.c.filter(Boolean).map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
         <p class="ex">${esc(linkPreview(me.role, me.ro.c, R.meta.type))}</p>` : ''}
     </div>
     <p class="shh">🤐 ${VI(`With ${partnersLine(me.ro)} — no talking! Signs only.`, 'Không được nói chuyện! Chỉ ra hiệu thôi.')}</p>
@@ -2468,28 +2787,36 @@ function sWrite() {
     const mine = R2.h && R2.h[PID];
     if (mine && !editing) {
       $('#area').innerHTML = `<div class="locked"><b>✅ ${VI('Locked in! Keep it secret 🤫', 'Đã khoá! Giữ bí mật nhé 🤫')}</b>
-        <p class="txt">${ui.pre ? esc(ui.pre) + ' ' : ''}${esc(mine.text)}</p>
+        <p class="txt">${ui.pre ? esc(ui.pre) + ' ' : ''}${esc(mine.text)}${mine.text2 ? ' … ' + esc(mine.text2) : ''}</p>
         <button class="btn small" id="edit">✏️ ${VI('Change it', 'Sửa lại')}</button></div>`;
-      $('#edit').onclick = () => { editing = true; $('#area').innerHTML = ''; screenUpdate(); $('#inp').value = mine.text; };
+      $('#edit').onclick = () => { editing = true; $('#area').innerHTML = ''; screenUpdate(); $('#inp').value = mine.text; if ($('#inp2')) $('#inp2').value = mine.text2 || ''; };
       return;
     }
     if ($('#inp')) return; // keep what they are typing
     $('#area').innerHTML = `<div class="card col">
+      ${two ? `<b>1️⃣ ${VI('Box 1: The + noun', 'Ô 1: The + danh từ')}</b>` : ''}
       <div class="inrow">${ui.pre ? `<span class="pre">${ui.pre}</span>` : ''}<textarea id="inp" maxlength="170" placeholder="${esc(ui.ph)}" autocapitalize="sentences"></textarea></div>
+      ${two ? `<p class="muted center">⬇️ ${VI('…your partners’ relative clause goes here…', '…mệnh đề quan hệ của các bạn cùng nhóm nằm ở đây…')} ⬇️</p>
+      <b>2️⃣ ${VI('Box 2: the verb + the rest of your sentence', 'Ô 2: động từ + phần còn lại của câu')}</b>
+      <div class="inrow"><textarea id="inp2" maxlength="170" placeholder="is / was / can …"></textarea></div>` : ''}
       <div id="msg"></div>
       <button class="btn primary" id="send">🔒 ${VI('Check & lock in', 'Kiểm tra & khoá')}</button></div>`;
     const inp = $('#inp');
     const draftKey = 'cp_draft_' + CODE + '_' + st().round; inp.value = inp.value || LS.get(draftKey, '');
     inp.oninput = () => { LS.set(draftKey, inp.value); $('#msg').innerHTML = ''; };
-    inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('#send').click(); } };
-    const lockIn = (text, warned) => {
+    const inp2 = $('#inp2');
+    inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); if (inp2) inp2.focus(); else $('#send').click(); } };
+    if (inp2) { inp2.oninput = () => { $('#msg').innerHTML = ''; }; inp2.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('#send').click(); } }; }
+    const lockIn = (text, warned, text2) => {
       editing = false; LS.del(draftKey);
-      put(`rounds/${roundKey(st().round)}/h/${PID}`, Object.assign({ text, at: Date.now() }, warned ? { warned: true } : {}));
+      put(`rounds/${roundKey(st().round)}/h/${PID}`, Object.assign({ text, at: Date.now() }, text2 ? { text2 } : {}, warned ? { warned: true } : {}));
     };
     $('#send').onclick = () => {
-      const res = checkHalf(inp.value, checkRole, R.meta.type);
+      const res = checkHalf(inp.value, checkRole, R.meta.type, { ro: me.ro, t2: inp2 ? inp2.value : '' });
+      if (!res.empty && inp2 && !cleanHalf(inp2.value)) Object.assign(res, { empty: true, msg: VI('Write box 2 too! ✍️', 'Viết cả ô 2 nữa nhé!') });
       if (res.empty) { $('#msg').innerHTML = `<div class="err"><b>${res.msg}</b></div>`; return; }
-      if (res.ok) return lockIn(res.text);
+      const text2 = inp2 ? res.text2 || cleanHalf(inp2.value) : '';
+      if (res.ok) return lockIn(res.text, false, text2);
       // only a suggestion: show it, let them fix or lock in anyway
       $('#msg').innerHTML = `<div class="warn">
         <span class="who">🤖 Máy gợi ý: câu này có thể chưa đúng</span>
@@ -2497,13 +2824,41 @@ function sWrite() {
         <span class="note">Đây chỉ là gợi ý của máy, có thể sai. Bạn đọc kỹ lại câu nhé. Nếu chắc là đúng rồi thì cứ bấm khoá. Cả lớp sẽ cùng sửa câu sau.</span>
         <div class="row"><button class="btn small" id="fix">✏️ ${VI('Let me fix it', 'Để mình sửa')}</button><button class="btn small primary" id="anyway">🔒 ${VI('It’s right, lock it in', 'Đúng rồi, khoá luôn')}</button></div></div>`;
       $('#fix').onclick = () => { $('#msg').innerHTML = ''; inp.focus(); };
-      $('#anyway').onclick = () => lockIn(res.text, true);
+      $('#anyway').onclick = () => lockIn(res.text, true, text2);
       $('#msg').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
   });
 }
+function sRevealRel() {
+  const s = st(), R = curRound(), i = Math.min(s.cur || 0, R.meta.order.length - 1), tk = R.meta.order[i], ro = R.meta.roles[tk];
+  const pids = [ro.if, ro.main, ro.x].filter(Boolean), own = pids.includes(PID), names = pids.map(pname), H = R.h || {}, guess = !!ro.card, ans = guess && !!s.ans;
+  if (!s.flipped) return show(`srl${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">${guess ? '🎭' : '🧑‍🤝‍🧑'}</p>
+    <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesC(names)}</p>
+    <p class="muted">${VI('Look at the screen 👀', 'Nhìn lên màn hình nào 👀')}</p></div></div>`);
+  const cls = ['i', 'm', 'xx'];
+  show(`srl${s.round}_${i}_1_${ans}`, `<div class="wrap">${pHead()}
+    <p class="center"><b>${namesC(names)}</b></p>
+    <div class="col" style="gap:8px">${pids.map((p, k) => `<p class="psent"><span class="${cls[k]}">${relSentHTML(H[p] && H[p].text)}</span></p>`).join('')}</div>
+    ${guess ? (ans ? `<div class="gans small">${cardImg(ro.card, 'gwimg')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2><p id="gres"></p></div></div>`
+        : own ? `<div class="card center"><p class="big-note">🙈 ${VI('The class is guessing…', 'Cả lớp đang đoán…')}</p></div>`
+        : `<p class="center"><b>🤔 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</b></p><div class="vote guess" data-slot="${tk}">${(ro.opts || []).map((o, k) => `<button data-gi="${k}"><span class="e">${'ABCD'[k]}</span><span>${esc(o)}</span></button>`).join('')}</div>`)
+      : own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>`
+      : `<p class="muted center">${VI('Do the sentences fit together?', 'Các câu có hợp nhau không?')}</p><div class="vote" data-slot="${tk}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}
+  </div>`, () => {
+    ROOT.querySelectorAll('.vote button').forEach(b => b.onclick = () => {
+      const base = `rounds/${roundKey(st().round)}`;
+      if (b.dataset.gi != null) { const gi = +b.dataset.gi; put(`${base}/g/${tk}/${PID}`, gi); put(`${base}/v/${tk}/${PID}`, (ro.opts || [])[gi] === ro.card.name ? 2 : 0); }
+      else put(`${base}/v/${tk}/${PID}`, +b.dataset.k);
+    });
+  }, () => {
+    const R2 = curRound(), my = R2 && R2.v && R2.v[tk] ? R2.v[tk][PID] : undefined, myG = R2 && R2.g && R2.g[tk] ? R2.g[tk][PID] : undefined;
+    ROOT.querySelectorAll('.vote button').forEach(b => b.classList.toggle('on', b.dataset.gi != null ? +b.dataset.gi === myG : +b.dataset.k === my));
+    if ($('#gres')) $('#gres').innerHTML = own ? VI('How many guessed it? Look at the screen!', 'Bao nhiêu bạn đoán đúng? Nhìn lên màn hình!') : myG == null ? VI('You didn’t guess.', 'Bạn chưa đoán.') : my === 2 ? '✅ ' + VI('You got it!', 'Bạn đoán đúng rồi!') : '❌ ' + VI(`You said ${esc((ro.opts || [])[myG])}`, 'Bạn đoán sai rồi');
+  });
+}
 function sReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta.order) return sWait();
+  if (isRel(R.meta.type)) return sRevealRel();
   const i = Math.min(s.cur || 0, R.meta.order.length - 1), tk = R.meta.order[i], ro = R.meta.roles[tk];
   const own = [ro.if, ro.main, ro.x].includes(PID), slots = slotsOf(R, tk);
   const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname);
@@ -2514,7 +2869,7 @@ function sReveal() {
     <p class="center"><b>${namesC(names)}</b></p>
     ${slots.map(sl => {
       const p = sentenceParts(R, R.meta.roles, tk, sl), H = halfTexts(R.meta.type, p);
-      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${kwHTML(H.a)}</span>${H.kb ? ` <b class="k">${esc(H.kb)}</b>` : ''} <span class="m">${esc(H.b)}</span>${p.tw ? ` <b class="k">${esc(H.kx)}</b> <span class="xx">${esc(H.x)}</span>` : ''}</p>
+      return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${kwHTML(H.a)}</span>${H.kb ? ` <b class="k">${esc(H.kb)}</b>` : ''} <span class="m">${esc(H.b)}</span>${p.tw ? `${H.kx ? ` <b class="k">${esc(H.kx)}</b>` : ''} <span class="xx">${esc(H.x)}</span>` : ''}${H.e ? ` <span class="i">${esc(H.e)}</span>` : ''}</p>
         ${own ? '' : `<div class="vote" data-slot="${sl}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}</div>`;
     }).join('<hr style="border:0;border-top:2px dashed var(--line);width:100%">')}
     ${own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>` : `<p class="muted center">${VI('Do the two halves match?', 'Hai vế có hợp nhau không?')}</p>`}
