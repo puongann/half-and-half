@@ -72,6 +72,14 @@ details summary{cursor:pointer;font-weight:800}
 .tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .tbl{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-height:92px;box-shadow:0 4px 0 var(--ink)}
 .tbl h3{font-size:18px;display:flex;justify-content:space-between;align-items:center}
+.tbl.team-r{border-top:10px solid var(--red)} .tbl.team-b{border-top:10px solid var(--blue-deep)}
+.tteam{display:inline-block;font:800 15px var(--body);padding:2px 10px;border-radius:999px;border:2px solid var(--ink);background:#fff;white-space:nowrap}
+.tteam.r{background:#ffd9d9} .tteam.b{background:#d6ebff}
+.battle{display:flex;align-items:stretch;gap:12px;margin:0 0 16px}
+.battle .bt{flex:1;display:flex;justify-content:space-between;align-items:center;gap:10px;border:3px solid var(--ink);border-radius:18px;padding:10px 18px;box-shadow:0 4px 0 var(--ink);font:800 22px var(--display)}
+.battle .bt b{font-size:34px} .battle .bt.r{background:#ffd9d9} .battle .bt.b{background:#d6ebff} .battle .bt.lead{outline:4px solid var(--sun-deep)}
+.battle .vs{align-self:center;font:900 22px var(--display)} .battle.big .bt{font-size:30px;padding:16px 24px} .battle.big .bt b{font-size:52px}
+@media (max-width:600px){.battle{flex-direction:column}.battle .vs{display:none}}
 .tbl.full{background:#f3eef1} .tbl.ready{background:#eafaf0} .tbl.solo{background:#fff8e6}
 .chip{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:15px;padding:3px 10px;border-radius:999px;background:var(--grid);border:2px solid transparent;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .role .who{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px}
@@ -92,12 +100,36 @@ button.tbl.mine{background:var(--sun)}
 #rjov .rjqr{display:flex;justify-content:center}
 #rjov .rjqr img,#rjov .rjqr canvas{width:min(300px,70vw)!important;height:auto!important}
 #rjov .rjlist{display:flex;flex-direction:column;gap:8px}
+/* teacher's card manager */
+#cmov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.55);display:flex;justify-content:center;align-items:flex-start;padding:16px;overflow:auto}
+#cmov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
+#cmov .cmtabs{display:flex;gap:8px;flex-wrap:wrap}
+#cmov .cmtabs .btn{box-shadow:0 3px 0 var(--ink)} #cmov .cmtabs .btn.on{background:var(--ink);color:#fff}
+#cmov input[type=search],#cmov input[type=text]{font:inherit;padding:8px 12px;border:2px solid var(--ink);border-radius:12px;background:#fff;min-width:0}
+.cmgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.cm{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:10px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative}
+.cm.off{background:#f3eef3;border-style:dashed} .cm.off .gwimg,.cm.off .gwemo,.cm.off b{opacity:.35;filter:grayscale(1)}
+.cm .gwimg{width:120px;height:120px} .cm .gwemo{font-size:84px;height:120px;display:flex;align-items:center}
+.cm b{font:800 16px/1.15 var(--display);min-height:2.3em;display:flex;align-items:center}
+.cm .cmbar{display:flex;gap:2px;align-items:center;justify-content:center;flex-wrap:wrap}
+.cm .cmbar .btn.ghost{text-decoration:none;font-size:18px;padding:4px 6px}
+.cm .cmpic{display:flex;flex-direction:column;gap:6px;width:100%} .cm .cmpic input{width:100%;font-size:13px!important;padding:6px 8px!important}
+.cm .cmpic .row{gap:4px;justify-content:center} .cm .cmpic a{font-size:13px}
+.cm .cmnew{position:absolute;top:6px;left:6px;font-size:11px;padding:3px 7px 2px}
+.sw{position:relative;display:inline-block;width:46px;height:26px;flex:none;cursor:pointer}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;background:#d9cfd7;border:2px solid var(--ink);border-radius:99px;transition:background .15s}
+.sw span:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border:2px solid var(--ink);border-radius:50%;transition:transform .15s}
+.sw input:checked+span{background:var(--mint)} .sw input:checked+span:before{transform:translateX(20px)}
+.sw input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
 /* demo mode */
 body.demo{padding-bottom:150px}
 body.demo-phone .wide{padding-right:350px}
 #demoBar{position:fixed;left:12px;right:12px;bottom:12px;z-index:70;display:flex;align-items:center;gap:14px;background:#fff;border:4px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:10px 14px}
 #demoBar .dnav{font-size:30px;line-height:1;padding:4px 16px 8px;background:var(--sun)}
 #demoBar .dtag{font:800 15px/1 var(--display);background:var(--sun);border:3px solid var(--ink);border-radius:999px;padding:7px 12px 5px;white-space:nowrap}
+#dMode{font:800 15px/1 var(--display);padding:7px 8px;border:3px solid var(--ink);border-radius:999px;background:#fff;max-width:200px}
+.dteams{padding:5px 10px;font-size:15px;gap:5px}
 #demoBar .dtxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 #demoBar .dtxt b{font:800 clamp(17px,1.7vw,24px)/1.2 var(--display)}
 #demoBar .dtxt span{color:var(--ink-soft);font-size:clamp(14px,1.2vw,17px)}
@@ -122,7 +154,7 @@ body.demo-phone .wide{padding-right:350px}
 
 /* ---- reveal stage ---- */
 .stage{display:flex;flex-direction:column;align-items:center;gap:18px;padding:10px 0}
-.stage .who{font:800 clamp(24px,3vw,44px)/1.1 var(--display);text-align:center}
+.stage .who{font:800 clamp(24px,3vw,44px)/1.1 var(--display);text-align:center} .stage .who.many{font-size:clamp(16px,1.5vw,24px);line-height:1.4}
 .pairs{display:flex;flex-direction:column;gap:22px;width:100%;align-items:center}
 .sent{display:flex;align-items:stretch;justify-content:center;gap:0;width:100%;flex-wrap:wrap;position:relative}
 .half{font:700 clamp(22px,2.6vw,40px)/1.25 var(--display);padding:18px 26px;border:4px solid var(--ink);box-shadow:0 7px 0 var(--ink);background:#fff;max-width:46%;transition:transform .7s cubic-bezier(.2,1.4,.4,1),opacity .4s,border-radius .4s,margin .5s}
@@ -150,14 +182,28 @@ body.demo-phone .wide{padding-right:350px}
 /* relative clauses: whole sentences stacked, relative word in bold; Make A Guess cards */
 .story{display:flex;flex-direction:column;gap:12px;width:100%;max-width:1100px;margin:0 auto}
 .story .half{max-width:100%;border-radius:22px;animation:storyIn .5s cubic-bezier(.2,1.4,.4,1) backwards}
+.story.many{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));max-width:1500px;gap:10px}
+.story.many .half{font-size:clamp(18px,1.6vw,26px);padding:10px 16px;box-shadow:0 4px 0 var(--ink);border-width:3px}
+.facedown.many{gap:10px} .facedown.many div{width:90px;height:70px;font-size:34px;border-width:3px;border-radius:14px;box-shadow:0 4px 0 var(--ink)}
 @keyframes storyIn{from{opacity:0;transform:translateY(24px) scale(.96)}}
 b.rw{background:var(--sun);border:3px solid var(--ink);border-radius:999px;padding:0 10px;box-shadow:0 3px 0 var(--ink);white-space:nowrap}
 .psent b.rw{border-width:2px;padding:0 6px;box-shadow:none}
+ins.fixw{color:var(--red);text-decoration:none} ins.fixw b.rw{color:var(--red)}
+del.fixd{color:var(--ink-soft);opacity:.75;text-decoration:line-through 3px var(--red)}
+.rs{cursor:text;white-space:pre-wrap;outline:none}
+.rs.editing{caret-color:var(--red)} .rs del.fixd{margin:0 .25em;user-select:none}
+.fixbtn{border:2px solid var(--ink);background:#fff;border-radius:999px;font:700 14px var(--body);padding:1px 10px;margin-left:8px;cursor:pointer;vertical-align:middle;text-transform:none;letter-spacing:0}
+.fixrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap} .fixrow input{flex:1;min-width:240px;font:700 clamp(20px,2.4vw,34px) var(--display);padding:4px 12px;border:3px solid var(--ink);border-radius:14px;color:var(--ink)}
 .gwcard{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:8px;margin:6px 0 10px}
 .gwcard b{display:block;font:800 24px/1.1 var(--display)} .gwcard small{color:var(--muted,#7a6a76)}
 .gwimg{width:84px;height:84px;object-fit:cover;border-radius:12px;border:2px solid var(--ink);background:#f3eef3;flex:none}
 .gwbig{width:min(200px,30vw);height:min(200px,30vw);object-fit:cover;border-radius:22px;border:4px solid var(--ink);box-shadow:0 7px 0 var(--ink);background:#fff}
 .gwemo{font-size:64px;line-height:1;flex:none}
+.tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:12px}
+.tcard{display:flex;gap:10px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:8px}
+.tcard .gwimg{width:72px;height:72px} .tcard .gwemo{font-size:52px} .tcard>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.tcard b{font:800 20px/1.1 var(--display)} .tcard select{font:inherit;font-size:14px;padding:4px 6px;border:2px solid var(--ink);border-radius:10px;background:#fff;max-width:100%}
+.tcard .who{font-size:13px;color:var(--muted,#7a6a76)}
 .gans{display:flex;align-items:center;justify-content:center;gap:24px;margin:14px auto;animation:storyIn .6s cubic-bezier(.2,1.6,.4,1) backwards}
 .gans h2{font-size:clamp(34px,4vw,60px)} .gans small{font-weight:800;color:var(--muted,#7a6a76)}
 .gans.small{justify-content:flex-start;gap:12px;margin:12px 0} .gans.small h2{font-size:26px}
@@ -1272,6 +1318,11 @@ const IRR = { went: 'go', ate: 'eat', had: 'have', drank: 'drink', saw: 'see', d
 const ROOT = document.getElementById('app');
 const QS = new URLSearchParams(location.search);
 const MAX_PER_TABLE = 3;
+// everyone in a group (relative-clause groups can be as big as you like: ro.m lists them all)
+const memOf = ro => !ro ? [] : ro.m || [ro.if, ro.main, ro.x].filter(Boolean);
+// a room that practises relative clauses allows big groups (e.g. the whole class in 2 groups)
+const bigGroups = () => { try { return roundTypes().some(t => isRel(t)); } catch (e) { return false; } };
+const maxPer = () => bigGroups() ? 99 : MAX_PER_TABLE;
 
 /* ---------- conditional types ---------- */
 const TYPES = {
@@ -1377,35 +1428,86 @@ const GW_CARDS = [
   GC('time', 'Tết (Lunar New Year)', 'Tết Nguyên Đán', ['tet', 'lunar new year']), GC('time', 'Christmas', 'Lễ Giáng Sinh', ['christmas', 'xmas', 'noel']), GC('time', 'Halloween'),
   GC('time', 'Mid-Autumn Festival', 'Tết Trung thu', ['mid autumn', 'trung thu']), GC('time', 'Valentine’s Day', 'Ngày Valentine', ['valentine', 'valentines']), GC('time', 'New Year’s Eve', 'Giao thừa', ['new year', 'giao thua']),
   GC('time', 'Children’s Day', 'Ngày Quốc tế Thiếu nhi', ['children s day', 'childrens day']), GC('time', 'Women’s Day (8/3)', 'Ngày Quốc tế Phụ nữ', ['women s day', 'womens day']), GC('time', 'Easter', 'Lễ Phục Sinh', ['easter']),
-  GC('time', 'Summer holiday', 'Mùa hè', ['summer']), GC('time', 'Birthday', 'Sinh nhật', ['birthday'])
+  GC('time', 'Summer holiday', 'Mùa hè', ['summer']), GC('time', 'Birthday', 'Sinh nhật', ['birthday']),
+  // more people & characters (g: star = real famous people, char = characters from cartoons, films, games, stories, legends, history)
+  ...[['Erik', 'Erik (ca sĩ)'], ['Đức Phúc', , ['duc phuc']], ['Bích Phương', , ['bich phuong']], ['Karik'], ['Hà Anh Tuấn', , ['anh tuan']], ['Noo Phước Thịnh', , ['noo', 'phuoc thinh']], ['Đông Nhi', , ['dong nhi']],
+    ['Chi Pu', , ['chipu']], ['Ninh Dương Lan Ngọc', , ['lan ngoc']], ['Phương Mỹ Chi', , ['my chi']], ['Văn Mai Hương', , ['mai huong']], ['Ngô Thanh Vân', , ['thanh van']],
+    ['Công Phượng', 'Nguyễn Công Phượng', ['cong phuong']], ['Tiến Linh', 'Nguyễn Tiến Linh', ['tien linh']], ['Đặng Văn Lâm', , ['van lam']], ['Huỳnh Như', , ['huynh nhu']], ['Ánh Viên', 'Nguyễn Thị Ánh Viên', ['anh vien']],
+    ['Hoàng Xuân Vinh', , ['xuan vinh']], ['Hai Bà Trưng', , ['hai ba trung', 'trung trac', 'trung nhi']], ['Trần Hưng Đạo', , ['hung dao', 'tran quoc tuan']], ['Võ Thị Sáu', , ['thi sau']],
+    ['BTS'], ['Jungkook', , ['jung kook']], ['Jennie (BLACKPINK)', 'Jennie (ca sĩ)', ['jennie', 'blackpink']], ['Rosé (BLACKPINK)', 'Rosé (ca sĩ)', ['rose', 'blackpink']], ['IU', 'IU (ca sĩ)', []],
+    ['Son Heung-min', , ['son heung min', 'heung min']], ['Neymar'], ['Kylian Mbappé', , ['mbappe']], ['Ed Sheeran', , ['sheeran']], ['Justin Bieber', , ['bieber']], ['Billie Eilish', , ['billie', 'eilish']],
+    ['Ariana Grande', , ['ariana']], ['Bruno Mars', , ['bruno']], ['Michael Jackson', , ['michael', 'jackson']], ['Elon Musk', , ['musk']], ['Bill Gates', , ['gates']], ['Mark Zuckerberg', , ['zuckerberg']],
+    ['Steve Jobs', , ['jobs']], ['Tom Holland', , ['holland']], ['Jackie Chan (Thành Long)', 'Thành Long', ['jackie chan', 'thanh long']], ['Bruce Lee (Lý Tiểu Long)', 'Lý Tiểu Long', ['bruce lee', 'ly tieu long']],
+    ['Charlie Chaplin', , ['chaplin', 'charlie']], ['Isaac Newton', , ['newton']], ['Leonardo da Vinci', , ['da vinci', 'leonardo']], ['Marie Curie', , ['curie']], ['Thomas Edison', , ['edison']]
+  ].map(([n, w, a]) => Object.assign(GC('person', n, w, a), { g: 'star' })),
+  ...[['Nobita', 'Nobi Nobita'], ['Shizuka', 'Minamoto Shizuka'], ['Son Goku', , ['goku', 'songoku']], ['Naruto', 'Uzumaki Naruto'], ['Luffy', 'Monkey D. Luffy', ['monkey d luffy']],
+    ['Shin (Crayon Shin-chan)', 'Nohara Shinnosuke', ['shin', 'shin chan', 'shinnosuke', 'crayon']], ['Mario', , ['super mario']], ['Batman', 'Người Dơi', ['bat man', 'nguoi doi']], ['Superman', 'Siêu Nhân (nhân vật)', ['super man', 'sieu nhan']],
+    ['Iron Man', 'Người Sắt', ['iron man', 'ironman', 'nguoi sat']], ['Thor', 'Thor (Marvel Comics)'], ['Hello Kitty', , ['kitty']], ['Peppa Pig', 'Heo Peppa', ['peppa', 'heo peppa']], ['Sherlock Holmes', , ['sherlock', 'holmes']],
+    ['Cinderella (Lọ Lem)', 'Lọ Lem', ['cinderella', 'lo lem']], ['Moon Lady (Chị Hằng)', 'Hằng Nga', ['hang nga', 'chi hang']], ['Lạc Long Quân', , ['lac long quan']], ['Âu Cơ', , ['au co']], ['Garfield'], ['Scooby-Doo', , ['scooby']],
+    ['Thỏ Bảy Màu', , ['tho bay mau']], ['Kitchen God (Ông Táo)', 'Táo Quân', ['ong tao', 'tao quan', 'kitchen god']], ['Pinocchio'], ['Aladdin'], ['Trư Bát Giới', , ['bat gioi', 'pigsy']], ['Đường Tăng', , ['duong tang']],
+    ['Mr. Bean', 'Mr. Bean', ['mr bean']], ['Minions', , ['minion']], ['Po (Kung Fu Panda)', 'Kung Fu Panda', ['kung fu panda', 'panda']], ['Steve (Minecraft)', , ['minecraft']]
+  ].map(([n, w, a]) => Object.assign(GC('person', n, w, a), { g: 'char' })),
+  GC('object', 'Mona Lisa', undefined, ['mona lisa', 'mona'])
 ].map((c, i) => Object.assign(c, { id: 'g' + i }));
+// the first person cards: characters vs real stars
+const GW_CHARS = new Set(['Doraemon', 'Pikachu', 'Harry Potter', 'Spider-Man', 'Conan', 'Tôn Ngộ Không', 'Thánh Gióng', 'Mickey Mouse', 'SpongeBob', 'Santa Claus']);
+GW_CARDS.forEach(c => { if (c.k === 'person' && !c.g) c.g = GW_CHARS.has(c.name) ? 'char' : 'star'; });
+const GW_PACKS = [['star', '🌟 Famous people'], ['char', '🦸 Characters (cartoons, films, legends)'], ['place', '📍 Places'], ['object', '🎁 Objects & food'], ['time', '⏰ Holidays & times']];
 const REL_TENSES = ['ps', 'past', 'pp', 'fut', 'near'];
 const noAccent = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
-// the prompt for one student: role if / main / x(link) = 1st / 2nd / 3rd prompt
-const relRoleIdx = role => role === 'if' ? 0 : role === 'main' ? 1 : 2;
-function relPrompt(ro, role) {
-  const set = ro && ro.card ? GW_KINDS[ro.card.k] || GW_KINDS.any : REL_SETS[ro && ro.set] || REL_SETS.star;
-  return set.p[relRoleIdx(role)];
+// what a student writes: ONE sentence with a relative clause, anything they like about the group's topic / secret card.
+// The set's prompts are only ideas (relative words, sentence frames and examples for the easier levels).
+function relTask(ro, pid) {
+  const card = ro && ro.card, set = card ? GW_KINDS[card.k] || GW_KINDS.any : REL_SETS[ro && ro.set] || REL_SETS.star;
+  const k = Math.max(0, memOf(ro).indexOf(pid)), idea = set.p[k % set.p.length];
+  const w = [...new Set(set.p.flatMap(p => p.w))];
+  const en = card ? 'Write ONE clue about your secret card. Anything you like (but no names!)' : `Write ONE sentence about ${set.e} ${set.en.toLowerCase()}. Anything you like!`;
+  const vi = card ? 'Viết MỘT câu gợi ý về thẻ bí mật. Viết gì cũng được (nhưng không ghi tên!)' : `Viết MỘT câu về ${set.vi.toLowerCase()}. Viết gì cũng được!`;
+  return { en, vi, w, fr: idea.fr, ex: idea.ex, ideas: set.p.map(p => p.en) };
 }
 // teacher's own Make A Guess cards: "Name" or "Name | Wikipedia page or picture link"
+function gwSetLink(c, link) {
+  delete c.wiki; delete c.img; link = String(link || '').trim(); if (!link) return c;
+  const m = link.match(/wikipedia\.org\/wiki\/([^?#]+)/);
+  if (m) c.wiki = decodeURIComponent(m[1]).replace(/_/g, ' '); else if (/^(https?:\/\/|data:image\/)/.test(link)) c.img = link; else c.wiki = link;
+  return c;
+}
 function parseGwMine(txt) {
   return String(txt || '').split('\n').map(l => l.trim()).filter(Boolean).slice(0, 60).map((l, i) => {
     const [name, link] = l.split('|').map(x => x.trim()), c = { id: 'm' + i, k: 'any', name: name.slice(0, 60), al: [] };
-    if (link) { const m = link.match(/wikipedia\.org\/wiki\/([^?#]+)/); if (m) c.wiki = decodeURIComponent(m[1]).replace(/_/g, ' '); else if (/^https?:\/\//.test(link)) c.img = link; else c.wiki = link; }
-    return c;
+    return link ? gwSetLink(c, link) : c;
   }).filter(c => c.name);
+}
+// the teacher's changes to the card list (kept on this computer): cards turned off, deleted, or with a new picture
+const gwEdit = () => { const e = LS.get('cp_gwedit', {}) || {}; return { off: e.off || {}, del: e.del || {}, pic: e.pic || {} }; };
+function gwAll(edit, mineTxt) {
+  const e = edit || {}, off = e.off || {}, del = e.del || {}, pic = e.pic || {};
+  return GW_CARDS.concat(parseGwMine(mineTxt)).filter(c => !(c.k !== 'any' && del[c.name])).map(c => {
+    const x = Object.assign({}, c); if (pic[c.name]) gwSetLink(x, pic[c.name]); if (off[c.name]) x.off = true; return x;
+  });
 }
 // hand out a card (or a prompt set) to each group; Make A Guess also gets 4 answer choices
 function relDeal(type, opt, used) {
   const lvl = opt.lvl || 'hard';
   if (TYPES[type].mode !== 'guess') return { set: opt.set && REL_SETS[opt.set] ? opt.set : shuffle(Object.keys(REL_SETS))[0], lvl };
-  const mine = parseGwMine(opt.mine), all = GW_CARDS.concat(mine);
-  let pool = opt.pack === 'mine' ? mine : opt.pack && GW_KINDS[opt.pack] ? GW_CARDS.filter(c => c.k === opt.pack) : all;
-  if (!pool.length) pool = GW_CARDS;
-  const fresh = pool.filter(c => !used.has(c.name)), card = shuffle((fresh.length ? fresh : pool).slice())[0]; used.add(card.name);
-  const same = all.filter(c => c.name !== card.name && (card.k === 'any' || c.k === card.k));
-  const opts = shuffle([card.name].concat(shuffle(same.slice()).slice(0, 3).map(c => c.name)));
-  const keep = { k: card.k, name: card.name, al: card.al || [] }; if (card.wiki) keep.wiki = card.wiki; if (card.img) keep.img = card.img;
+  const every = gwAll(opt.edit, opt.mine), on = every.filter(c => !c.off), built = on.filter(c => c.k !== 'any'), mine = on.filter(c => c.k === 'any');
+  const inPack = (c, pk) => pk === 'mine' ? c.k === 'any' : pk === 'person' ? c.k === 'person' : pk === 'star' || pk === 'char' ? c.g === pk : c.k === pk;
+  let pack = opt.pack, card = opt.pick && (on.find(c => c.name === opt.pick) || every.find(c => c.name === opt.pick));
+  if (!card) {
+    if (!pack || pack === 'all') {
+      const all0 = GW_PACKS.map(x => x[0]).concat(['mine']).filter(pk => on.some(c => inPack(c, pk))), ps = all0.filter(pk => on.some(c => inPack(c, pk) && !used.has(c.name)));
+      pack = shuffle((ps.length ? ps : all0).slice())[0];
+    }
+    let pool = on.filter(c => inPack(c, pack));
+    if (!pool.length) pool = built.length ? built : mine.length ? mine : GW_CARDS; // that topic is all switched off
+    const fresh = pool.filter(c => !used.has(c.name)); card = shuffle((fresh.length ? fresh : pool).slice())[0];
+  }
+  used.add(card.name);
+  // wrong answers: same kind of card, switched-on cards first
+  const sameAs = c => c.name !== card.name && (card.k === 'any' || (c.k === card.k && (!card.g || c.g === card.g)));
+  const wrong = shuffle(on.filter(sameAs)).concat(shuffle(every.filter(c => c.off && sameAs(c))), shuffle(GW_CARDS.filter(c => sameAs(c) && !every.some(x => x.name === c.name))));
+  const opts = shuffle([card.name].concat([...new Set(wrong.map(c => c.name))].slice(0, 3)));
+  const keep = { k: card.k, name: card.name, al: card.al || [] }; if (card.g) keep.g = card.g; if (card.wiki) keep.wiki = card.wiki; if (card.img) keep.img = card.img;
   return { card: keep, opts, lvl };
 }
 // pictures: from Vietnamese Wikipedia (page summary thumbnail), or the teacher's own link
@@ -1427,6 +1529,7 @@ function fillImgs() {
     wikiImg(im.dataset.wiki).then(u => { if (u) im.src = u; else { const sp = document.createElement('span'); sp.className = 'gwemo'; sp.textContent = im.dataset.emo || '🎭'; im.replaceWith(sp); } });
   });
 }
+const gwPackOf = c => c.k === 'any' ? 'mine' : c.k === 'person' ? c.g || 'star' : c.k;
 const gwCardHTML = c => `<div class="gwcard">${cardImg(c, 'gwimg')}<div><small>${VI('Your group’s secret card 🤫', 'Thẻ bí mật của nhóm bạn 🤫')}</small><b>${esc(c.name)}</b></div></div>`;
 const GROUPS = [
   { id: '0', topic: 'cond', label: 'Type 0', vi: 'Loại 0', types: ['0'] },
@@ -1452,6 +1555,23 @@ const THEMES = [
   ['🍜 Food', 'Food', 'Đồ ăn'], ['💸 Money', 'Money', 'Tiền'], ['🐶 Pets', 'Pets', 'Thú cưng'], ['📱 Phones', 'Phones', 'Điện thoại'],
   ['👩‍🏫 Teachers', 'Teachers', 'Thầy cô'], ['🦸 Superpowers', 'Superpowers', 'Siêu năng lực']
 ];
+// Make A Guess: after the answer, the class rates how well the group described it (this is the score)
+const RATES = [
+  { k: 2, e: '🎯', en: 'Spot on', vi: 'Tả rất đúng' },
+  { k: 1, e: '🙂', en: 'Partly right', vi: 'Đúng một phần' },
+  { k: 0, e: '❌', en: 'Not right', vi: 'Tả chưa đúng' }
+];
+// true when every played round was Make A Guess: the end screens then talk about describing, not being besties
+function guessGame() {
+  const Rs = Object.values((room && room.rounds) || {}).filter(R => R && R.meta && R.meta.order);
+  return Rs.length > 0 && Rs.every(R => TYPES[R.meta.type] && TYPES[R.meta.type].mode === 'guess');
+}
+const scoreWord = () => guessGame() ? VI('description score', 'điểm mô tả') : VI('compatible', 'hợp nhau');
+// how many guessed the secret card (shown, but not the score)
+function guessInfo(R, tk) {
+  const ro = R.meta.roles[tk], right = (ro.opts || []).indexOf(ro.card && ro.card.name), gs = Object.values((R.g && R.g[tk]) || {});
+  return { n: gs.length, ok: gs.filter(g => g === right).length };
+}
 const VOTES = [
   { k: 2, e: '🧑‍🤝‍🧑', en: 'Perfect match', vi: 'Hợp nhau quá' },
   { k: 1, e: '🙂', en: 'Kind of…', vi: 'Cũng tạm' },
@@ -1466,13 +1586,11 @@ const isPass = type => TYPES[type] && TYPES[type].kind === 'pass';
 const isRel = type => TYPES[type] && TYPES[type].kind === 'rel';
 // what each student writes: one whole sentence for their prompt (ro = the group's roles + card)
 function relLay(ro) {
-  const lvl = (ro && ro.lvl) || 'hard', part = role => {
-    const P = relPrompt(ro, role);
-    return { pre: '', en: P.en, vi: P.vi, ex: lvl === 'easy' ? P.ex : '', ph: lvl === 'easy' ? P.fr : 'One whole sentence…',
-      form: lvl === 'easy' ? '✍️ ' + P.fr : lvl === 'mid' ? `✍️ One sentence with ${P.w.join(' / ')} …` : '✍️ One whole sentence with a relative clause' };
-  };
-  const b = part('main');
-  return { a: part('if'), b, b2: b, x: part('link') };
+  const lvl = (ro && ro.lvl) || 'hard', P = relTask(ro, PID);
+  const part = { pre: '', en: P.en, vi: P.vi, ex: lvl === 'easy' ? P.ex : '', ph: lvl === 'easy' ? P.fr : 'One whole sentence…',
+    ideas: lvl === 'easy' ? P.ideas : null,
+    form: lvl === 'easy' ? '✍️ ' + P.fr : lvl === 'mid' ? `✍️ One sentence with ${P.w.join(' / ')} …` : '✍️ One whole sentence with a relative clause' };
+  return { a: part, b: part, b2: part, x: part };
 }
 // what each half looks like for a round type: a = first half (If… / Something was V3), b = second (main / by…), x = trio twist
 function lay(type, c, trio, three) {
@@ -1521,10 +1639,11 @@ function frameHTML(type, trio, withX) {
   if (isRel(type)) {
     if (TYPES[type].mode === 'guess') return `<div class="fi">${VI('Each group gets a SECRET card', 'Mỗi nhóm nhận 1 thẻ bí mật')}<small>${['person', 'place', 'object', 'time'].map(k => GW_KINDS[k].e + ' ' + GW_KINDS[k].en).join(' · ')}</small></div>
     <div class="fm">${VI('Each student writes 1 clue sentence with a relative clause (no names!)', 'Mỗi bạn viết 1 câu gợi ý có mệnh đề quan hệ (không ghi tên!)')}<small>This person is a singer who has millions of fans.</small></div>
-    <div class="fx" id="fx">${VI('The class guesses on their phones', 'Cả lớp đoán trên điện thoại')}<small>${VI('More right guesses = the class understands you!', 'Càng nhiều bạn đoán đúng = lớp càng hiểu ý nhóm!')}</small></div>`;
+    <div class="fx" id="fx">${VI('The class guesses, then rates the description', 'Cả lớp đoán, rồi chấm phần mô tả')}<small>${VI('The group that describes best wins!', 'Nhóm mô tả hay và đúng nhất sẽ thắng!')}</small></div>`;
     const S = REL_SETS.star;
-    return `<div class="fi">${VI('Student 1: one sentence for prompt 1', 'Bạn 1: viết 1 câu theo gợi ý 1')}<small>${esc(S.p[0].ex)}</small></div>
-    <div class="fm">${VI('Student 2: one sentence for prompt 2, without knowing sentence 1', 'Bạn 2: viết 1 câu theo gợi ý 2, không biết câu của bạn 1')}<small>${esc(S.p[1].ex)}</small></div>${withX ? `<div class="fx" id="fx">${VI('Group of 3: student 3 writes prompt 3', 'Nhóm 3: bạn 3 viết theo gợi ý 3')}<small>${esc(S.p[2].ex)}</small></div>` : ''}`;
+    return `<div class="fi">${VI('Each group gets a topic', 'Mỗi nhóm nhận 1 chủ đề')}<small>${Object.values(REL_SETS).map(x => x.e + ' ' + esc(x.en)).join(' · ')}</small></div>
+    <div class="fm">${VI('Each student writes ONE sentence about it: anything they like, without seeing the others', 'Mỗi bạn viết MỘT câu về chủ đề đó: viết gì cũng được, không biết các bạn khác viết gì')}<small>${esc(S.p[0].ex)} · ${esc(S.p[1].ex)}</small></div>
+    <div class="fx" id="fx">${VI('The class votes: do the sentences fit together?', 'Cả lớp bình chọn: các câu có hợp nhau không?')}<small>${VI('Any group size: pairs, or the whole class in 2 big groups', 'Nhóm bao nhiêu người cũng được: cặp, hoặc cả lớp chia 2 nhóm lớn')}</small></div>`;
   }
   const L = lay(type, null, trio), xHTML = `${VI('Group of 3:', 'Nhóm 3:')} ${esc(L.x.form)}<small>${esc(L.x.ex)}</small>`;
   return `<div class="fi">${esc(L.a.form)}<small>${esc(L.a.ex)}${isPass(type) ? '' : ','}</small></div>
@@ -1653,7 +1772,7 @@ document.addEventListener('mouseover', e => {
 
 /* ---------- relative clause checker (advice only): one whole sentence, checked by the shared Chó checker ---------- */
 function checkRelSentence(raw, role, ctx) {
-  const ro = ctx.ro || {}, P = relPrompt(ro, role), t = cleanHalf(raw);
+  const ro = ctx.ro || {}, P = relTask(ro, PID), t = cleanHalf(raw);
   const hint = `Đề bài: <b>${esc(P.vi)}</b><br>Từ quan hệ có thể dùng: <b>${P.w.join(' / ')}</b><br>Ví dụ: <i>${esc(P.ex)}</i>`;
   if (t.length > 200) return { ok: false, msg: VI('That’s a novel! Keep it under 200 characters.', 'Dài quá! Viết dưới 200 ký tự thôi nhé.'), hint };
   if (t.split(/\s+/).length < 4) return { ok: false, msg: VI('Write a whole sentence!', 'Viết cả một câu hoàn chỉnh nhé!'), hint };
@@ -1839,7 +1958,7 @@ function tablesMap() {
 }
 const slotsOf = (R, tk) => { const ro = R && R.meta && R.meta.roles && R.meta.roles[tk]; if (!ro) return []; return ro.x && R.meta.trio === 'two' ? [tk + 'a', tk + 'b'] : [tk]; };
 const tableOfSlot = s => s.replace(/[ab]$/, '');
-const tableDone = (R, tk) => { const ro = R.meta.roles[tk], H = R.h || {}; return [ro.if, ro.main, ro.x].filter(Boolean).every(p => H[p] && H[p].text); };
+const tableDone = (R, tk) => { const ro = R.meta.roles[tk], H = R.h || {}; return memOf(ro).every(p => H[p] && H[p].text); };
 function slotScore(R, slot) {
   const vs = Object.values((R && R.v && R.v[slot]) || {}).filter(v => v === 0 || v === 1 || v === 2);
   const n = vs.length, cls = n ? vs.reduce((a, b) => a + b, 0) / (2 * n) * 100 : null;
@@ -1862,19 +1981,19 @@ function leaderboard() {
       const s = tableScore(R, tk); if (s.compat == null && s.chaos == null) continue;
       const t = tot[tk] = tot[tk] || { tk, c: [], ch: [], pids: new Set() };
       if (s.compat != null) t.c.push(s.compat); if (s.chaos != null) t.ch.push(s.chaos);
-      const ro = R.meta.roles[tk]; [ro.if, ro.main, ro.x].filter(Boolean).forEach(p => t.pids.add(p));
+      const ro = R.meta.roles[tk]; memOf(ro).forEach(p => t.pids.add(p)); if (ro.team) t.team = ro.team;
     }
   }
   const tm = tablesMap();
   return Object.values(tot).map(t => {
-    return { tk: t.tk, names: groupNames(t.tk, t.pids), compat: t.c.length ? t.c.reduce((a, b) => a + b, 0) / t.c.length : 0, chaos: t.ch.length ? t.ch.reduce((a, b) => a + b, 0) / t.ch.length : 0, rounds: t.c.length };
+    return { tk: t.tk, team: t.team, names: groupNames(t.tk, t.pids), compat: t.c.length ? t.c.reduce((a, b) => a + b, 0) / t.c.length : 0, chaos: t.ch.length ? t.ch.reduce((a, b) => a + b, 0) / t.ch.length : 0, rounds: t.c.length };
   }).sort((a, b) => b.compat - a.compat || a.tk.localeCompare(b.tk));
 }
 // names of a pair now (falls back to who played in it)
 function groupNames(tk, pids) {
   const now = (tablesMap()[tk.slice(1)] || []).map(p => p.name);
   if (now.length >= 2) return now;
-  if (!pids && room.rounds) { pids = new Set(); Object.values(room.rounds).forEach(R => { const ro = R && R.meta && R.meta.roles && R.meta.roles[tk]; if (ro) [ro.if, ro.main, ro.x].filter(Boolean).forEach(p => pids.add(p)); }); }
+  if (!pids && room.rounds) { pids = new Set(); Object.values(room.rounds).forEach(R => { const ro = R && R.meta && R.meta.roles && R.meta.roles[tk]; if (ro) memOf(ro).forEach(p => pids.add(p)); }); }
   return [...(pids || [])].map(pname);
 }
 const pct = x => x == null ? '–' : Math.round(x) + '%';
@@ -1951,7 +2070,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b || !isHost()) return;
   const act = b.dataset.act, rid = b.dataset.rid;
   if (act === 'rjqr') openRejoinQR();
-  else if (act === 'demo') openDemo(room.meta.groups || ['1'], true);
+  else if (act === 'demo') openDemo(room.meta.groups || ['1'], true, teamsOn());
   else if (act === 'rjclose') { const ov = document.getElementById('rjov'); if (ov) ov.remove(); drawRejoin(); }
   else if (act === 'rjok') put('rejoin/' + rid + '/ok', true);
   else if (act === 'rjno') put('rejoin/' + rid, null);
@@ -1980,7 +2099,9 @@ function showHome() {
           <p class="muted" style="font-size:14px">${VI('Same database as the Chó game is fine. Leave empty to test on this computer only (open the student link in another tab).', 'Dùng chung database với game Chó được. Để trống để thử trên máy này (mở link học sinh ở tab khác).')}</p>
         </div></details>
       <button class="btn primary" id="create">✨ ${VI('Create room', 'Tạo phòng')}</button>
-      <button class="btn" id="demo">🎬 ${VI('Demo for the class (pretend students)', 'Chơi thử cho cả lớp xem (học sinh ảo)')}</button>
+      <div class="col demomodes" style="gap:8px"><b>🎬 ${VI('Demo for the class (15 pretend students)', 'Chơi thử cho cả lớp xem (15 học sinh ảo)')}</b>
+        <div class="row" style="gap:8px">${DEMO_MODES.map(m => `<button class="btn small" data-demo="${m.k}" type="button">${m.e} ${m.en}</button>`).join('')}</div>
+        <label class="chk" style="align-self:flex-start"><input type="checkbox" id="demoTeams"${LS.get('cp_demoTeams', false) ? ' checked' : ''}> ⚔️ ${VI('With 2 teams: 🔴 Red vs 🔵 Blue', 'Có 2 đội: Đỏ đấu Xanh')}</label></div>
       ${last ? `<button class="btn small" id="resume">↩︎ ${VI(`Back to room ${esc(last.code)}`, `Quay lại phòng ${esc(last.code)}`)}</button>` : ''}
     </div>
     <div class="card col">
@@ -1991,7 +2112,8 @@ function showHome() {
   </div>`, () => {
     $('#groups').querySelectorAll('[data-all]').forEach(b => b.onclick = () => GROUPS.filter(g => g.topic === b.dataset.all).forEach(g => ($('#groups').querySelector(`input[value="${g.id}"]`).checked = true)));
     $('#create').onclick = createRoom;
-    $('#demo').onclick = () => { const g = [...$('#groups').querySelectorAll('input:checked')].map(i => i.value); openDemo(g.length ? g : ['1'], false); };
+    $('#demoTeams').onchange = () => LS.set('cp_demoTeams', $('#demoTeams').checked);
+    document.querySelectorAll('[data-demo]').forEach(b => b.onclick = () => openDemoMode(b.dataset.demo, $('#demoTeams').checked, false));
     if ($('#resume')) $('#resume').onclick = () => go(last.code, last.db, true);
     $('#join').onclick = () => { const c = $('#code').value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (c) go(c.startsWith('HH') ? c : 'HH' + c, DB || 'local'); };
   });
@@ -2026,7 +2148,11 @@ async function createRoom() {
    (local only, never touches the real room or Firebase)
    ====================================================================== */
 const DEMO_CODE = 'HHDEMO';
-const DEMO_BOTS = [['dmai', 'Mai'], ['dtu', 'Tú'], ['dlinh', 'Linh'], ['dkhoa', 'Khoa'], ['dvy', 'Vy']];
+const DEMO_BOTS = [['dmai', 'Mai'], ['dtu', 'Tú'], ['dlinh', 'Linh'], ['dkhoa', 'Khoa'], ['dvy', 'Vy'], ['dan', 'An'], ['dbao', 'Bảo'], ['dchau', 'Châu'],
+  ['ddung', 'Dũng'], ['dgiang', 'Giang'], ['dha', 'Hà'], ['dhuy', 'Huy'], ['dminh', 'Minh'], ['dngoc', 'Ngọc'], ['dphuc', 'Phúc']];
+// the demo class: 15 students in 6 groups [1st half, 2nd half, 3rd]; Mai (the phone) is in the first group
+const DEMO_GROUPS = [['dtu', 'dmai'], ['dkhoa', 'dlinh', 'dvy'], ['dan', 'dbao', 'dchau'], ['dhuy', 'dminh'], ['ddung', 'dgiang', 'dha'], ['dngoc', 'dphuc']];
+const demoTable = g => 'g' + [g[0], g[1]].sort().join('_');
 const DEMO_PHONE = 'dmai'; // the student whose phone is shown
 const DEMO_BANK = {
   '0': { if: ['you heat ice', 'you don’t sleep', 'my cat is hungry'], main: ['it melts', 'you feel tired', 'she bites my toes'], x: ['it turns into water', 'everybody gets grumpy', 'she sleeps all day'] },
@@ -2079,8 +2205,8 @@ const DEMO_GUESS = {
 // what a bot locks in
 function demoHalf(R, pid) {
   if (!isRel(R.meta.type)) return { text: demoText(R, pid) };
-  const all = Object.values(R.meta.roles), ro = all.find(r => [r.if, r.main, r.x].includes(pid)); if (!ro) return { text: '' };
-  const k = relRoleIdx(ro.if === pid ? 'if' : ro.main === pid ? 'main' : 'link'), i = (all.indexOf(ro) + (st().round || 1)) % 3;
+  const all = Object.values(R.meta.roles), ro = all.find(r => memOf(r).includes(pid)); if (!ro) return { text: '' };
+  const k = memOf(ro).indexOf(pid) % 3, i = (all.indexOf(ro) + (st().round || 1) + Math.floor(memOf(ro).indexOf(pid) / 3)) % 3;
   const B = ro.card ? DEMO_GUESS[ro.card.k] || DEMO_GUESS.any : DEMO_STORY[ro.set] || DEMO_STORY.star;
   return { text: B[k][i] };
 }
@@ -2089,10 +2215,10 @@ function demoCast(R, tk, pid) {
   const ro = R.meta.roles[tk];
   if (!ro || !ro.card) return { v: demoVote() };
   const right = (ro.opts || []).indexOf(ro.card.name), gi = Math.random() < 0.67 ? right : Math.floor(Math.random() * (ro.opts || [1]).length);
-  return { g: gi, v: (ro.opts || [])[gi] === ro.card.name ? 2 : 0 };
+  return { g: gi, v: Math.random() < 0.6 ? 2 : Math.random() < 0.7 ? 1 : 0 };
 }
 function demoText(R, pid) {
-  const me = Object.values(R.meta.roles).find(ro => [ro.if, ro.main, ro.x].includes(pid)); if (!me) return '';
+  const me = Object.values(R.meta.roles).find(ro => memOf(ro).includes(pid)); if (!me) return '';
   const role = me.if === pid ? 'if' : me.main === pid ? 'main' : 'x';
   const B = DEMO_BANK[R.meta.type] || DEMO_BANK['1'];
   const list = role === 'x' && R.meta.trio === 'twist' ? B.if : B[role];
@@ -2100,8 +2226,29 @@ function demoText(R, pid) {
   const same = Object.values(R.meta.roles).map(ro => role === 'if' ? ro.if : role === 'main' ? ro.main : ro.x).filter(Boolean).sort();
   return list[(same.indexOf(pid) + (st().round || 1)) % list.length];
 }
-function openDemo(groups, newTab) {
-  LS.set('cp_local_' + DEMO_CODE, { meta: { created: Date.now(), groups, v: 2, demo: true }, state: { phase: 'lobby', round: 0 } });
+// one demo for each kind of game
+const DEMO_MODES = [
+  { k: 'cond', e: '🔀', en: 'Conditionals', vi: 'Câu điều kiện', groups: ['0', '1', '2', '3', 'm'], type: '1' },
+  { k: 'pass', e: '🔄', en: 'Passive voice', vi: 'Câu bị động', groups: ['pS', 'pP', 'pF', 'pPP', 'pM'], type: 'pS' },
+  { k: 'rA', e: '📖', en: 'Story cards', vi: 'Thẻ gợi ý', groups: ['rA'], type: 'rA' },
+  { k: 'rG', e: '🎴', en: 'Make A Guess', vi: 'Đoán thẻ bí mật', groups: ['rG'], type: 'rG' }
+];
+const demoModeOf = groups => DEMO_MODES.find(m => m.groups.includes((groups || [])[0])) || DEMO_MODES[0];
+function openDemoMode(k, teams, newTab) { const m = DEMO_MODES.find(x => x.k === k) || DEMO_MODES[0]; LS.set('cp_lastType_' + DEMO_CODE, m.type); openDemo(m.groups, newTab, teams); }
+// in the demo's top bar: switch to another mode, with or without teams (restarts the demo)
+function demoModeHTML() {
+  const cur = demoModeOf(room.meta && room.meta.groups).k;
+  return `<select id="dMode" title="Demo mode · Chế độ chơi thử">${DEMO_MODES.map(m => `<option value="${m.k}"${m.k === cur ? ' selected' : ''}>${m.e} ${m.en}</option>`).join('')}</select>
+    <label class="chk dteams" title="2 teams: Red vs Blue · 2 đội Đỏ đấu Xanh"><input type="checkbox" id="dTeams"${teamsOn() ? ' checked' : ''}> ⚔️ ${VI('Teams', 'Đội')}</label>`;
+}
+document.addEventListener('change', e => {
+  if (!DEMO || !e.target || (e.target.id !== 'dMode' && e.target.id !== 'dTeams')) return;
+  const m = document.getElementById('dMode'), t = document.getElementById('dTeams');
+  if (e.target.id === 'dTeams') LS.set('cp_demoTeams', t.checked);
+  openDemoMode(m.value, t.checked, false);
+});
+function openDemo(groups, newTab, teams) {
+  LS.set('cp_local_' + DEMO_CODE, Object.assign({ meta: { created: Date.now(), groups, v: 2, demo: true }, state: { phase: 'lobby', round: 0 } }, teams ? { teams: true } : {}));
   LS.set('cp_host_' + DEMO_CODE, true);
   const u = new URL(location.href); u.search = ''; u.hash = '';
   u.searchParams.set('room', DEMO_CODE); u.searchParams.set('db', 'local'); u.searchParams.set('host', '1'); u.searchParams.set('demo', '1');
@@ -2117,25 +2264,30 @@ function demoTeacher() {
   if (!s.phase || s.phase === 'lobby') {
     DEMO_BOTS.forEach(([pid, name], i) => {
       if (pid === DEMO_PHONE && demoPhoneOn()) demoLater('j-late' + pid, 12000, () => { if (!players()[pid]) put('players/' + pid, { name, t: Date.now() }); });
-      else demoLater('j' + pid, 1200 + i * 1100, () => { if (!players()[pid]) put('players/' + pid, { name, t: Date.now() }); });
+      else demoLater('j' + pid, 1200 + Math.min(i, 4) * 1100 + Math.max(0, i - 4) * 450, () => { if (!players()[pid]) put('players/' + pid, { name, t: Date.now() }); });
     });
     if (DEMO_BOTS.every(([pid]) => P[pid] || pid === DEMO_PHONE)) {
       demoLater('pLK', 1500, () => { if (!players().dlinh.table) joinGroup('dlinh', 'dkhoa'); });
       demoLater('pV', 3200, () => { const t = players().dlinh.table; if (t && !players().dvy.table) joinGroup('dvy', 'dlinh'); });
       demoLater('pMT', demoPhoneOn() ? 16000 : 2400, () => { if (players().dmai && !players().dmai.table) joinGroup('dmai', 'dtu'); });
+      if (teamsOn() && !singles(tablesMap()).length && DEMO_BOTS.some(([pid]) => P[pid] && !P[pid].team)) demoLater('teams' + Object.keys(tablesMap()).length, 600, () => patch(teamUpdates(false)));
+      DEMO_GROUPS.slice(2).forEach((g, gi) => {
+        demoLater('pg' + gi, 2200 + gi * 1300, () => { if (!players()[g[1]].table) joinGroup(g[1], g[0]); });
+        if (g[2]) demoLater('pg3' + gi, 2800 + gi * 1300, () => { if (players()[g[1]].table && !players()[g[2]].table) joinGroup(g[2], g[1]); });
+      });
     }
   }
   if (s.phase === 'write' && R) {
-    const all = Object.values(R.meta.roles).flatMap(ro => [ro.if, ro.main, ro.x]).filter(Boolean);
-    all.filter(pid => !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => demoLater(`w${s.round}${pid}`, 2500 + i * 2200, () => {
+    const all = Object.values(R.meta.roles).flatMap(memOf);
+    all.filter(pid => !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => demoLater(`w${s.round}${pid}`, 2000 + i * 1100, () => {
       const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[pid])) put(`rounds/${roundKey(st().round)}/h/${pid}`, Object.assign({ at: Date.now() }, demoHalf(R2, pid)));
     }));
     demoLater(`w${s.round}late`, 30000, () => { const R2 = curRound(); if (st().phase === 'write' && !(R2.h && R2.h[DEMO_PHONE])) put(`rounds/${roundKey(st().round)}/h/${DEMO_PHONE}`, Object.assign({ at: Date.now() }, demoHalf(R2, DEMO_PHONE))); });
   }
   if (s.phase === 'reveal' && s.flipped && R) {
     const tk = R.meta.order[s.cur || 0], ro = R.meta.roles[tk];
-    DEMO_BOTS.map(b => b[0]).filter(pid => ![ro.if, ro.main, ro.x].includes(pid) && !(pid === DEMO_PHONE && demoPhoneOn())).forEach((pid, i) => slotsOf(R, tk).forEach(sl =>
-      demoLater(`v${s.round}${sl}${pid}`, 1800 + i * 1300, () => { if (st().phase === 'reveal' && st().flipped && curRound().meta.order[st().cur || 0] === tk) { const c = demoCast(curRound(), tk, pid); if (c.g != null) put(`rounds/${roundKey(st().round)}/g/${sl}/${pid}`, c.g); put(`rounds/${roundKey(st().round)}/v/${sl}/${pid}`, c.v); } })));
+    DEMO_BOTS.map(b => b[0]).filter(pid => !memOf(ro).includes(pid) && !(pid === DEMO_PHONE && demoPhoneOn()) && !(teamsOn() && ro.team && (P[pid] || {}).team === ro.team)).forEach((pid, i) => slotsOf(R, tk).forEach(sl =>
+      demoLater(`v${s.round}${sl}${pid}`, 1500 + i * 550, () => { if (st().phase === 'reveal' && st().flipped && curRound().meta.order[st().cur || 0] === tk) { const c = demoCast(curRound(), tk, pid); if (c.g != null) put(`rounds/${roundKey(st().round)}/g/${sl}/${pid}`, c.g); put(`rounds/${roundKey(st().round)}/v/${sl}/${pid}`, c.v); } })));
   }
 }
 const demoPhoneOn = () => LS.get('cp_demoPhone', true) && innerWidth >= 900;
@@ -2144,7 +2296,9 @@ const DEMO_STEPS = {
   pair: ['2️⃣ Tap the name of the person next to you to make a pair. A 3rd person taps a pair to join it.', 'Chạm vào tên bạn ngồi cạnh để ghép cặp. Bạn thứ 3 chạm vào một cặp để vào nhóm.'],
   start: ['3️⃣ Everyone has a partner. Teacher, press ▶ Start round!', 'Mọi người đã có cặp. Giáo viên bấm ▶ Bắt đầu vòng!'],
   writeRel: ['4️⃣ Each of you writes ONE whole sentence with a relative clause, in secret. 🤐 No talking! The computer may give a hint, but you decide.', 'Mỗi bạn viết MỘT câu hoàn chỉnh có mệnh đề quan hệ, giữ bí mật. 🤐 Không nói chuyện! Máy có thể gợi ý, nhưng bạn tự quyết định.'],
-  guess: ['6️⃣ Who or what is it? Guess on your phone! Then the teacher shows the answer and gives 0–5 🤝 for the sentences.', 'Đây là ai / cái gì? Đoán trên điện thoại! Sau đó giáo viên bấm xem đáp án và chấm 0–5 🤝 cho các câu.'],
+  guess: ['6️⃣ Who or what is it? Guess on your phone! Then the teacher shows the answer: rate the description 🎯 / 🙂 / ❌, and the teacher gives 0–5 🤝.', 'Đây là ai / cái gì? Đoán trên điện thoại! Sau khi xem đáp án, cả lớp chấm nhóm tả có đúng không, giáo viên chấm 0–5 🤝.'],
+  resultsGuess: ['7️⃣ Score = 50% class rating of the description + 50% teacher.', 'Điểm = 50% cả lớp chấm phần mô tả + 50% giáo viên.'],
+  finalGuess: ['🏆 The group that describes best wins!', 'Nhóm mô tả hay và đúng nhất sẽ thắng!'],
   write: ['4️⃣ Each of you writes a different part of ONE sentence, in secret. 🤐 No talking, only signs! The computer may give a hint, but you decide.', 'Mỗi bạn viết một phần của CÙNG một câu, giữ bí mật. 🤐 Không nói chuyện, chỉ ra hiệu! Máy có thể gợi ý, nhưng bạn tự quyết định.'],
   ready: ['4️⃣ Everyone has locked in. Teacher, press 🎬 Reveal!', 'Mọi người đã khoá câu. Giáo viên bấm để lật bài!'],
   flip: ['5️⃣ Whose halves go together? Teacher, press 🔄 Flip!', 'Các nửa câu có khớp nhau không? Giáo viên bấm 🔄 Lật!'],
@@ -2172,11 +2326,13 @@ function demoChrome() {
     $('#dPrev').onclick = () => demoGoto(demoScene() - 1);
     $('#dNext').onclick = () => demoGoto(demoScene() + 1);
     $('#dPhone').onclick = () => { LS.set('cp_demoPhone', !LS.get('cp_demoPhone', true)); demoChrome(); };
-    $('#dAgain').onclick = () => { openDemo(room.meta.groups || ['1'], false); };
+    $('#dAgain').onclick = () => { openDemo(room.meta.groups || ['1'], false, teamsOn()); };
+
     $('#dExit').onclick = () => { LS.del('cp_local_' + DEMO_CODE); LS.del('cp_host_' + DEMO_CODE); window.close(); setTimeout(() => { location.href = location.pathname; }, 200); };
   }
   const k = demoStep(), R0 = curRound(), rel = R0 && R0.meta && isRel(R0.meta.type) && st().phase !== 'lobby';
-  const t = DEMO_STEPS[rel && k === 'write' ? 'writeRel' : rel && k === 'vote' && Object.values(R0.meta.roles).some(r => r.card) ? 'guess' : k], sc = demoScene();
+  const gm = rel && Object.values(R0.meta.roles).some(r => r.card);
+  const t = DEMO_STEPS[rel && k === 'write' ? 'writeRel' : gm && k === 'vote' ? 'guess' : gm && (k === 'results' || k === 'final') ? k + 'Guess' : k], sc = demoScene();
   $('#dNum').textContent = `${sc + 1} / ${DEMO_SCENES}`; $('#dPrev').disabled = sc === 0; $('#dNext').disabled = sc === DEMO_SCENES - 1;
   if (bar.dataset.k !== k) { bar.dataset.k = k; bar.querySelector('.dtxt b').textContent = t[0]; bar.querySelector('.dtxt span').textContent = t[1]; bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
   let ph = document.getElementById('demoPhone');
@@ -2191,14 +2347,14 @@ function demoChrome() {
   if (ph) ph.hidden = !on;
 }
 // ‹ › jump between scenes: each scene is rebuilt from scratch, so going back works too
-const DEMO_PAIR = 'tgdmai_dtu', DEMO_TRIO = 'tgdkhoa_dlinh';
-const DEMO_SCENES = 11; // join, pair, start, write, ready, flip 1, vote 1, flip 2, vote 2, results, final
+const DEMO_TKS = DEMO_GROUPS.map(g => 't' + demoTable(g)), DEMO_NG = DEMO_GROUPS.length;
+const DEMO_SCENES = 7 + 2 * DEMO_NG; // join, pair, start, write, ready, (flip + vote) for each group, results, final
 function demoScene() {
   const s = st(), k = demoStep();
   if (s.phase === 'write') return k === 'ready' ? 4 : 3;
-  if (s.phase === 'reveal') return 5 + 2 * Math.min(s.cur || 0, 1) + (s.flipped ? 1 : 0);
-  if (s.phase === 'results') return 9;
-  if (s.phase === 'final') return 10;
+  if (s.phase === 'reveal') return 5 + 2 * Math.min(s.cur || 0, DEMO_NG - 1) + (s.flipped ? 1 : 0);
+  if (s.phase === 'results') return 5 + 2 * DEMO_NG;
+  if (s.phase === 'final') return 6 + 2 * DEMO_NG;
   return { join: 0, pair: 1 }[k] ?? 2;
 }
 function demoGoto(i) {
@@ -2208,27 +2364,36 @@ function demoGoto(i) {
   const old = room.rounds && room.rounds.r1 && room.rounds.r1.meta;
   let type = old ? old.type : ($('#rtype') && $('#rtype').value) || LS.get('cp_lastType_' + DEMO_CODE, types[0]);
   if (!TYPES[type]) type = types[Math.floor(Math.random() * types.length)];
-  const snap = { meta: { created: now, groups, v: 2, demo: true }, state: { phase: 'lobby', round: 0 }, players: {} };
+  const snap = { meta: { created: now, groups, v: 2, demo: true }, state: { phase: 'lobby', round: 0 }, players: {} }, tms = teamsOn();
+  if (tms) snap.teams = true;
+  // teams: keep the teams the class already has, else groups take turns (8 red v 7 blue)
+  const gTeam = DEMO_GROUPS.map((g, gi) => (old && old.roles && (old.roles[DEMO_TKS[gi]] || {}).team) || (players()[g[0]] || {}).team || (gi % 2 ? 'b' : 'r')), demoTeam = gi => gTeam[gi];
   if (i >= 1) DEMO_BOTS.forEach(([pid, name], k) => { snap.players[pid] = { name, t: now - 60000 + k * 1000 }; });
-  if (i >= 2) { ['dmai', 'dtu'].forEach(p => snap.players[p].table = DEMO_PAIR.slice(1)); ['dkhoa', 'dlinh', 'dvy'].forEach(p => snap.players[p].table = DEMO_TRIO.slice(1)); }
+  if (i >= 2) DEMO_GROUPS.forEach((g, gi) => g.forEach(p => { snap.players[p].table = demoTable(g); if (tms) snap.players[p].team = demoTeam(gi); }));
   if (i >= 3) {
-    const pass = isPass(type), rel = isRel(type), used = new Set(), relOpt = { set: LS.get('cp_relset', 'rand'), pack: LS.get('cp_gwpack', 'all'), lvl: LS.get('cp_rellvl', 'hard'), mine: LS.get('cp_gwmine', '') };
-    const roles = old && old.type === type ? old.roles : {
-      [DEMO_PAIR]: Object.assign({ if: 'dtu', main: 'dmai', x: null }, pass ? { c: shuffle(['so', 'because', 'but']).slice(0, 1) } : rel ? relDeal(type, relOpt, used) : {}),
-      [DEMO_TRIO]: rel ? Object.assign({ if: 'dkhoa', main: 'dlinh', x: 'dvy' }, relDeal(type, relOpt, used)) : { if: 'dkhoa', main: 'dlinh', x: 'dvy', c: pass ? shuffle(['and', 'so', 'but']).slice(0, 2) : ['', shuffle(['and', 'so', 'but'])[0]] }
-    };
+    const pass = isPass(type), rel = isRel(type), used = new Set(), relOpt = { set: LS.get('cp_relset', 'rand'), pack: LS.get('cp_gwpack', 'all'), lvl: LS.get('cp_rellvl', 'hard'), mine: LS.get('cp_gwmine', ''), edit: gwEdit() };
+    const same = old && old.type === type && DEMO_TKS.every(tk => old.roles && old.roles[tk]), roles = same ? old.roles : {};
+    if (!same) DEMO_GROUPS.forEach(([a, b, c], gi) => {
+      const ro = { if: a, main: b, x: c || null };
+      if (rel) Object.assign(ro, relDeal(type, relOpt, used));
+      else if (c) ro.c = pass ? shuffle(['and', 'so', 'but']).slice(0, 2) : ['', shuffle(['and', 'so', 'but'])[0]];
+      else if (pass) ro.c = shuffle(['so', 'because', 'but']).slice(0, 1);
+      if (tms) ro.team = demoTeam(gi);
+      roles[DEMO_TKS[gi]] = ro;
+    });
     const R = { meta: { type, theme: '', trio: 'link', roles, at: now } };
     snap.rounds = { r1: R }; snap.state = { phase: 'write', round: 1 };
     if (i >= 4) { R.h = {}; DEMO_BOTS.forEach(([pid]) => { R.h[pid] = Object.assign({ at: now }, demoHalf(R, pid)); }); }
     if (i >= 5) {
-      R.meta.order = [DEMO_PAIR, DEMO_TRIO];
-      snap.state = i >= 9 ? { phase: i === 9 ? 'results' : 'final', round: 1 } : { phase: 'reveal', round: 1, cur: i >= 7 ? 1 : 0, flipped: i % 2 === 0 };
+      R.meta.order = same && old.order && old.order.length === DEMO_NG ? old.order : DEMO_TKS.slice();
+      const cur = Math.floor((i - 5) / 2), end = 5 + 2 * DEMO_NG;
+      snap.state = i >= end ? { phase: i === end ? 'results' : 'final', round: 1 } : { phase: 'reveal', round: 1, cur, flipped: (i - 5) % 2 === 1 };
       // groups already shown get their votes and handshakes
-      const shown = i >= 9 ? 2 : i >= 7 ? 1 : 0;
+      const shown = i >= end ? DEMO_NG : cur;
       R.v = {}; R.hearts = {};
       R.meta.order.slice(0, shown).forEach(tk => {
         const ro = roles[tk]; R.v[tk] = {};
-        DEMO_BOTS.map(b => b[0]).filter(p => ![ro.if, ro.main, ro.x].includes(p)).forEach(p => { const c = demoCast(R, tk, p); R.v[tk][p] = c.v; if (c.g != null) { R.g = R.g || {}; (R.g[tk] = R.g[tk] || {})[p] = c.g; } });
+        DEMO_BOTS.map(b => b[0]).filter(p => !memOf(ro).includes(p) && !(tms && ro.team && snap.players[p].team === ro.team)).forEach(p => { const c = demoCast(R, tk, p); R.v[tk][p] = c.v; if (c.g != null) { R.g = R.g || {}; (R.g[tk] = R.g[tk] || {})[p] = c.g; } });
         R.hearts[tk] = 3 + Math.floor(Math.random() * 3);
       });
     }
@@ -2292,7 +2457,7 @@ function studentLink() {
 }
 function topBar(extra = '') {
   return `<div class="t-top"><div class="logo" style="font-size:clamp(24px,2.6vw,36px)"><span class="h">Half</span> &amp; <span class="b">Half</span> 🧑‍🤝‍🧑</div>
-    <div class="row">${extra}${DEMO ? '' : `<button class="btn small" data-act="demo">🎬 ${VI('Demo', 'Chơi thử')}</button><button class="btn small" data-act="rjqr">📱 ${VI('Rejoin QR', 'QR vào lại')}</button>`}<span class="tag sun">${DEMO ? '🎬 DEMO' : esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local && !DEMO ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
+    <div class="row">${extra}${DEMO ? '' : `<button class="btn small" data-act="demo">🎬 ${VI('Demo', 'Chơi thử')}</button><button class="btn small" data-act="rjqr">📱 ${VI('Rejoin QR', 'QR vào lại')}</button>`}${DEMO ? demoModeHTML() : ''}<span class="tag sun">${DEMO ? '🎬 DEMO' : esc(CODE.replace(/^HH/, 'HH-'))}</span>${api && api.local && !DEMO ? '<span class="tag">TEST MODE</span>' : ''}</div></div>`;
 }
 // a pair's id comes from both players, so two people tapping each other at the same time land in the same pair
 const pairId = (a, b) => 'g' + [a, b].sort().join('_');
@@ -2302,11 +2467,60 @@ const singles = tm => Object.values(players()).length ? Object.entries(players()
 function joinGroup(pid, target) {
   const tm = tablesMap(), tp = players()[target]; if (!tp || pid === target) return false;
   const grp = tp.table && tm[tp.table] ? tm[tp.table].filter(m => m.pid !== pid) : [];
-  if (grp.length >= MAX_PER_TABLE) { toast('That group is full (3 max).'); return false; }
+  if (grp.length >= maxPer()) { toast(`That group is full (${maxPer()} max).`); return false; }
   const id = grp.length >= 2 ? tp.table : (tp.table && grp.length === 1 ? tp.table : pairId(pid, target));
   const upd = { ['players/' + pid + '/table']: id, ['players/' + pid + '/t']: Date.now() };
   if (tp.table !== id) upd['players/' + target + '/table'] = id;
+  if (teamsOn() && tp.team) upd['players/' + pid + '/team'] = tp.team; // joining a group = joining its team
   patch(upd); return true;
+}
+// teacher: split everyone at random into n groups (2-3 each, or bigger when the room practises relative clauses)
+function makeGroups(n) {
+  const pids = shuffle(Object.keys(players())), np = pids.length;
+  if (np < 2 || !n) return;
+  if (Object.values(tablesMap()).some(m => m.length >= 2) && !confirm(`Mix everyone into ${n} new groups? The groups you have now will be replaced.`)) return;
+  const upd = {}, now = Date.now(); let made = 0;
+  const split = (list, k, team) => {
+    const base = Math.floor(list.length / k), extra = list.length % k; let at = 0;
+    for (let g = 0; g < k; g++) {
+      const mem = list.slice(at, at += base + (g < extra ? 1 : 0)), id = 'g' + mem.slice().sort().join('_');
+      mem.forEach((pid, j) => { upd['players/' + pid + '/table'] = id; upd['players/' + pid + '/t'] = now + made * 10 + j; upd['players/' + pid + '/team'] = team; });
+      made++;
+    }
+  };
+  if (teamsOn() && np >= 4) {
+    const A = pids.slice(0, Math.ceil(np / 2)), B = pids.slice(A.length), fit = (k, m) => Math.min(Math.floor(m / 2), Math.max(Math.ceil(m / maxPer()), k, 1));
+    const na = fit(Math.round(n * A.length / np), A.length); split(A, na, 'r'); split(B, fit(n - na, B.length), 'b');
+  } else split(pids, n, null);
+  selPid = null; patch(upd); toast(teamsOn() ? `⚔️ ${made} groups in 2 teams` : `👥 ${made} groups made`);
+}
+// two big teams for the whole class: 🔴 Red vs 🔵 Blue. Students still write in their small groups.
+const TEAMS = { r: { e: '🔴', en: 'Red team', vi: 'Đội Đỏ' }, b: { e: '🔵', en: 'Blue team', vi: 'Đội Xanh' } };
+const teamsOn = () => !!(room && room.teams);
+const groupTeam = mem => { const ts = mem.map(p => p.team).filter(t => t === 'r' || t === 'b'); return ts.length ? (ts.filter(t => t === 'r').length >= ts.length / 2 ? 'r' : 'b') : null; };
+const teamTag = t => t && TEAMS[t] ? `<span class="tteam ${t}">${TEAMS[t].e} ${VI(TEAMS[t].en, TEAMS[t].vi)}</span>` : '';
+// give every group (and everyone in it) one team, keeping the two teams the same size
+function teamUpdates(force) {
+  const upd = {}, cnt = { r: 0, b: 0 }, gs = groupsSorted(tablesMap()).filter(([, m]) => m.length >= 2);
+  const todo = [];
+  gs.forEach(([, m]) => { const t = force ? null : groupTeam(m); if (t) { cnt[t] += m.length; m.forEach(p => { if (p.team !== t) upd['players/' + p.pid + '/team'] = t; }); } else todo.push(m); });
+  todo.sort((a, b) => b.length - a.length).forEach(m => { const t = cnt.r <= cnt.b ? 'r' : 'b'; cnt[t] += m.length; m.forEach(p => { if (p.team !== t) upd['players/' + p.pid + '/team'] = t; }); });
+  return upd;
+}
+// average score of each team's groups (one round, or the whole game)
+function teamScores(onlyR) {
+  const acc = { r: [], b: [] };
+  for (const R of onlyR ? [onlyR] : Object.values((room && room.rounds) || {})) {
+    if (!R || !R.meta || !R.meta.order) continue;
+    for (const tk of R.meta.order) { const t = R.meta.roles[tk] && R.meta.roles[tk].team, c = tableScore(R, tk).compat; if (acc[t] && c != null) acc[t].push(c); }
+  }
+  const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  return { r: avg(acc.r), b: avg(acc.b), any: acc.r.length + acc.b.length > 0 };
+}
+function battleHTML(onlyR, big) {
+  const sc = teamScores(onlyR); if (!sc.any) return '';
+  const lead = sc.r == null ? 'b' : sc.b == null ? 'r' : sc.r > sc.b ? 'r' : sc.b > sc.r ? 'b' : '';
+  return `<div class="battle${big ? ' big' : ''}">${['r', 'b'].map(t => `<div class="bt ${t}${lead === t ? ' lead' : ''}"><span>${lead === t ? '👑 ' : ''}${TEAMS[t].e} ${VI(TEAMS[t].en, TEAMS[t].vi)}</span><b>${pct(sc[t])}</b></div>`).join('<span class="vs">VS</span>')}</div>`;
 }
 let selPid = null; // teacher: the name tapped first
 function tableCards(mode) {
@@ -2314,12 +2528,13 @@ function tableCards(mode) {
   let html = '';
   if (selPid && players()[selPid]) {
     html += `<div class="tbl" style="grid-column:1/-1;background:var(--sun)"><b>${VI(`${esc(pname(selPid))} selected — tap another name to pair them.`, 'Chạm vào tên khác để ghép cặp.')}</b>
-      <div class="row"><button class="btn small" data-act="unpair">✂️ ${VI('Unpair', 'Tách cặp')}</button><button class="btn small" data-act="remove">🗑 ${VI('Remove', 'Xoá')}</button><button class="btn small ghost" data-act="cancel">${VI('Cancel', 'Huỷ')}</button></div></div>`;
+      <div class="row"><button class="btn small" data-act="unpair">✂️ ${VI('Unpair', 'Tách cặp')}</button><button class="btn small" data-act="remove">🗑 ${VI('Remove', 'Xoá')}</button>${teamsOn() && players()[selPid].table ? `<button class="btn small" data-act="team">⚔️ ${VI('Move the group to the other team', 'Chuyển nhóm sang đội kia')}</button>` : ''}<button class="btn small ghost" data-act="cancel">${VI('Cancel', 'Huỷ')}</button></div></div>`;
   } else selPid = null;
   const chip = (p, ro) => {
     let rc = '', mark = '';
     if (mode === 'write') {
-      rc = ro ? (p.pid === ro.if ? 'r-if' : p.pid === ro.main ? 'r-main' : p.pid === ro.x ? 'r-x' : '') : '';
+      const mi = ro ? memOf(ro).indexOf(p.pid) : -1;
+      rc = ro ? (p.pid === ro.if ? 'r-if' : p.pid === ro.main ? 'r-main' : p.pid === ro.x ? 'r-x' : mi >= 0 ? ['r-if', 'r-main', 'r-x'][mi % 3] : '') : '';
       mark = rc ? (R.h && R.h[p.pid] ? ' ✓' : ' …') : ' ⏳';
     }
     return `<span class="chip ${rc}" data-pid="${p.pid}" style="${p.pid === selPid ? 'border-color:var(--ink);background:var(--sun)' : ''}">${esc(p.name)}${mark}</span>`;
@@ -2331,7 +2546,8 @@ function tableCards(mode) {
     if (mode === 'write') { if (ro) { const done = tableDone(R, tk); if (done) cls = 'ready'; status = done ? '✅' : '✍️'; } else status = '⏳'; }
     const link = mode === 'write' && ro && (ro.card || ro.set) ? `<div><span class="tag sun">${ro.card ? '🎭 ' + VI('secret card', 'thẻ bí mật') : esc(REL_SETS[ro.set].e + ' ' + REL_SETS[ro.set].en)}</span></div>`
       : mode === 'write' && ro && ro.c && ro.c.some(Boolean) ? `<div><span class="tag sun">🔗 ${ro.c.filter(Boolean).map(esc).join(' · ')}</span></div>` : '';
-    html += `<div class="tbl ${cls}"><h3><span>${mem.length >= 3 ? VI('Group of 3', 'Nhóm 3') : VI('Pair', 'Cặp')}</span><span>${status}</span></h3>${link}<div class="row" style="gap:6px">${mem.map(p => chip(p, ro)).join('')}</div></div>`;
+    const tt = mode === 'write' && ro ? ro.team : teamsOn() ? groupTeam(mem) : null;
+    html += `<div class="tbl ${cls}${tt ? ' team-' + tt : ''}"><h3><span>${mem.length >= 3 ? VI(`Group of ${mem.length}`, `Nhóm ${mem.length}`) : VI('Pair', 'Cặp')}${tt ? ' ' + TEAMS[tt].e : ''}</span><span>${status}</span></h3>${link}<div class="row" style="gap:6px">${mem.map(p => chip(p, ro)).join('')}</div></div>`;
   }
   const solo = singles(tm);
   if (solo.length) html += `<div class="tbl solo" style="grid-column:1/-1"><h3><span>${VI('Not paired yet', 'Chưa có cặp')}</span><span>👀 ${solo.length}</span></h3><div class="row" style="gap:6px">${solo.map(p => chip(p, null)).join('')}</div></div>`;
@@ -2348,6 +2564,7 @@ function bindChips() {
     const a = selPid; selPid = null;
     if (b.dataset.act === 'unpair' && a) put('players/' + a + '/table', null);
     else if (b.dataset.act === 'remove' && a && confirm(`Remove ${pname(a)} from the game?`)) put('players/' + a, null);
+    else if (b.dataset.act === 'team' && a) { const mem = tablesMap()[players()[a].table] || [], t = groupTeam(mem) === 'r' ? 'b' : 'r', upd = {}; mem.forEach(p => { upd['players/' + p.pid + '/team'] = t; }); patch(upd); }
     else screenUpdate && screenUpdate();
   });
 }
@@ -2380,16 +2597,28 @@ function tLobby() {
             <label class="field" id="relBox" style="flex:1;min-width:200px">${VI('Story cards', 'Bộ thẻ gợi ý')}
               <select id="relset"><option value="rand">🎲 Random (each group)</option>${Object.entries(REL_SETS).map(([k, v]) => `<option value="${k}">${v.e} ${v.en}</option>`).join('')}</select></label>
             <label class="field" id="gwBox" style="flex:1;min-width:200px">${VI('Make A Guess cards', 'Thẻ Make A Guess')}
-              <select id="gwpack"><option value="all">🎲 Everything</option>${['person', 'place', 'object', 'time'].map(k => `<option value="${k}">${GW_KINDS[k].e} ${GW_KINDS[k].en}</option>`).join('')}<option value="mine">✍️ Only my own cards</option></select></label>
+              <select id="gwpack"><option value="all">🎲 Everything</option><option value="person">🧑 All people & characters</option>${GW_PACKS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}<option value="mine">✍️ Only my own cards</option></select></label>
             <label class="field" id="lvlBox" style="flex:1;min-width:200px">${VI('Help on phones', 'Mức gợi ý trên điện thoại')}
               <select id="rellvl"><option value="hard">Hard: prompt only</option><option value="mid">Medium: + relative words</option><option value="easy">Easy: + sentence frame</option></select></label>
-            <label class="field" id="mineBox" style="flex-basis:100%">${VI('Your own cards (one per line, optional picture): Name | Wikipedia page or picture link', 'Thẻ của bạn (mỗi dòng 1 thẻ, ảnh không bắt buộc): Tên | trang Wikipedia hoặc link ảnh')}
-              <textarea id="gwmine" rows="3" placeholder="Ms Hoa&#10;Cát Bà | https://vi.wikipedia.org/wiki/Cát_Bà&#10;Our school | https://…/photo.jpg"></textarea></label>
+            <details id="mineBox" style="flex-basis:100%"><summary>⚙️ ${VI('Settings', 'Cài đặt')}<span id="mineSum"></span></summary>
+              <div id="pickBox" style="margin-top:8px"><b>🎭 <span id="pickSum"></span></b>
+                <p class="muted" style="margin:2px 0 0;font-size:14px">🙈 ${VI('Hide the screen from the class before opening Settings! Leave a group on 🎲 and the computer chooses for it.', 'Nhớ che màn hình trước khi mở Cài đặt! Nhóm nào để 🎲 thì máy chọn ngẫu nhiên.')}</p>
+                <div class="tcards" id="pickList"></div></div>
+              <div id="gwOnly"><div class="row" style="margin-top:8px;gap:10px"><button class="btn small primary" id="cmOpen" type="button">🗂 ${VI('See & edit all the cards', 'Xem & sửa tất cả thẻ')}</button>
+                <span class="muted" style="font-size:14px">${VI('Switch cards on/off, change pictures, delete', 'Bật/tắt thẻ, đổi ảnh, xoá thẻ')}</span></div>
+              <label class="field" style="margin-top:8px">${VI('Your own cards (one per line, optional picture): Name | Wikipedia page or picture link', 'Thẻ của bạn (mỗi dòng 1 thẻ, ảnh không bắt buộc): Tên | trang Wikipedia hoặc link ảnh')}
+              <textarea id="gwmine" rows="3" placeholder="Ms Hoa&#10;Cát Bà | https://vi.wikipedia.org/wiki/Cát_Bà&#10;Our school | https://…/photo.jpg"></textarea></label></div></details>
           </div>
           <div class="frame" id="frame"></div>
           <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
             <span class="muted" id="startNote"></span></div>
         </div>
+        <div class="card row" id="grpRow" style="gap:10px;padding:12px 16px">
+          <b>👥 ${VI('Number of groups', 'Số nhóm')}</b><select id="ngrp" style="font:inherit;padding:6px 10px;border:2px solid var(--ink);border-radius:12px;background:#fff"></select>
+          <button class="btn small primary" id="mkgrp">🎲 ${VI('Make the groups', 'Chia nhóm')}</button>
+          <label class="row" style="gap:6px;font-weight:800;cursor:pointer"><input type="checkbox" id="teams" style="width:22px;height:22px"> ⚔️ ${VI('2 teams: 🔴 Red vs 🔵 Blue', '2 đội: Đỏ đấu Xanh')}</label>
+          <span class="tag" id="teamCnt" hidden></span>
+          <span class="muted" style="font-size:14px">${VI('Mixes everyone at random. Or let students pair themselves.', 'Chia ngẫu nhiên cả lớp. Hoặc để học sinh tự ghép cặp.')}</span></div>
         <h3>${VI('Pairs · tap two names to pair them, or one name to unpair / remove', 'Các cặp · chạm 2 tên để ghép, chạm 1 tên để tách / xoá')}</h3>
         <div class="tables" id="tables"></div>
       </div>
@@ -2401,22 +2630,79 @@ function tLobby() {
       const t = $('#rtype').value;
       $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || !!(TYPES[t] && TYPES[t].kind);
       const anyT = k => t === k || (t === '?' && types.includes(k));
-      $('#relBox').hidden = !anyT('rA'); $('#gwBox').hidden = $('#mineBox').hidden = !anyT('rG'); $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
+      $('#relBox').hidden = !anyT('rA'); $('#gwBox').hidden = $('#gwOnly').hidden = $('#mineSum').hidden = !anyT('rG'); $('#mineBox').hidden = !anyT('rG') && !anyT('rA'); $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
+      drawPicks();
       $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t, $('#trio').value, Object.values(tablesMap()).some(m => m.length >= 3));
       LS.set('cp_lastType_' + CODE, t);
     };
-    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', '']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => LS.set('cp_' + id, el.value); });
+    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', '']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => { LS.set('cp_' + id, el.value); drawPicks(); }; });
+    relPicksSig = '';
+    const mineSum = () => {
+      const n = parseGwMine($('#gwmine').value).length, all = gwAll(gwEdit(), $('#gwmine').value), on = all.filter(c => !c.off).length;
+      $('#mineSum').textContent = ` · ${on} of ${all.length} cards on` + (n ? ` · ${n} of your own` : '');
+    };
+    $('#cmOpen').onclick = () => { LS.set('cp_gwmine', $('#gwmine').value); openCardMgr(); };
+    mineSum(); $('#gwmine').addEventListener('input', mineSum);
     $('#rtype').onchange = drawFrame; $('#trio').onchange = drawFrame; drawFrame();
-    $('#start').onclick = () => startRound($('#rtype').value, $('#theme').value, $('#trio').value, { set: $('#relset').value, pack: $('#gwpack').value, lvl: $('#rellvl').value, mine: $('#gwmine').value });
+    $('#start').onclick = () => startRound($('#rtype').value, $('#theme').value, $('#trio').value, { set: $('#relset').value, pack: $('#gwpack').value, lvl: $('#rellvl').value, mine: $('#gwmine').value, edit: gwEdit() });
     if ($('#toFinal')) $('#toFinal').onclick = () => { if (confirm('Finish the game and show the winners?')) patch({ 'state/phase': 'final' }); };
+    $('#ngrp').onchange = () => LS.set('cp_ngrp', +$('#ngrp').value);
+    $('#mkgrp').onclick = () => makeGroups(+$('#ngrp').value);
+    $('#teams').onchange = () => { const on = $('#teams').checked; patch(Object.assign({ teams: on || null }, on ? teamUpdates(false) : {})); toast(on ? '⚔️ 2 teams! Only the other team votes.' : 'Teams off'); };
   }, () => {
+    const np0 = Object.keys(players()).length, sel = $('#ngrp');
+    $('#grpRow').hidden = np0 < 4; $('#teams').checked = teamsOn();
+    const tcount = t => Object.values(players()).filter(p => p && p.team === t && p.table).length;
+    $('#teamCnt').hidden = !teamsOn(); if (teamsOn()) $('#teamCnt').textContent = `🔴 ${tcount('r')} · 🔵 ${tcount('b')}`;
+    if (sel.dataset.n !== String(np0) + bigGroups()) { // the choices depend on how many students joined
+      const lo = bigGroups() ? Math.min(2, Math.floor(np0 / 2)) : Math.ceil(np0 / MAX_PER_TABLE), hi = Math.floor(np0 / 2), want = +LS.get('cp_ngrp', 0) || Math.round(np0 / 2);
+      sel.innerHTML = '';
+      for (let k = lo; k <= hi; k++) { const b = Math.floor(np0 / k), x = np0 % k, sz = [x ? `${x} × ${b + 1}` : '', `${k - x} × ${b}`].filter(Boolean).join(' + ');
+        sel.insertAdjacentHTML('beforeend', `<option value="${k}">${k} groups (${sz} students)</option>`); }
+      sel.value = String(Math.min(hi, Math.max(lo, want))); sel.dataset.n = String(np0) + bigGroups();
+    }
     const tm2 = tablesMap(), np = Object.keys(players()).length, rdy = Object.values(tm2).filter(m => m.length >= 2).length;
     $('#cnt').textContent = `${np} student${np === 1 ? '' : 's'} · ${rdy} pair${rdy === 1 ? '' : 's'} ready`;
-    $('#tables').innerHTML = tableCards('lobby'); bindChips();
+    $('#tables').innerHTML = tableCards('lobby'); bindChips(); drawPicks();
     $('#trioBox').hidden = !Object.values(tm2).some(m => m.length >= 3) || !!(TYPES[$('#rtype').value] && TYPES[$('#rtype').value].kind);
     $('#start').disabled = !rdy;
     const solo = singles(tm2).map(p => p.name);
     $('#startNote').textContent = !rdy ? 'Waiting for at least one pair…' : solo.length ? `Not paired: ${solo.join(', ')} — they’ll wait this round.` : '';
+  });
+}
+// teacher: choose the secret card (Make A Guess) or the story set for each group before the round; 🎲 = random (default)
+let relPicks = { g: {}, s: {} }, relPicksSig = '';
+function drawPicks() {
+  const box = $('#pickBox'), list = $('#pickList'); if (!box || !list) return;
+  const t = $('#rtype').value, guess = t === 'rG', cards = t === 'rA';
+  box.hidden = !guess && !cards; if (box.hidden) return;
+  const gs = groupsSorted(tablesMap()).filter(([, m]) => m.length >= 2), P = guess ? relPicks.g : relPicks.s;
+  Object.keys(P).forEach(tb => { if (!gs.some(([id]) => id === tb)) delete P[tb]; }); // groups that are gone
+  const n = gs.filter(([id]) => P[id]).length;
+  $('#pickSum').textContent = (guess ? 'Each group’s secret card' : 'Each group’s story set') + ` · ${n ? n + ' chosen, the rest 🎲 random' : '🎲 all random'}`;
+  const mineTxt = $('#gwmine').value, on = guess ? gwAll(gwEdit(), mineTxt).filter(c => !c.off) : [];
+  const sig = [t, $('#relset').value, guess ? mineTxt + JSON.stringify(gwEdit()) : '', JSON.stringify(P), JSON.stringify(gs.map(([id, m]) => [id, m.map(p => p.name), groupTeam(m)]))].join('|');
+  if (sig === relPicksSig || list.contains(document.activeElement)) return; relPicksSig = sig;
+  if (!gs.length) { list.innerHTML = `<p class="muted">${VI('Make the groups first.', 'Chia nhóm trước đã.')}</p>`; return; }
+  const packs = GW_PACKS.concat([['mine', '✍️ My own cards']]), rs = $('#relset').value;
+  list.innerHTML = gs.map(([id, m], gi) => {
+    const pk = P[id], who = `<span class="who">${teamTag(teamsOn() ? groupTeam(m) : null)} ${namesJoin(m.map(p => p.name))}</span>`, head = `<b>${VI(`Group ${gi + 1}`, `Nhóm ${gi + 1}`)} · ${m.length}</b>`;
+    if (!guess) {
+      const S = REL_SETS[pk];
+      return `<div class="tcard"><span class="gwemo">${S ? S.e : '🎲'}</span><div>${head}${who}
+        <select data-ps="${id}"><option value="">${rs === 'rand' || !REL_SETS[rs] ? '🎲 Random' : `${REL_SETS[rs].e} ${esc(REL_SETS[rs].en)} (as above)`}</option>${Object.entries(REL_SETS).map(([k, v]) => `<option value="${k}"${k === pk ? ' selected' : ''}>${v.e} ${esc(v.en)}</option>`).join('')}</select></div></div>`;
+    }
+    const card = pk && (on.find(c => c.name === pk) || gwAll(gwEdit(), mineTxt).find(c => c.name === pk));
+    const groups = packs.map(([k, l]) => [l, on.filter(c => gwPackOf(c) === k).map(c => c.name).sort((a, b) => a.localeCompare(b, 'vi'))]).filter(([, a]) => a.length);
+    if (pk && !on.some(c => c.name === pk)) groups.unshift(['…', [pk]]);
+    return `<div class="tcard">${card ? cardImg(card, 'gwimg') : '<span class="gwemo">🎲</span>'}<div>${head}${who}
+      <select data-pg="${id}"><option value="">🎲 Random</option>${groups.map(([l, a]) => `<optgroup label="${esc(l)}">${a.map(nm => `<option${nm === pk ? ' selected' : ''}>${esc(nm)}</option>`).join('')}</optgroup>`).join('')}</select></div></div>`;
+  }).join('');
+  fillImgs();
+  list.querySelectorAll('select').forEach(el => el.onchange = () => {
+    const tb = el.dataset.pg || el.dataset.ps, Q = el.dataset.pg ? relPicks.g : relPicks.s;
+    if (el.value) Q[tb] = el.value; else delete Q[tb];
+    el.blur(); relPicksSig = ''; drawPicks();
   });
 }
 async function startRound(type, theme, trio, relOpt) {
@@ -2425,16 +2711,30 @@ async function startRound(type, theme, trio, relOpt) {
   const r = (st().round || 0) + 1, tm = tablesMap(), roles = {}, pass = isPass(type), rel = isRel(type);
   const used = new Set(Object.values(room.rounds || {}).flatMap(R0 => Object.values((R0.meta && R0.meta.roles) || {}).map(ro => ro.card && ro.card.name).filter(Boolean)));
   if (pass || rel || trio !== 'twist') trio = 'link'; // a group of 3 writes one sentence: 3rd part joined by and / so / but
+  // big groups only work when everyone writes their own whole sentence (relative clauses)
+  const tooBig = Object.values(tm).filter(m => m.length > MAX_PER_TABLE);
+  if (!rel && tooBig.length) return toast(`Groups bigger than ${MAX_PER_TABLE} only work for relative clauses. Make new groups (2–3 students) first.`, 6000);
+  const tupd = teamsOn() ? teamUpdates(false) : {}, teamOfP = pid => tupd['players/' + pid + '/team'] || (players()[pid] || {}).team;
+  // the teacher's own choice for some groups (a card / a story set); the others are random
+  const picks = rel ? (TYPES[type].mode === 'guess' ? relPicks.g : relPicks.s) : {};
+  if (rel && TYPES[type].mode === 'guess') Object.keys(tm).forEach(tb => { if (picks[tb]) used.add(picks[tb]); });
   for (const [tb, mem0] of Object.entries(tm)) {
-    const mem = mem0.slice(0, MAX_PER_TABLE); if (mem.length < 2) continue;
+    const mem = rel ? mem0 : mem0.slice(0, MAX_PER_TABLE); if (mem.length < 2) continue;
     const k = (r - 1) % mem.length, rot = mem.slice(k).concat(mem.slice(0, k)); // roles take turns each round
     roles['t' + tb] = { if: rot[0].pid, main: rot[1].pid, x: rot[2] ? rot[2].pid : null };
-    if (rel) Object.assign(roles['t' + tb], relDeal(type, relOpt || {}, used)); // story prompts, or a secret Make A Guess card
+    if (rel) roles['t' + tb].m = rot.map(p => p.pid);
+    if (teamsOn()) roles['t' + tb].team = teamOfP(rot[0].pid) || 'r';
+    if (rel) { // a story set, or a secret Make A Guess card: the teacher's pick, or random
+      const pk = picks[tb], o = Object.assign({}, relOpt || {}), guess = TYPES[type].mode === 'guess';
+      if (pk && guess) o.pick = pk; else if (pk) o.set = pk;
+      Object.assign(roles['t' + tb], relDeal(type, o, used));
+    }
     else if (pass) roles['t' + tb].c = rot[2] ? shuffle(['and', 'so', 'but']).slice(0, 2) : shuffle(['so', 'because', 'but']).slice(0, 1);
     else if (rot[2] && trio === 'link') roles['t' + tb].c = ['', shuffle(['and', 'so', 'but'])[0]];
   }
   if (!Object.keys(roles).length) return toast('No pairs yet.');
-  await patch({ ['rounds/' + roundKey(r) + '/meta']: { type, theme: theme || '', trio: trio || 'link', roles, at: Date.now() }, state: { phase: 'write', round: r } });
+  if (rel) { relPicks = { g: {}, s: {} }; relPicksSig = ''; } // next round: random again unless the teacher picks
+  await patch(Object.assign(tupd, { ['rounds/' + roundKey(r) + '/meta']: { type, theme: theme || '', trio: trio || 'link', roles, at: Date.now() }, state: { phase: 'write', round: r } }));
 }
 function roundHeader(R) {
   const T = TYPES[R.meta.type];
@@ -2451,41 +2751,220 @@ function tWrite() {
       <p class="big-note">🤐 ${VI('No talking! Signs and body language only.', 'Cấm nói chuyện! Chỉ được ra hiệu bằng tay, nét mặt.')}</p>
       <div class="row"><span class="tag sun" id="prog"></span><button class="btn small ghost" id="cancel">${VI('Cancel round', 'Huỷ vòng')}</button><button class="btn primary" id="reveal">🎬 ${VI('Reveal!', 'Lật bài!')}</button></div>
     </div>
+    ${isRel(R.meta.type) ? `<div class="card" style="margin-bottom:16px"><div class="row" style="justify-content:space-between">
+      <div><b>🎴 ${T.mode === 'guess' ? VI('Each group’s secret card', 'Thẻ bí mật của từng nhóm') : VI('Each group’s card set', 'Bộ thẻ của từng nhóm')}</b>
+      <p class="muted" style="margin:2px 0 0;font-size:14px">${VI('See them, or change one. Phones update at once.', 'Xem trước hoặc đổi thẻ; điện thoại của nhóm đổi ngay.')}</p></div>
+      <button class="btn small" id="cardsTog"></button></div><div class="tcards" id="tcards"></div></div>` : ''}
     <div class="tables" id="tables"></div></div>`, () => {
-    if ($('#fx') && TYPES[R.meta.type].mode !== 'guess') $('#fx').hidden = !Object.values(R.meta.roles).some(r => r.x);
+    if ($('#fx') && !isRel(R.meta.type)) $('#fx').hidden = !Object.values(R.meta.roles).some(r => r.x);
+    if ($('#cardsTog')) $('#cardsTog').onclick = () => { tCardsOpen = tCardsOpen === st().round ? 0 : st().round; tCardsSig = ''; screenUpdate(); };
     $('#reveal').onclick = () => {
-      const R2 = curRound(), done = Object.keys(R2.meta.roles).filter(tk => tableDone(R2, tk));
-      const miss = Object.keys(R2.meta.roles).length - done.length;
-      if (!done.length) return toast('No pair has finished yet.');
-      if (miss && !confirm(`${miss} pair(s) haven’t finished. Reveal the others anyway?`)) return;
+      const R2 = curRound(), H2 = R2.h || {}, rel = isRel(R2.meta.type), sent = p => H2[p] && H2[p].text;
+      // relative clauses: every student writes a whole sentence, so a group can be shown as soon as one of them has sent
+      const done = Object.keys(R2.meta.roles).filter(tk => rel ? memOf(R2.meta.roles[tk]).some(sent) : tableDone(R2, tk));
+      if (!done.length) return toast(rel ? 'Nobody has sent a sentence yet.' : 'No pair has finished yet.');
+      if (rel) { const left = Object.values(R2.meta.roles).flatMap(memOf).filter(p => !sent(p)).length; if (left && !confirm(`${left} student(s) haven’t sent a sentence yet. Reveal anyway?`)) return; }
+      else { const miss = Object.keys(R2.meta.roles).length - done.length; if (miss && !confirm(`${miss} pair(s) haven’t finished. Reveal the others anyway?`)) return; }
       patch({ ['rounds/' + roundKey(st().round) + '/meta/order']: shuffle(done), state: { phase: 'reveal', round: st().round, cur: 0, flipped: false } });
     };
     $('#cancel').onclick = () => { if (confirm('Cancel this round? What students wrote will be deleted.')) patch({ ['rounds/' + roundKey(st().round)]: null, state: { phase: 'lobby', round: st().round - 1 } }); };
   }, () => {
     const R2 = curRound(); if (!R2) return;
     const all = Object.keys(R2.meta.roles), done = all.filter(tk => tableDone(R2, tk)).length;
-    $('#prog').textContent = `${done} / ${all.length} pairs ready`;
+    if (isRel(R2.meta.type)) { const st0 = Object.values(R2.meta.roles).flatMap(memOf), n = st0.filter(p => R2.h && R2.h[p] && R2.h[p].text).length; $('#prog').textContent = `${n} / ${st0.length} students sent`; }
+    else $('#prog').textContent = `${done} / ${all.length} pairs ready`;
     $('#tables').innerHTML = tableCards('write'); bindChips();
+    if ($('#tcards')) drawTCards(R2);
   });
 }
+// teacher: see each group's card and change it (hidden at first: the class can see the big screen)
+let tCardsOpen = 0, tCardsSig = '';
+function drawTCards(R) {
+  const open = tCardsOpen === st().round, guess = TYPES[R.meta.type].mode === 'guess', box = $('#tcards');
+  $('#cardsTog').innerHTML = open ? '🙈 ' + VI('Hide', 'Ẩn') : '👁 ' + VI('Show (hide the screen from the class!)', 'Xem (đừng để lớp nhìn màn hình!)');
+  const roles = R.meta.roles, H = R.h || {}, tks = Object.keys(roles).sort();
+  const sig = open + JSON.stringify(tks.map(tk => [roles[tk].v, roles[tk].card && roles[tk].card.name, roles[tk].set, memOf(roles[tk]).map(p => p && !!H[p])]));
+  if (sig === tCardsSig) return; tCardsSig = sig;
+  if (!open) { box.innerHTML = ''; return; }
+  const onCards = gwAll(gwEdit(), LS.get('cp_gwmine', '')).filter(c => !c.off), mine = onCards.filter(c => c.k === 'any'), packs = GW_PACKS.concat(mine.length ? [['mine', '✍️ My own cards']] : []);
+  box.innerHTML = tks.map(tk => {
+    const ro = roles[tk], mem = memOf(ro), wrote = mem.filter(p => H[p]).length;
+    const who = `<span class="who">${mem.map(p => esc(pname(p)) + (H[p] ? ' ✓' : '')).join(' · ')}</span>`;
+    if (!guess) return `<div class="tcard"><span class="gwemo">${REL_SETS[ro.set].e}</span><div><b>${esc(REL_SETS[ro.set].en)}</b>${who}
+      <select data-set="${tk}">${Object.entries(REL_SETS).map(([k, v]) => `<option value="${k}"${k === ro.set ? ' selected' : ''}>${v.e} ${esc(v.en)}</option>`).join('')}</select></div></div>`;
+    const c = ro.card, pk = gwPackOf(c), list = [...new Set([c.name].concat(onCards.filter(x => gwPackOf(x) === pk).map(x => x.name)))].sort((a, b) => a.localeCompare(b, 'vi'));
+    return `<div class="tcard">${cardImg(c, 'gwimg')}<div><b>${esc(c.name)}</b>${who}
+      <div class="row" style="gap:5px;flex-wrap:nowrap"><select data-pack="${tk}" title="Topic · Chủ đề">${packs.filter(([k]) => k === pk || onCards.some(x => gwPackOf(x) === k)).map(([k, l]) => `<option value="${k}"${k === pk ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>
+      <button class="btn small ghost" data-redeal="${tk}" title="Another random card · Đổi thẻ ngẫu nhiên">🎲</button></div>
+      <select data-pick="${tk}">${list.map(n => `<option${n === c.name ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select></div></div>`;
+  }).join('');
+  fillImgs();
+  box.querySelectorAll('[data-set]').forEach(el => el.onchange = () => relChange(el.dataset.set, { set: el.value }) || (tCardsSig = '', screenUpdate()));
+  box.querySelectorAll('[data-pack]').forEach(el => el.onchange = () => relChange(el.dataset.pack, { pack: el.value }) || (tCardsSig = '', screenUpdate()));
+  box.querySelectorAll('[data-pick]').forEach(el => el.onchange = () => relChange(el.dataset.pick, { pick: el.value }) || (tCardsSig = '', screenUpdate()));
+  box.querySelectorAll('[data-redeal]').forEach(el => el.onclick = () => { const ro = curRound().meta.roles[el.dataset.redeal]; relChange(el.dataset.redeal, { pack: gwPackOf(ro.card) }); });
+}
+// the teacher's card manager: see every Make A Guess card, switch it on/off, change its picture, delete it
+let cmTab = 'star', cmQ = '', cmPic = '';
+function gwEditSave(fn) { const e = gwEdit(); fn(e); LS.set('cp_gwedit', e); }
+function gwMineLines() { return String(LS.get('cp_gwmine', '') || '').split('\n').filter(l => l.trim()); }
+function gwMineSave(lines) { const v = lines.join('\n'); LS.set('cp_gwmine', v); const ta = document.getElementById('gwmine'); if (ta) { ta.value = v; ta.dispatchEvent(new Event('input')); } }
+function openCardMgr() {
+  if (document.getElementById('cmov')) return;
+  const ov = document.createElement('div'); ov.id = 'cmov';
+  ov.innerHTML = `<div class="card">
+    <div class="row" style="justify-content:space-between;gap:10px"><h2 style="margin:0">🗂 ${VI('Make A Guess cards', 'Thẻ Make A Guess')} <span class="tag" id="cmCount"></span></h2>
+      <button class="btn small primary" data-cm="close">✓ ${VI('Done', 'Xong')}</button></div>
+    <p class="muted" style="margin:0">${VI('Switch off the cards your class won’t know: they are never dealt. Tap 🖼 to change a picture, 🗑 to delete. Saved on this computer.', 'Tắt những thẻ lớp không biết: thẻ tắt sẽ không được chia. Chạm 🖼 để đổi ảnh, 🗑 để xoá. Lưu trên máy này.')}</p>
+    <div class="cmtabs" id="cmTabs"></div>
+    <div class="row" style="gap:8px"><input type="search" id="cmQ" placeholder="🔍 Find a card · Tìm thẻ" style="flex:1;min-width:160px">
+      <button class="btn small" data-cm="allon">✓ ${VI('All on', 'Bật hết')}</button><button class="btn small" data-cm="alloff">✕ ${VI('All off', 'Tắt hết')}</button></div>
+    <div class="row" id="cmAdd" style="gap:8px" hidden><input type="text" id="cmNewName" placeholder="New card name · Tên thẻ mới" style="flex:1;min-width:150px" maxlength="60">
+      <input type="text" id="cmNewLink" placeholder="Picture link or Wikipedia page (optional)" style="flex:2;min-width:180px">
+      <button class="btn small primary" data-cm="add">＋ ${VI('Add', 'Thêm')}</button></div>
+    <div class="cmgrid" id="cmGrid"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn small ghost" data-cm="reset">↺ ${VI('Undo all my changes to the built-in cards', 'Huỷ mọi thay đổi với thẻ có sẵn')}</button></div></div>`;
+  document.body.appendChild(ov);
+  const q = ov.querySelector('#cmQ'); q.value = cmQ; q.oninput = () => { cmQ = q.value; drawCardMgr(); };
+  ov.addEventListener('click', e => { if (e.target === ov) closeCardMgr(); });
+  ov.addEventListener('click', cmClick);
+  ov.addEventListener('change', e => {
+    const t = e.target;
+    if (t.dataset.on != null) { gwEditSave(ed => { if (t.checked) delete ed.off[t.dataset.on]; else ed.off[t.dataset.on] = 1; }); drawCardMgr(); }
+    else if (t.dataset.file != null && t.files[0]) cmUpload(t.dataset.file, t.files[0]);
+  });
+  ov.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { if (cmPic) { cmPic = ''; drawCardMgr(); } else closeCardMgr(); }
+    else if (e.key === 'Enter' && e.target.dataset.link != null) cmClick({ target: ov.querySelector('[data-cm="picsave"]') });
+    else if (e.key === 'Enter' && (e.target.id === 'cmNewName' || e.target.id === 'cmNewLink')) cmClick({ target: ov.querySelector('[data-cm="add"]') });
+  });
+  drawCardMgr();
+}
+function closeCardMgr() { const ov = document.getElementById('cmov'); if (ov) ov.remove(); cmPic = ''; const ta = document.getElementById('gwmine'); if (ta) ta.dispatchEvent(new Event('input')); }
+function cmCards() { const ed = gwEdit(), all = gwAll(ed, LS.get('cp_gwmine', '')); return { ed, all, gone: GW_CARDS.filter(c => ed.del[c.name]) }; }
+function drawCardMgr() {
+  const ov = document.getElementById('cmov'); if (!ov) return;
+  const { ed, all, gone } = cmCards(), tabs = GW_PACKS.concat([['mine', '✍️ My own cards']], gone.length ? [['del', '🗑 Deleted']] : []);
+  if (cmTab === 'del' && !gone.length) cmTab = 'star';
+  const inTab = (c, tb) => gwPackOf(c) === tb;
+  ov.querySelector('#cmCount').textContent = `${all.filter(c => !c.off).length} / ${all.length} on`;
+  ov.querySelector('#cmTabs').innerHTML = tabs.map(([k, l]) => {
+    const n = k === 'del' ? gone.length : all.filter(c => inTab(c, k)).length, on = k === 'del' ? '' : all.filter(c => inTab(c, k) && !c.off).length + '/';
+    return `<button class="btn small${k === cmTab && !cmQ ? ' on' : ''}" data-cm="tab" data-k="${k}">${esc(l.replace(/ \(.*\)$/, ''))} · ${on}${n}</button>`;
+  }).join('');
+  const nq = noAccent(cmQ.trim());
+  const list = nq ? all.concat(gone.map(c => Object.assign({}, c, { gone: 1 }))).filter(c => noAccent(c.name).includes(nq) || (c.al || []).some(a => noAccent(a).includes(nq)))
+    : cmTab === 'del' ? gone.map(c => Object.assign({}, c, { gone: 1 })) : all.filter(c => inTab(c, cmTab));
+  ov.querySelector('#cmAdd').hidden = cmTab !== 'mine' || !!nq;
+  ov.querySelectorAll('[data-cm="allon"],[data-cm="alloff"]').forEach(b => b.hidden = cmTab === 'del' && !nq);
+  list.sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+  const tile = c => {
+    const n = esc(c.name), own = c.k === 'any', changed = !own && ed.pic[c.name];
+    if (c.gone) return `<div class="cm off">${cardImg(c, 'gwimg')}<b>${n}</b><button class="btn small" data-cm="restore" data-n="${n}">↺ ${VI('Restore', 'Khôi phục')}</button></div>`;
+    const bar = cmPic === c.name ? `<div class="cmpic"><input data-link placeholder="Picture link or Wikipedia page" value="${esc(ed.pic[c.name] && !/^data:/.test(ed.pic[c.name]) ? ed.pic[c.name] : '')}">
+        <div class="row"><label class="btn small" title="Choose a photo from this computer · Chọn ảnh trên máy">📁 ${VI('Photo', 'Ảnh')}<input type="file" accept="image/*" data-file="${n}" hidden></label>
+        <button class="btn small primary" data-cm="picsave" data-n="${n}">✓</button><button class="btn small" data-cm="piccancel">✕</button></div>
+        <div class="row"><a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(c.name)}" target="_blank" rel="noopener">🔎 ${VI('Find a picture', 'Tìm ảnh')}</a>${ed.pic[c.name] ? ` · <a href="#" data-cm="picreset" data-n="${n}">↺ ${VI('Original', 'Ảnh gốc')}</a>` : ''}</div></div>`
+      : `<div class="cmbar"><label class="sw" title="On / off · Bật / tắt"><input type="checkbox" data-on="${n}"${c.off ? '' : ' checked'}><span></span></label>
+        <button class="btn small ghost" data-cm="pic" data-n="${n}" title="Change picture · Đổi ảnh">🖼</button><button class="btn small ghost" data-cm="del" data-n="${n}" title="Delete · Xoá">🗑</button></div>`;
+    return `<div class="cm${c.off ? ' off' : ''}">${changed ? `<span class="tag cmnew">🖼 ${VI('new', 'mới')}</span>` : ''}${cardImg(c, 'gwimg')}<b>${n}</b>${bar}</div>`;
+  };
+  ov.querySelector('#cmGrid').innerHTML = list.length ? list.map(tile).join('') : `<p class="muted">${cmTab === 'mine' && !nq ? VI('No cards of your own yet. Add one above!', 'Chưa có thẻ riêng. Thêm ở trên nhé!') : VI('No cards found.', 'Không tìm thấy thẻ.')}</p>`;
+  fillImgs();
+  const li = ov.querySelector('[data-link]'); if (li) li.focus();
+}
+function cmClick(e) {
+  const b = e.target && e.target.closest && e.target.closest('[data-cm]'); if (!b) return;
+  const act = b.dataset.cm, n = b.dataset.n, ov = document.getElementById('cmov');
+  if (act !== 'tab' && e.preventDefault) e.preventDefault();
+  if (act === 'close') return closeCardMgr();
+  if (act === 'tab') { cmTab = b.dataset.k; cmQ = ''; ov.querySelector('#cmQ').value = ''; cmPic = ''; }
+  else if (act === 'allon' || act === 'alloff') {
+    const { all } = cmCards(), nq = noAccent(cmQ.trim()), these = all.filter(c => nq ? noAccent(c.name).includes(nq) : gwPackOf(c) === cmTab);
+    gwEditSave(ed => these.forEach(c => { if (act === 'allon') delete ed.off[c.name]; else ed.off[c.name] = 1; }));
+  }
+  else if (act === 'pic') cmPic = n;
+  else if (act === 'piccancel') cmPic = '';
+  else if (act === 'picsave') { const v = ov.querySelector('[data-link]').value.trim(); if (v) gwEditSave(ed => { ed.pic[n] = v; }); cmPic = ''; }
+  else if (act === 'picreset') { gwEditSave(ed => { delete ed.pic[n]; }); cmPic = ''; }
+  else if (act === 'del') {
+    const own = !GW_CARDS.some(c => c.name === n);
+    if (own) { if (!confirm(`Delete “${n}” from your own cards? · Xoá thẻ này?`)) return; gwMineSave(gwMineLines().filter(l => l.split('|')[0].trim() !== n)); gwEditSave(ed => { delete ed.off[n]; delete ed.pic[n]; }); }
+    else gwEditSave(ed => { ed.del[n] = 1; });
+    toast(own ? '🗑 Deleted · Đã xoá' : '🗑 Deleted · Đã xoá (↺ in “Deleted”)');
+  }
+  else if (act === 'restore') gwEditSave(ed => { delete ed.del[n]; });
+  else if (act === 'add') {
+    const nm = ov.querySelector('#cmNewName'), lk = ov.querySelector('#cmNewLink'), name = nm.value.replace(/\|/g, '/').trim(), link = lk.value.trim();
+    if (!name) { nm.focus(); return; }
+    if (cmCards().all.some(c => c.name.toLowerCase() === name.toLowerCase())) { toast('That card is already there · Đã có thẻ này'); return; }
+    gwMineSave(gwMineLines().concat([link ? name + ' | ' + link : name])); nm.value = lk.value = ''; nm.focus();
+  }
+  else if (act === 'reset') { if (!confirm('Switch every built-in card back on, bring back deleted cards and original pictures?')) return; LS.del('cp_gwedit'); }
+  drawCardMgr();
+}
+// a photo from the computer: shrink it so it is small enough to send to the phones
+function cmUpload(name, file) {
+  const rd = new FileReader();
+  rd.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const S = 240, k = Math.min(1, S / Math.max(im.width, im.height)), cv = document.createElement('canvas');
+      cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
+      cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+      gwEditSave(ed => { ed.pic[name] = cv.toDataURL('image/jpeg', .8); }); cmPic = ''; drawCardMgr(); toast('🖼 Picture changed · Đã đổi ảnh');
+    };
+    im.onerror = () => toast('That file is not a picture · Không phải ảnh');
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(file);
+}
+function relChange(tk, opt) {
+  const R = curRound(), ro = R.meta.roles[tk], H = R.h || {}, wrote = memOf(ro).filter(p => H[p]);
+  if (wrote.length && !confirm(`${wrote.map(pname).join(', ')} already wrote a sentence. Change the card and delete ${wrote.length > 1 ? 'them' : 'it'}?`)) return false;
+  const used = new Set(Object.values(room.rounds || {}).flatMap(R0 => Object.values((R0.meta && R0.meta.roles) || {}).map(r => r.card && r.card.name).filter(Boolean)));
+  const nr = Object.assign({}, ro, relDeal(R.meta.type, Object.assign({ lvl: ro.lvl, mine: LS.get('cp_gwmine', ''), edit: gwEdit() }, opt), used), { v: (ro.v || 0) + 1 });
+  const base = 'rounds/' + roundKey(st().round), upd = { [base + '/meta/roles/' + tk]: nr };
+  wrote.forEach(p => { upd[base + '/h/' + p] = null; });
+  patch(upd); toast('🎴 Card changed · Đã đổi thẻ'); return true;
+}
 function halfCard(cls, lbl, text) { return `<div class="half ${cls}"><span class="lbl">${lbl}</span>${kwHTML(text)}</div>`; }
-// relative clauses: the whole sentence, with its relative word in bold
-function relSentHTML(t) {
+// relative clauses: the whole sentence, with its relative word in bold.
+// fix = the teacher's correction: removed words are crossed out, new words are red
+function relSentHTML(t, fix) {
   const x = cleanHalf(t || '');
   if (!x) return '<span class="muted">…</span>';
-  return esc(cap1(x) + '.').replace(/(^|[^\w])(who|whom|which|that|whose|where|when)(?=[^\w])/i, '$1<b class="rw">$2</b>');
+  const a = cap1(x), f = fix && cleanHalf(fix) ? cap1(cleanHalf(fix)) : a;
+  const toks = wordDiff(a, f), groups = [];
+  toks.forEach(([op, w]) => { const g = groups[groups.length - 1]; if (g && g.op === op) g.w.push(w); else groups.push({ op, w: [w] }); });
+  let rel = false;
+  const word = w => { let h = esc(w); if (!rel) { const m = h.match(/^(\W*)(who|whom|which|that|whose|where|when)(\W*)$/i); if (m) { rel = true; h = m[1] + '<b class="rw">' + m[2] + '</b>' + m[3]; } } return h; };
+  return groups.map(g => g.op === '-' ? `<del class="fixd">${g.w.map(esc).join(' ')}</del>` : g.op === '+' ? `<ins class="fixw">${g.w.map(word).join(' ')}</ins>` : g.w.map(word).join(' ')).join(' ') + '.';
+}
+// word-by-word difference (longest common subsequence, ignoring capitals)
+function wordDiff(a, b) {
+  const A = a.split(/\s+/).filter(Boolean), B = b.split(/\s+/).filter(Boolean), n = A.length, m = B.length, k = w => w.toLowerCase().replace(/[.,!?;:]+$/, '');
+  const L = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) L[i][j] = k(A[i]) === k(B[j]) ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const out = []; let i = 0, j = 0;
+  while (i < n || j < m) {
+    if (i < n && j < m && k(A[i]) === k(B[j])) { out.push(['=', B[j]]); i++; j++; }
+    else if (i < n && (j >= m || L[i + 1][j] >= L[i][j + 1])) out.push(['-', A[i++]]);
+    else out.push(['+', B[j++]]);
+  }
+  return out;
 }
 // scores under a group: class votes (or right / wrong guesses) + the teacher's handshakes
 function drawScore(sl, guess) {
   const box = $('#sc_' + sl); if (!box) return;
   const sc = slotScore(curRound(), sl), tot = Math.max(1, sc.n);
-  const bars = guess ? [['✅', 'Right', 'Đúng', 2], ['❌', 'Wrong', 'Sai', 0]] : VOTES.map(v => [v.e, v.en, v.vi, v.k]);
-  box.innerHTML = `<div class="votes"><b>${guess ? VI(`Guesses · ${sc.n}`, 'Lượt đoán') : VI(`Class vote · ${sc.n} vote${sc.n === 1 ? '' : 's'}`, 'Cả lớp bình chọn')}</b>
+  const bars = (guess ? RATES : VOTES).map(v => [v.e, v.en, v.vi, v.k]);
+  box.innerHTML = `<div class="votes"><b>${guess ? VI(`Was the description right? · ${sc.n}`, 'Nhóm tả đúng không?') : VI(`Class vote · ${sc.n} vote${sc.n === 1 ? '' : 's'}`, 'Cả lớp bình chọn')}</b>
       ${bars.map(([e, en, vi, k]) => `<div class="vbar k${k}"><span>${e} ${en}</span><span class="bar"><i style="width:${sc.counts[k] / tot * 100}%"></i></span><span>${sc.counts[k]}</span></div>`).join('')}</div>
-    <div class="meter"><div class="pct">${pct(guess ? sc.cls : sc.compat)}</div><b>${guess ? VI('guessed it', 'lớp đoán đúng') : VI('compatible', 'hợp nhau')}</b></div>
+    <div class="meter"><div class="pct">${pct(sc.compat)}</div><b>${guess ? VI('description score', 'điểm mô tả') : VI('compatible', 'hợp nhau')}</b>${guess ? (gi => `<span class="muted" style="font-size:14px">🤔 ${VI(`${gi.ok} of ${gi.n} guessed it`, `${gi.ok}/${gi.n} bạn đoán đúng`)}</span>`)(guessInfo(curRound(), sl)) : ''}</div>
     <div class="col" style="align-items:center"><b>${VI('Teacher’s handshakes', 'Bắt tay của giáo viên')}</b>
       <div class="hearts" data-slot="${sl}">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${sc.h >= n ? 'on' : ''}" aria-label="${n} handshakes">🤝</button>`).join('')}</div>
-      <span class="muted" style="font-size:14px">${guess ? VI(`Total ${pct(sc.compat)} · class 50% · teacher 50%`, 'Tổng: cả lớp 50% · giáo viên 50%') : VI('Class 50% · Teacher 50%', 'Cả lớp 50% · Giáo viên 50%')}</span></div>`;
+      <span class="muted" style="font-size:14px">${VI('Class 50% · Teacher 50%', 'Cả lớp 50% · Giáo viên 50%')}</span></div>`;
   box.querySelectorAll('.hearts button').forEach(b => b.onclick = () => {
     const n = +b.dataset.n, cur = (curRound().hearts || {})[sl];
     sndPop(); put(`rounds/${roundKey(st().round)}/hearts/${sl}`, cur === n ? null : n);
@@ -2493,15 +2972,15 @@ function drawScore(sl, guess) {
 }
 function tRevealRel() {
   const s = st(), R = curRound(), order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], ro = R.meta.roles[tk];
-  const pids = [ro.if, ro.main, ro.x].filter(Boolean), names = pids.map(pname), roles = ['if', 'main', 'link'], H = R.h || {};
+  const H = R.h || {}, all = memOf(ro), wrote = all.filter(p => H[p] && H[p].text), pids = wrote.length ? wrote : all, names = all.map(pname), many = pids.length > 4;
   const guess = !!ro.card, flipped = !!s.flipped, ans = guess && !!s.ans, set = REL_SETS[ro.set];
   show(`trl${s.round}_${i}_${flipped}_${ans}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
     <div class="stage">
-      <p class="who">${namesC(names)}</p>
+      <p class="who${names.length > 4 ? ' many' : ''}">${teamTag(ro.team)} ${namesC(names)}</p>
       ${guess ? `<p class="big-note">🎭 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</p>` : `<p class="big-note">${esc(set ? set.e + ' ' + set.en : '')}</p>`}
-      ${!flipped ? `<div class="facedown">${pids.map((p, k) => `<div class="${'abc'[k]}">❓</div>`).join('')}</div>
+      ${!flipped ? `<div class="facedown${pids.length > 3 ? ' many' : ''}">${pids.map((p, k) => `<div class="${'abc'[k % 3]}">❓</div>`).join('')}</div>
         <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
-      : `<div class="story">${pids.map((p, k) => `<div class="half ${['hi', 'hm', 'hx'][k]}" style="animation-delay:${k * 0.35}s"><span class="lbl">${esc(pname(p))}${guess ? '' : ' · ' + esc(relPrompt(ro, roles[k]).en)}</span>${relSentHTML(H[p] && H[p].text)}</div>`).join('')}</div>
+      : `<div class="story${many ? ' many' : ''}">${pids.map((p, k) => `<div class="half ${['hi', 'hm', 'hx'][k % 3]}" style="animation-delay:${k * (many ? 0.12 : 0.35)}s"><span class="lbl">${esc(pname(p))}${H[p] ? `<button class="fixbtn" data-fix="${p}" title="Click the sentence and type · Bấm vào câu để sửa">✏️ ${VI('Correct', 'Sửa')}</button><button class="fixbtn" data-unfix="${p}" id="fu_${p}" hidden title="Back to the student’s sentence · Trả lại câu gốc">↺ ${VI('Original', 'Câu gốc')}</button>` : ''}</span><div class="rs" id="rs_${p}" data-pid="${p}">${relSentHTML(H[p] && H[p].text, H[p] && H[p].fix)}</div></div>`).join('')}</div>
         ${guess && !ans ? `<div class="card row" style="justify-content:space-between;margin-top:14px"><p class="big-note">🤔 ${VI('Guess on your phone!', 'Đoán trên điện thoại nhé!')} <span class="tag sun" id="gcount"></span></p>
           <button class="btn primary" id="showAns">🎯 ${VI('Show the answer', 'Xem đáp án')}</button></div>` : ''}
         ${ans ? `<div class="gans">${cardImg(ro.card, 'gwbig')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2></div></div>` : ''}
@@ -2512,25 +2991,94 @@ function tRevealRel() {
         </div>`}
     </div></div>`, () => {
     if (!flipped) { $('#flip').onclick = () => { sndPop(); patch({ 'state/flipped': true, 'state/ans': false }); }; return; }
-    sndJoin();
+    sndJoin(); relEdit = null;
+    ROOT.querySelectorAll('[data-fix], .rs[data-pid]').forEach(el => el.onclick = () => relFixStart(el.dataset.fix || el.dataset.pid));
+    ROOT.querySelectorAll('[data-unfix]').forEach(el => el.onclick = () => { const p = el.dataset.unfix; if (relEdit === p) { relEdit = null; $('#rs_' + p).blur(); } put(`rounds/${roundKey(st().round)}/h/${p}/fix`, null); });
     if ($('#showAns')) $('#showAns').onclick = () => { sndWin(); patch({ 'state/ans': true }); };
     $('#prev').onclick = () => patch({ 'state/cur': i - 1, 'state/flipped': true, 'state/ans': !!R.meta.roles[order[i - 1]].card });
     if ($('#next')) $('#next').onclick = () => i < order.length - 1 ? patch({ 'state/cur': i + 1, 'state/flipped': false, 'state/ans': false }) : (sndWin(), patch({ 'state/phase': 'results' }));
   }, () => {
     if (!flipped) return;
+    const H2 = curRound().h || {};
+    pids.forEach(p => { const fu = $('#fu_' + p); if (fu) fu.hidden = !(H2[p] && H2[p].fix); });
+    pids.forEach(p => { const el = $('#rs_' + p); if (!el || relEdit === p) return; const h = relSentHTML(H2[p] && H2[p].text, H2[p] && H2[p].fix); if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } });
     if ($('#gcount')) { const n = Object.keys(((curRound().g || {})[tk]) || {}).length; $('#gcount').textContent = `${n} guess${n === 1 ? '' : 'es'}`; }
     drawScore(tk, guess);
   });
+}
+// teacher corrects a sentence in place; the correction is saved next to what the student wrote
+let relEdit = null, relSaveT = null;
+// the sentence while the teacher types: exactly the typed text, with new words red and removed words crossed out (not editable)
+function relLiveHTML(orig, typed) {
+  const A = cleanHalf(orig).split(/\s+/).filter(Boolean), B = typed.split(/\s+/).filter(Boolean), ops = wordDiff(A.join(' '), B.join(' '));
+  let oi = 0, out = '', rel = false;
+  const dels = () => { let d = []; while (oi < ops.length && ops[oi][0] === '-') d.push(ops[oi++][1]); return d.length ? `<del class="fixd" contenteditable="false">${esc(d.join(' '))}</del>` : ''; };
+  for (const piece of typed.match(/\s+|\S+/g) || []) {
+    if (/^\s/.test(piece)) { out += esc(piece); continue; }
+    out += dels();
+    const op = ops[oi++] || ['+', piece];
+    let h = esc(piece);
+    if (!rel) { const m = h.match(/^(\W*)(who|whom|which|that|whose|where|when)(\W*)$/i); if (m) { rel = true; h = m[1] + '<b class="rw">' + m[2] + '</b>' + m[3]; } }
+    out += op[0] === '+' ? `<ins class="fixw">${h}</ins>` : h;
+  }
+  return out + dels();
+}
+// caret position counted in typed text only (crossed-out words don't count)
+function liveText(el, upTo) {
+  let n = 0, txt = '';
+  const walk = node => {
+    if (node.nodeType === 3) { if (upTo && upTo.node === node) { n = txt.length + upTo.off; upTo.done = true; } txt += node.nodeValue; return; }
+    if (node.nodeName === 'DEL') { if (upTo && !upTo.done && node.contains(upTo.node)) { n = txt.length; upTo.done = true; } return; }
+    if (upTo && upTo.node === node && !upTo.done) { for (let i = 0; i < upTo.off; i++) walk(node.childNodes[i]); n = txt.length; upTo.done = true; for (let i = upTo.off; i < node.childNodes.length; i++) walk(node.childNodes[i]); return; }
+    node.childNodes.forEach(walk);
+  };
+  walk(el); return { txt, n };
+}
+function setCaret(el, n) {
+  const sel = getSelection(), r = document.createRange(); let left = n, placed = false;
+  const walk = node => {
+    if (placed) return;
+    if (node.nodeType === 3) { if (left <= node.nodeValue.length) { r.setStart(node, left); placed = true; } else left -= node.nodeValue.length; return; }
+    if (node.nodeName === 'DEL') return;
+    node.childNodes.forEach(walk);
+  };
+  walk(el); if (!placed) { r.selectNodeContents(el); r.collapse(false); } else r.collapse(true);
+  sel.removeAllRanges(); sel.addRange(r);
+}
+function relFixStart(pid) {
+  const el = $('#rs_' + pid), h = (curRound().h || {})[pid]; if (!el || !h || relEdit === pid) return;
+  if (relEdit) { const o = $('#rs_' + relEdit); if (o) o.blur(); }
+  relEdit = pid; const orig = h.text, path = `rounds/${roundKey(st().round)}/h/${pid}/fix`;
+  const save = typed => { const same = !cleanHalf(typed) || cleanHalf(typed).toLowerCase() === cleanHalf(orig).toLowerCase(); put(path, same ? null : typed.trim()); };
+  el.contentEditable = 'true'; el.spellcheck = false; el.classList.add('editing');
+  el.innerHTML = relLiveHTML(orig, cap1(cleanHalf(h.fix || orig)) + '.'); el.focus(); setCaret(el, 1e6);
+  let composing = false;
+  const redraw = () => {
+    const sel = getSelection(), at = sel.rangeCount ? { node: sel.getRangeAt(0).startContainer, off: sel.getRangeAt(0).startOffset } : null;
+    const { txt, n } = liveText(el, at); el.innerHTML = relLiveHTML(orig, txt); setCaret(el, at ? n : txt.length);
+    clearTimeout(relSaveT); relSaveT = setTimeout(() => save(txt), 700); // phones follow a moment later
+  };
+  el.oninput = () => { if (!composing) redraw(); };
+  el.addEventListener('compositionstart', () => { composing = true; });
+  el.addEventListener('compositionend', () => { composing = false; redraw(); });
+  el.onkeydown = e => { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); el.blur(); } };
+  el.onpaste = e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData.getData('text/plain') || '').replace(/\s+/g, ' ')); };
+  el.onblur = () => {
+    if (relEdit !== pid) return;
+    clearTimeout(relSaveT); const { txt } = liveText(el);
+    relEdit = null; el.contentEditable = 'false'; el.classList.remove('editing'); el.dataset.h = ''; el.oninput = el.onblur = el.onkeydown = el.onpaste = null;
+    save(txt); screenUpdate && screenUpdate();
+  };
 }
 function tReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta || !R.meta.order) return tLobby();
   if (isRel(R.meta.type)) return tRevealRel();
   const order = R.meta.order, i = Math.min(s.cur || 0, order.length - 1), tk = order[i], roles = R.meta.roles, ro = roles[tk];
-  const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname), slots = slotsOf(R, tk), twist = R.meta.trio !== 'two' && ro.x;
+  const names = memOf(ro).map(pname), slots = slotsOf(R, tk), twist = R.meta.trio !== 'two' && ro.x;
   const flipped = !!s.flipped;
   show(`trv${s.round}_${i}_${flipped}`, `<div class="wide">${topBar(`<span class="tag">${i + 1} / ${order.length}</span>`)}
     <div class="stage">
-      <p class="who">${namesC(names)}</p>
+      <p class="who">${teamTag(ro.team)} ${namesC(names)}</p>
       ${!flipped ? `<div class="facedown"><div class="a">❓</div><div class="b">❓</div>${ro.x ? '<div class="c">❓</div>' : ''}</div>
         <p class="big-note muted">${ro.x ? VI('Do these three think alike? Let’s see…', 'Ba bạn này có hiểu ý nhau không? Cùng xem nào…') : VI('Do these two think alike? Let’s see…', 'Hai bạn này có hiểu ý nhau không? Cùng xem nào…')}</p>
         <div class="nav"><button class="btn primary" id="flip" style="font-size:24px">🔄 ${VI('Flip!', 'Lật!')}</button></div>`
@@ -2554,7 +3102,7 @@ function tReveal() {
       sndJoin();
       slots.forEach(sl => {
         const p = sentenceParts(R, roles, tk, sl), sh = sharedWords(p.ifT + ' ' + (p.xT || ''), p.mainT);
-        if (sh.length) setTimeout(() => { $('#mr_' + sl).innerHTML = `<span class="badge">🧠 ${VI(`Mind-readers! Both said “${esc(sh.slice(0, 2).join('”, “'))}”`, 'Đọc được suy nghĩ của nhau luôn!')}</span>`; }, 1100);
+        if (sh.length) setTimeout(() => { if (!$('#mr_' + sl)) return; $('#mr_' + sl).innerHTML = `<span class="badge">🧠 ${VI(`Mind-readers! Both said “${esc(sh.slice(0, 2).join('”, “'))}”`, 'Đọc được suy nghĩ của nhau luôn!')}</span>`; }, 1100);
       });
     }, 60));
     $('#prev').onclick = () => patch({ 'state/cur': i - 1, 'state/flipped': true });
@@ -2579,8 +3127,8 @@ function tReveal() {
   });
 }
 function rankTable(rows, roundR) {
-  return `<table class="rank"><tr><th></th><th>${VI('Pair', 'Cặp')}</th>${roundR ? `<th class="num">${VI('This round', 'Vòng này')}</th>` : ''}<th class="num">🧑‍🤝‍🧑 ${VI('Compatible', 'Hợp nhau')}</th><th class="num">🤯 ${VI('Chaos', 'Loạn')}</th></tr>
-    ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td><b>${namesC(r.names)}</b></td>
+  return `<table class="rank"><tr><th></th><th>${VI('Pair', 'Cặp')}</th>${roundR ? `<th class="num">${VI('This round', 'Vòng này')}</th>` : ''}${guessGame() ? `<th class="num">🎯 ${VI('Description', 'Mô tả')}</th><th class="num">❌ ${VI('Not right', 'Chưa đúng')}</th>` : `<th class="num">🧑‍🤝‍🧑 ${VI('Compatible', 'Hợp nhau')}</th><th class="num">🤯 ${VI('Chaos', 'Loạn')}</th>`}</tr>
+    ${rows.map((r, i) => `<tr class="${i === 0 ? 'top' : ''}"><td>${i === 0 ? '👑' : i + 1}</td><td>${r.team ? TEAMS[r.team].e + ' ' : ''}<b>${namesC(r.names)}</b></td>
       ${roundR ? `<td class="num">${roundR.meta.roles[r.tk] && roundR.meta.order.includes(r.tk) ? pct(tableScore(roundR, r.tk).compat) : '–'}</td>` : ''}
       <td class="num">${pct(r.compat)}</td><td class="num">${pct(r.chaos)}</td></tr>`).join('')}</table>`;
 }
@@ -2591,6 +3139,7 @@ function tResults() {
     <div class="row" style="justify-content:space-between;margin-bottom:14px">
       <h1 style="font-size:clamp(30px,3.6vw,52px)">${VI(`After round ${st().round}`, `Sau vòng ${st().round}`)}</h1>
       <div class="row"><button class="btn" id="back">◀ ${VI('Back to reveal', 'Quay lại')}</button><button class="btn blue" id="again">▶ ${VI('Next round', 'Vòng tiếp')}</button><button class="btn primary" id="fin">🏆 ${VI('Finish & crown winners', 'Kết thúc & trao giải')}</button></div></div>
+    ${battleHTML(null)}
     ${best && best.c >= 0 ? `<p class="big-note" style="margin-bottom:12px">⭐ ${VI(`Best match this round: ${namesC(groupNames(best.tk))} (${pct(best.c)})`, 'Cặp hợp nhất vòng này')}</p>` : ''}
     ${rankTable(rows, R)}</div>`, () => {
     $('#back').onclick = () => patch({ 'state/phase': 'reveal', 'state/cur': Math.max(0, (R.meta.order || []).length - 1), 'state/flipped': true });
@@ -2608,10 +3157,12 @@ function winners() {
 function tFinal() {
   const { rows, bff, chaos } = winners();
   show('tf', `<div class="wide">${topBar(`<button class="btn small" id="more">↩︎ ${VI('Play more rounds', 'Chơi thêm')}</button><button class="btn small" id="del">🗑 ${VI('Delete room', 'Xoá phòng')}</button>`)}
-    <h1 class="center" style="font-size:clamp(34px,4.4vw,64px);margin-bottom:20px">🏆 ${VI('And the besties are…', 'Và cặp bạn thân nhất là…')}</h1>
+    ${(() => { const sc = teamScores(); if (!sc.any) return ''; const w = sc.r == null ? 'b' : sc.b == null ? 'r' : sc.r > sc.b ? 'r' : sc.b > sc.r ? 'b' : '';
+      return `<h1 class="center" style="font-size:clamp(34px,4.4vw,64px);margin-bottom:14px">${w ? `🏆 ${TEAMS[w].e} ${VI(TEAMS[w].en + ' wins!', TEAMS[w].vi + ' thắng!')}` : `🤝 ${VI('It’s a draw!', 'Hai đội hoà!')}`}</h1>${battleHTML(null, true)}`; })()}
+    <h1 class="center" style="font-size:clamp(34px,4.4vw,64px);margin-bottom:20px">🏆 ${guessGame() ? VI('And the best describers are…', 'Và nhóm mô tả hay nhất là…') : VI('And the besties are…', 'Và cặp bạn thân nhất là…')}</h1>
     <div class="podium" style="margin-bottom:26px">
-      <div class="award bff"><div class="ico">🧑‍🤝‍🧑</div><h2>${VI('Best Friends Forever', 'Bạn thân trọn đời')}</h2>
-        ${bff ? `<p class="names">${namesJoin(bff.names)}</p><p><b>${pct(bff.compat)}</b> compatible</p>` : '<p>No votes yet</p>'}</div>
+      <div class="award bff"><div class="ico">${guessGame() ? '🎯' : '🧑‍🤝‍🧑'}</div><h2>${guessGame() ? VI('Best Describers', 'Nhóm mô tả hay nhất') : VI('Best Friends Forever', 'Bạn thân trọn đời')}</h2>
+        ${bff ? `<p class="names">${namesJoin(bff.names)}</p><p><b>${pct(bff.compat)}</b> ${scoreWord()}</p>` : '<p>No votes yet</p>'}</div>
       <div class="award chaos"><div class="ico">🤯</div><h2>${VI('Chaos Kings', 'Vua hỗn loạn')}</h2>
         ${chaos ? `<p class="names">${namesJoin(chaos.names)}</p><p><b>${pct(chaos.chaos)}</b> chaos votes</p>` : '<p>Everyone made sense?! 😳</p>'}</div>
     </div>
@@ -2636,6 +3187,7 @@ function myRole(R) {
     if (ro.if === PID) return { tk, role: 'if', ro };
     if (ro.main === PID) return { tk, role: 'main', ro };
     if (ro.x === PID) return { tk, role: R.meta.trio === 'twist' ? 'twist' : R.meta.trio === 'two' ? 'main2' : 'link', ro };
+    if (ro.m && ro.m.includes(PID)) return { tk, role: 'main', ro }; // 4th, 5th… student of a big relative-clause group
   }
   return null;
 }
@@ -2705,7 +3257,7 @@ function sJoin(changing) {
 }
 let joinChanging = false;
 function partnersLine(ro) {
-  const others = [ro.if, ro.main, ro.x].filter(p => p && p !== PID).map(pname);
+  const others = memOf(ro).filter(p => p !== PID).map(pname);
   return others.length ? namesJoin(others) : '';
 }
 function sWait() {
@@ -2716,22 +3268,22 @@ function sWait() {
   }, () => {
     const tm = tablesMap(), mine = myTable(), mates = mine && tm[mine] ? tm[mine].filter(p => p.pid !== PID) : [];
     if (mates.length) {
-      const canGrow = mates.length + 1 < MAX_PER_TABLE;
+      const canGrow = mates.length + 1 < maxPer(), big = bigGroups();
       $('#box').innerHTML = `<div class="card col center"><p style="font-size:54px;line-height:1">${mates.length >= 2 ? '🫂' : '🧑‍🤝‍🧑'}</p>
-        <p class="big-note">${VI(namesJoin(['You', ...mates.map(p => p.name)]), mates.length >= 2 ? 'Nhóm 3 của bạn' : 'Bạn và bạn cùng cặp')}</p>
+        <p class="big-note">${VI(namesJoin(['You', ...mates.map(p => p.name)]), mates.length >= 2 ? `Nhóm ${mates.length + 1} người của bạn` : 'Bạn và bạn cùng cặp')}</p>
         <p class="muted">${VI('Wait for your teacher to start the round.', 'Chờ giáo viên bắt đầu vòng chơi nhé.')}</p>
-        ${canGrow ? `<p class="muted" style="font-size:14px">${VI('Only if your teacher says so, a 3rd classmate can tap your name to join you.', 'Nếu giáo viên cho phép, bạn thứ 3 có thể chạm vào tên bạn để vào nhóm.')}</p>` : ''}
+        ${canGrow ? `<p class="muted" style="font-size:14px">${big ? VI('Classmates in your group can tap your name to join you.', 'Các bạn cùng nhóm có thể chạm vào tên bạn để vào nhóm.') : VI('Only if your teacher says so, a 3rd classmate can tap your name to join you.', 'Nếu giáo viên cho phép, bạn thứ 3 có thể chạm vào tên bạn để vào nhóm.')}</p>` : ''}
         <button class="btn small" id="leave">✂️ ${VI('Wrong partner? Unpair', 'Ghép nhầm? Tách cặp')}</button></div>`;
       $('#leave').onclick = () => put('players/' + PID + '/table', null);
       return;
     }
     const solo = singles(tm).filter(p => p.pid !== PID);
-    const groups = groupsSorted(tm).filter(([, m]) => m.length >= 2 && m.length < MAX_PER_TABLE && !m.some(p => p.pid === PID));
+    const big = bigGroups(), groups = groupsSorted(tm).filter(([, m]) => m.length >= 2 && m.length < maxPer() && !m.some(p => p.pid === PID));
     $('#box').innerHTML = `<div class="card col"><h2>${VI('Tap your partner’s name', 'Chạm vào tên bạn cùng cặp')}</h2>
       <p class="muted" style="font-size:15px">${VI('The person sitting next to you. Just one of you needs to tap.', 'Bạn ngồi cạnh bạn. Chỉ cần một người chạm là được.')}</p>
       <div class="vote">${solo.map(p => `<button data-pid="${p.pid}"><span class="e">🙋</span><span>${esc(p.name)}</span></button>`).join('') || `<p class="muted center">${groups.length ? VI('Everyone else is already paired.', 'Các bạn khác đã có cặp hết rồi.') : VI('Nobody else yet… waiting for classmates 👀', 'Chưa có ai khác… đang chờ các bạn 👀')}</p>`}</div>
-      ${groups.length ? `<h3 style="margin-top:8px">${VI('Group of 3? Tap your pair', 'Nhóm 3 người? Chạm vào cặp của bạn')}</h3>
-      <p class="muted" style="font-size:15px">${VI('If your teacher put you with a pair, tap their names to join them.', 'Nếu giáo viên xếp bạn vào một cặp, chạm vào tên cặp đó để vào nhóm.')}</p>
+      ${groups.length ? `<h3 style="margin-top:8px">${big ? VI('Joining a group? Tap it', 'Vào nhóm có sẵn? Chạm vào nhóm đó') : VI('Group of 3? Tap your pair', 'Nhóm 3 người? Chạm vào cặp của bạn')}</h3>
+      <p class="muted" style="font-size:15px">${big ? VI('Tap the group your teacher put you in.', 'Chạm vào nhóm mà giáo viên xếp bạn vào.') : VI('If your teacher put you with a pair, tap their names to join them.', 'Nếu giáo viên xếp bạn vào một cặp, chạm vào tên cặp đó để vào nhóm.')}</p>
       <div class="vote pairs">${groups.map(([, m]) => `<button data-pid="${m[0].pid}"><span class="e">🧑‍🤝‍🧑</span><span>${namesJoin(m.map(p => p.name))}</span></button>`).join('')}</div>` : ''}
     </div>`;
     $('#box').querySelectorAll('button[data-pid]').forEach(b => b.onclick = () => joinGroup(PID, b.dataset.pid));
@@ -2740,7 +3292,7 @@ function sWait() {
 function roleUI(role, type, c, trio, three) {
   const L = lay(type, c, trio, three), cls = { if: 'if', main: 'main', main2: 'x', twist: 'x', link: 'x' }[role];
   const d = L[roleKey(role)], t = role === 'main2' ? Object.assign({}, L.b, L.b2) : d;
-  return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex };
+  return { cls, en: t.en, vi: t.vi, pre: d.pre, ph: d.ph, form: d.form, ex: d.ex, ideas: d.ideas };
 }
 // everyone's job in my group, e.g. "IF: you · MAIN: Lan · BUT: Chi"
 // keep only the Vietnamese of a bilingual message (VI / BI → the .vi part)
@@ -2750,11 +3302,10 @@ function viOnly(html) {
   pars.forEach(par => { const out = []; [...par.childNodes].filter(n => n.classList && n.classList.contains('vi')).forEach((v, i) => { if (i) out.push(document.createTextNode(' ')); out.push(...v.childNodes); }); par.replaceChildren(...out); });
   return t.innerHTML;
 }
-// relative clauses: everyone's job, so each student knows what the noun before theirs is
+// relative clauses: everyone in the group writes their own sentence about the same topic / card
 function relPlanHTML(ro) {
-  const who = pid => pid === PID ? '👉 YOU' : esc(pname(pid));
-  const rows = [[ro.if, 'if'], [ro.main, 'main'], [ro.x, 'link']].filter(r => r[0]).map(([pid, role]) => { const P = relPrompt(ro, role); return `<li${pid === PID ? ' class="me"' : ''}><b>${who(pid)}:</b> ${VI(esc(P.en), esc(P.vi))}</li>`; });
-  return `<ol class="plan">${rows.join('')}</ol>`;
+  const mem = memOf(ro);
+  return `<p class="muted" style="margin:4px 0">👥 ${VI(`Your group (${mem.length}): `, 'Nhóm của bạn: ')}${mem.map(p => p === PID ? '<b>👉 YOU</b>' : esc(pname(p))).join(' · ')}</p>`;
 }
 function whoLine(R, me) {
   const ro = me.ro, pass = isPass(R.meta.type), rel = isRel(R.meta.type), c = ro.c || [];
@@ -2768,9 +3319,9 @@ function sWrite() {
   const R = curRound(), me = myRole(R);
   if (!me) return show('swx' + st().round, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:48px">⏳</p><h2>${VI('You’ll play next round!', 'Bạn sẽ chơi ở vòng sau!')}</h2><p class="muted">${VI('You need a partner when the round starts.', 'Bạn cần có cặp khi vòng bắt đầu.')}</p></div></div>`);
   const T = TYPES[R.meta.type], ui = roleUI(me.role, R.meta.type, isRel(R.meta.type) ? me.ro : me.ro.c, R.meta.trio, !!me.ro.x), checkRole = me.role === 'main2' ? 'main' : me.role;
-  const ex = ui.ex, two = false; // (a second box for student 1: not used at the moment)
+  const ex = ui.ex, two = false, rel = isRel(R.meta.type); // (two: a second box for student 1, not used at the moment)
   let editing = false;
-  show('swr' + st().round, `<div class="wrap">${pHead()}
+  show('swr' + st().round + '_' + (me.ro.v || 0), `<div class="wrap">${pHead()}
     <p class="muted center"><b>${VI(`Round ${st().round} · ${T.name}`, `Vòng ${st().round} · ${T.vn}`)}</b>${R.meta.theme ? ` · ${esc(R.meta.theme)}` : ''}</p>
     <div class="role ${ui.cls}">
       ${me.ro.card ? gwCardHTML(me.ro.card) : ''}
@@ -2778,16 +3329,21 @@ function sWrite() {
       ${whoLine(R, me)}
       <p class="form">${esc(ui.form)}</p>
       ${ex ? `<p class="ex">e.g. ${esc(ex)}</p>` : ''}
+      ${ui.ideas ? `<p class="ex">💡 ${VI('Ideas', 'Gợi ý')}: ${ui.ideas.map(esc).join(' · ')}</p>` : ''}
       ${isRel(R.meta.type) ? '' : me.ro.c && me.ro.c.some(Boolean) ? `<p class="form">🔗 ${VI(`Your ${me.ro.x ? 'group' : 'pair'}’s linking word${me.ro.c.filter(Boolean).length > 1 ? 's' : ''}: ${me.ro.c.filter(Boolean).map(w => w.toUpperCase()).join(' · ')}`, 'Từ nối của nhóm bạn')}</p>
         <p class="ex">${esc(linkPreview(me.role, me.ro.c, R.meta.type))}</p>` : ''}
     </div>
-    <p class="shh">🤐 ${VI(`With ${partnersLine(me.ro)} — no talking! Signs only.`, 'Không được nói chuyện! Chỉ ra hiệu thôi.')}</p>
+    <p class="shh">🤐 ${rel ? VI('No talking! Keep your sentence secret.', 'Không được nói chuyện! Giữ bí mật câu của bạn nhé.') : VI(`With ${partnersLine(me.ro)} — no talking! Signs only.`, 'Không được nói chuyện! Chỉ ra hiệu thôi.')}</p>
     <div id="area"></div></div>`, null, () => {
     const R2 = curRound(); if (!R2) return;
     const mine = R2.h && R2.h[PID];
     if (mine && !editing) {
-      $('#area').innerHTML = `<div class="locked"><b>✅ ${VI('Locked in! Keep it secret 🤫', 'Đã khoá! Giữ bí mật nhé 🤫')}</b>
+      // relative clauses: sent as it is; the computer's idea is shown afterwards, only as advice
+      const adv = rel && mine.warned ? checkHalf(mine.text, checkRole, R.meta.type, { ro: me.ro }) : null;
+      $('#area').innerHTML = `<div class="locked"><b>✅ ${rel ? VI('Sent! Keep it secret 🤫', 'Đã gửi! Giữ bí mật nhé 🤫') : VI('Locked in! Keep it secret 🤫', 'Đã khoá! Giữ bí mật nhé 🤫')}</b>
         <p class="txt">${ui.pre ? esc(ui.pre) + ' ' : ''}${esc(mine.text)}${mine.text2 ? ' … ' + esc(mine.text2) : ''}</p>
+        ${rel ? `<p class="muted" style="margin:0;font-size:14px">${VI('You can still change it until your teacher reveals.', 'Bạn vẫn sửa được cho tới khi giáo viên lật bài.')}</p>` : ''}
+        ${adv && !adv.ok && !adv.empty ? `<div class="warn"><span class="who">🤖 Máy gợi ý (không bắt buộc sửa, có thể sai)</span><b>${viOnly(adv.msg)}</b>${adv.ans ? `<span class="ans">Gợi ý sửa: ${esc(adv.ans)}</span>` : ''}</div>` : ''}
         <button class="btn small" id="edit">✏️ ${VI('Change it', 'Sửa lại')}</button></div>`;
       $('#edit').onclick = () => { editing = true; $('#area').innerHTML = ''; screenUpdate(); $('#inp').value = mine.text; if ($('#inp2')) $('#inp2').value = mine.text2 || ''; };
       return;
@@ -2800,9 +3356,9 @@ function sWrite() {
       <b>2️⃣ ${VI('Box 2: the verb + the rest of your sentence', 'Ô 2: động từ + phần còn lại của câu')}</b>
       <div class="inrow"><textarea id="inp2" maxlength="170" placeholder="is / was / can …"></textarea></div>` : ''}
       <div id="msg"></div>
-      <button class="btn primary" id="send">🔒 ${VI('Check & lock in', 'Kiểm tra & khoá')}</button></div>`;
+      <button class="btn primary" id="send">${rel ? '📨 ' + VI('Send', 'Gửi') : '🔒 ' + VI('Check & lock in', 'Kiểm tra & khoá')}</button></div>`;
     const inp = $('#inp');
-    const draftKey = 'cp_draft_' + CODE + '_' + st().round; inp.value = inp.value || LS.get(draftKey, '');
+    const draftKey = 'cp_draft_' + CODE + '_' + st().round + '_' + (me.ro.v || 0); inp.value = inp.value || LS.get(draftKey, '');
     inp.oninput = () => { LS.set(draftKey, inp.value); $('#msg').innerHTML = ''; };
     const inp2 = $('#inp2');
     inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); if (inp2) inp2.focus(); else $('#send').click(); } };
@@ -2817,6 +3373,7 @@ function sWrite() {
       if (res.empty) { $('#msg').innerHTML = `<div class="err"><b>${res.msg}</b></div>`; return; }
       const text2 = inp2 ? res.text2 || cleanHalf(inp2.value) : '';
       if (res.ok) return lockIn(res.text, false, text2);
+      if (rel) return lockIn(res.text, true, text2); // relative clauses: never held back, right or wrong
       // only a suggestion: show it, let them fix or lock in anyway
       $('#msg').innerHTML = `<div class="warn">
         <span class="who">🤖 Máy gợi ý: câu này có thể chưa đúng</span>
@@ -2831,37 +3388,41 @@ function sWrite() {
 }
 function sRevealRel() {
   const s = st(), R = curRound(), i = Math.min(s.cur || 0, R.meta.order.length - 1), tk = R.meta.order[i], ro = R.meta.roles[tk];
-  const pids = [ro.if, ro.main, ro.x].filter(Boolean), own = pids.includes(PID), names = pids.map(pname), H = R.h || {}, guess = !!ro.card, ans = guess && !!s.ans;
+  const H = R.h || {}, all = memOf(ro), wrote = all.filter(p => H[p] && H[p].text), pids = wrote.length ? wrote : all, own = all.includes(PID), names = all.map(pname), guess = !!ro.card, ans = guess && !!s.ans;
+  const mate = !own && !!ro.team && (players()[PID] || {}).team === ro.team, noVote = own || mate;
+  const mateMsg = `<div class="card center"><p class="big-note">${TEAMS[ro.team] ? TEAMS[ro.team].e : ''} ${guess ? VI('Your team! The other team is guessing…', 'Đội bạn đó! Đội kia đang đoán…') : VI('Your team! The other team is voting…', 'Đội bạn đó! Đội kia đang bình chọn…')}</p></div>`;
   if (!s.flipped) return show(`srl${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">${guess ? '🎭' : '🧑‍🤝‍🧑'}</p>
     <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesC(names)}</p>
     <p class="muted">${VI('Look at the screen 👀', 'Nhìn lên màn hình nào 👀')}</p></div></div>`);
   const cls = ['i', 'm', 'xx'];
-  show(`srl${s.round}_${i}_1_${ans}`, `<div class="wrap">${pHead()}
+  show(`srl${s.round}_${i}_1_${ans}_${pids.map(p => (H[p] && H[p].fix) || '').join('|')}`, `<div class="wrap">${pHead()}
     <p class="center"><b>${namesC(names)}</b></p>
-    <div class="col" style="gap:8px">${pids.map((p, k) => `<p class="psent"><span class="${cls[k]}">${relSentHTML(H[p] && H[p].text)}</span></p>`).join('')}</div>
-    ${guess ? (ans ? `<div class="gans small">${cardImg(ro.card, 'gwimg')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2><p id="gres"></p></div></div>`
-        : own ? `<div class="card center"><p class="big-note">🙈 ${VI('The class is guessing…', 'Cả lớp đang đoán…')}</p></div>`
+    <div class="col" style="gap:8px">${pids.map((p, k) => `<p class="psent"><span class="${cls[k % 3]}">${relSentHTML(H[p] && H[p].text, H[p] && H[p].fix)}</span></p>`).join('')}</div>
+    ${guess ? (ans ? `<div class="gans small">${cardImg(ro.card, 'gwimg')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2><p id="gres"></p></div></div>
+          ${noVote ? `<div class="card center"><p class="big-note">🙈 ${VI('The class is rating your description…', 'Cả lớp đang chấm phần mô tả của nhóm…')}</p></div>`
+          : `<p class="center"><b>${VI(`Did their sentences describe ${esc(ro.card.name)} well?`, 'Các câu có tả đúng không?')}</b></p><div class="vote" data-slot="${tk}">${RATES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}`
+        : mate ? mateMsg : own ? `<div class="card center"><p class="big-note">🙈 ${ro.team ? VI('The other team is guessing…', 'Đội kia đang đoán…') : VI('The class is guessing…', 'Cả lớp đang đoán…')}</p></div>`
         : `<p class="center"><b>🤔 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</b></p><div class="vote guess" data-slot="${tk}">${(ro.opts || []).map((o, k) => `<button data-gi="${k}"><span class="e">${'ABCD'[k]}</span><span>${esc(o)}</span></button>`).join('')}</div>`)
-      : own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>`
+      : mate ? mateMsg : own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>`
       : `<p class="muted center">${VI('Do the sentences fit together?', 'Các câu có hợp nhau không?')}</p><div class="vote" data-slot="${tk}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}
   </div>`, () => {
     ROOT.querySelectorAll('.vote button').forEach(b => b.onclick = () => {
       const base = `rounds/${roundKey(st().round)}`;
-      if (b.dataset.gi != null) { const gi = +b.dataset.gi; put(`${base}/g/${tk}/${PID}`, gi); put(`${base}/v/${tk}/${PID}`, (ro.opts || [])[gi] === ro.card.name ? 2 : 0); }
+      if (b.dataset.gi != null) put(`${base}/g/${tk}/${PID}`, +b.dataset.gi);
       else put(`${base}/v/${tk}/${PID}`, +b.dataset.k);
     });
   }, () => {
     const R2 = curRound(), my = R2 && R2.v && R2.v[tk] ? R2.v[tk][PID] : undefined, myG = R2 && R2.g && R2.g[tk] ? R2.g[tk][PID] : undefined;
     ROOT.querySelectorAll('.vote button').forEach(b => b.classList.toggle('on', b.dataset.gi != null ? +b.dataset.gi === myG : +b.dataset.k === my));
-    if ($('#gres')) $('#gres').innerHTML = own ? VI('How many guessed it? Look at the screen!', 'Bao nhiêu bạn đoán đúng? Nhìn lên màn hình!') : myG == null ? VI('You didn’t guess.', 'Bạn chưa đoán.') : my === 2 ? '✅ ' + VI('You got it!', 'Bạn đoán đúng rồi!') : '❌ ' + VI(`You said ${esc((ro.opts || [])[myG])}`, 'Bạn đoán sai rồi');
+    if ($('#gres')) $('#gres').innerHTML = noVote ? VI('How many guessed it? Look at the screen!', 'Bao nhiêu bạn đoán đúng? Nhìn lên màn hình!') : myG == null ? VI('You didn’t guess.', 'Bạn chưa đoán.') : (ro.opts || [])[myG] === ro.card.name ? '✅ ' + VI('You got it!', 'Bạn đoán đúng rồi!') : '❌ ' + VI(`You said ${esc((ro.opts || [])[myG])}`, 'Bạn đoán sai rồi');
   });
 }
 function sReveal() {
   const s = st(), R = curRound(); if (!R || !R.meta.order) return sWait();
   if (isRel(R.meta.type)) return sRevealRel();
   const i = Math.min(s.cur || 0, R.meta.order.length - 1), tk = R.meta.order[i], ro = R.meta.roles[tk];
-  const own = [ro.if, ro.main, ro.x].includes(PID), slots = slotsOf(R, tk);
-  const names = [ro.if, ro.main, ro.x].filter(Boolean).map(pname);
+  const own = memOf(ro).includes(PID), slots = slotsOf(R, tk);
+  const names = memOf(ro).map(pname), mate = !own && !!ro.team && (players()[PID] || {}).team === ro.team, noVote = own || mate;
   if (!s.flipped) return show(`srv${s.round}_${i}_0`, `<div class="wrap">${pHead()}<div class="card col center"><p style="font-size:54px" class="spin">🧑‍🤝‍🧑</p>
     <h2>${own ? VI('It’s YOUR turn! 🙈', 'Tới lượt bạn rồi! 🙈') : VI('Next up…', 'Tiếp theo…')}</h2><p class="big-note">${namesC(names)}</p>
     <p class="muted">${VI('Look at the screen 👀', 'Nhìn lên màn hình nào 👀')}</p></div></div>`);
@@ -2870,9 +3431,9 @@ function sReveal() {
     ${slots.map(sl => {
       const p = sentenceParts(R, R.meta.roles, tk, sl), H = halfTexts(R.meta.type, p);
       return `<div class="col" style="gap:10px"><p class="psent"><span class="i">${kwHTML(H.a)}</span>${H.kb ? ` <b class="k">${esc(H.kb)}</b>` : ''} <span class="m">${esc(H.b)}</span>${p.tw ? `${H.kx ? ` <b class="k">${esc(H.kx)}</b>` : ''} <span class="xx">${esc(H.x)}</span>` : ''}${H.e ? ` <span class="i">${esc(H.e)}</span>` : ''}</p>
-        ${own ? '' : `<div class="vote" data-slot="${sl}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}</div>`;
+        ${noVote ? '' : `<div class="vote" data-slot="${sl}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}</div>`;
     }).join('<hr style="border:0;border-top:2px dashed var(--line);width:100%">')}
-    ${own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>` : `<p class="muted center">${VI('Do the two halves match?', 'Hai vế có hợp nhau không?')}</p>`}
+    ${mate ? `<div class="card center"><p class="big-note">${TEAMS[ro.team].e} ${VI('Your team! The other team is voting…', 'Đội bạn đó! Đội kia đang bình chọn…')}</p></div>` : own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>` : `<p class="muted center">${VI('Do the two halves match?', 'Hai vế có hợp nhau không?')}</p>`}
   </div>`, () => {
     ROOT.querySelectorAll('.vote button').forEach(b => b.onclick = () => {
       const sl = b.closest('.vote').dataset.slot;
@@ -2889,16 +3450,17 @@ function sReveal() {
 function sResults() {
   const fin = st().phase === 'final';
   const { rows, bff, chaos } = winners(), tk = 't' + myTable(), meRow = rows.find(r => r.tk === tk), rank = rows.indexOf(meRow) + 1;
-  const award = fin && bff && bff.tk === tk ? ['🧑‍🤝‍🧑', 'Best Friends Forever', 'Bạn thân trọn đời'] : fin && chaos && chaos.tk === tk ? ['🤯', 'Chaos Kings', 'Vua hỗn loạn'] : null;
+  const award = fin && bff && bff.tk === tk ? (guessGame() ? ['🎯', 'Best Describers', 'Nhóm mô tả hay nhất'] : ['🧑‍🤝‍🧑', 'Best Friends Forever', 'Bạn thân trọn đời']) : fin && chaos && chaos.tk === tk ? ['🤯', 'Chaos Kings', 'Vua hỗn loạn'] : null;
   show('sr' + st().phase + st().round + (meRow ? Math.round(meRow.compat) : ''), `<div class="wrap">${pHead()}
     ${meRow ? `<div class="cert">
       <p class="tag">${fin ? VI('Friendship certificate', 'Chứng nhận tình bạn') : VI(`After round ${st().round}`, `Sau vòng ${st().round}`)}</p>
       ${award ? `<p style="font-size:64px;line-height:1">${award[0]}</p><h2>${VI(award[1], award[2])}</h2>` : ''}
       <p class="big-note">${namesJoin(meRow.names)}</p>
-      <p class="pct">${pct(meRow.compat)}</p><b>${VI('compatible', 'hợp nhau')}</b>
+      <p class="pct">${pct(meRow.compat)}</p><b>${scoreWord()}</b>
       <p>${VI(`Rank #${rank} of ${rows.length} · ${pct(meRow.chaos)} chaos`, `Hạng ${rank}/${rows.length}`)}</p>
       ${fin ? `<p class="muted" style="font-size:14px">📸 ${VI('Screenshot this!', 'Chụp màn hình lại nhé!')}</p>` : ''}
     </div>` : `<div class="card center"><p class="big-note">${VI('Look at the screen for the results! 🏆', 'Xem kết quả trên màn hình nhé! 🏆')}</p></div>`}
+    ${battleHTML(null)}
     ${!fin ? `<p class="muted center">${VI('Next round coming soon…', 'Sắp tới vòng tiếp theo…')}</p>` : ''}</div>`, () => { if (award) confetti(40); });
 }
 
