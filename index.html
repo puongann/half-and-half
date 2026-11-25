@@ -219,6 +219,9 @@ del.fixd{color:var(--ink-soft);opacity:.75;text-decoration:line-through 3px var(
 @keyframes kgrow{from{transform:scaleY(0)}}
 .kb span{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;gap:4px;text-align:center;color:#fff;font:800 15px/1.15 var(--body);padding:6px;border:3px solid var(--ink);border-radius:12px}
 .kb.k0 i,.kb.k0 span{background:#e21b3c} .kb.k1 i,.kb.k1 span{background:#1368ce} .kb.k2 i,.kb.k2 span{background:#d89e00} .kb.k3 i,.kb.k3 span{background:#26890c}
+.kb span{flex-direction:column} .kb span em{font-style:normal}
+.kimg{width:min(84px,8vw);height:min(84px,8vw);object-fit:cover;border-radius:10px;border:2px solid #fff;background:#fff} .kb .gwemo{font-size:44px}
+.gopt{width:56px;height:56px;object-fit:cover;border-radius:10px;border:2px solid var(--ink);background:#f3eef3;flex:none} .vote .gwemo{font-size:40px}
 .kbars.done .kb:not(.ok){opacity:.4} .kb.ok span{box-shadow:0 0 0 4px var(--sun)}
 .vote.guess button.on{background:var(--sun)}
 .vote.guess button .e{display:inline-grid;place-items:center;min-width:44px;height:44px;border:2px solid var(--ink);border-radius:10px;color:#fff;font:800 20px/1 var(--display)}
@@ -1526,7 +1529,16 @@ function relDeal(type, opt, used) {
   const wrong = shuffle(every.filter(sameAs)).concat(shuffle(GW_CARDS.filter(c => sameAs(c) && !every.some(x => x.name === c.name))));
   const opts = shuffle([card.name].concat([...new Set(wrong.map(c => c.name))].slice(0, 3)));
   const keep = { k: card.k, name: card.name, al: card.al || [] }; if (card.own) keep.own = 1; if (card.g) keep.g = card.g; if (card.wiki) keep.wiki = card.wiki; if (card.img) keep.img = card.img;
-  return { card: keep, opts, lvl };
+  // each answer's picture (phones don't have the teacher's own cards / new pictures, so it travels with the round)
+  const byName = n => every.find(c => c.name === n) || GW_CARDS.find(c => c.name === n) || { k: card.k };
+  const optc = opts.map(n => { const c = n === card.name ? keep : byName(n), o = { k: c.k || 'any' }; if (c.wiki) o.wiki = c.wiki; if (c.img) o.img = c.img; return o; });
+  return { card: keep, opts, optc, lvl };
+}
+// the card behind answer k (A / B / C / D), for its picture; older rounds fall back to the built-in list
+function optCard(ro, k) {
+  const n = (ro.opts || [])[k];
+  if (ro.card && n === ro.card.name) return ro.card;
+  return (ro.optc && ro.optc[k]) || GW_CARDS.find(c => c.name === n) || { k: (ro.card && ro.card.k) || 'any' };
 }
 // pictures: from Vietnamese Wikipedia (page summary thumbnail), or the teacher's own link
 const WIMG = new Map();
@@ -3007,8 +3019,8 @@ function drawGuessBars(tk) {
   const R = curRound(), ro = R.meta.roles[tk], opts = ro.opts || [], gs = Object.values((R.g && R.g[tk]) || {}), right = opts.indexOf(ro.card && ro.card.name);
   const cnt = opts.map((o, k) => gs.filter(g => g === k).length), max = Math.max(1, ...cnt), n = gs.length;
   const html = opts.map((o, k) => `<div class="kb k${k}${k === right ? ' ok' : ''}"><div class="kc"><b>${cnt[k]}</b><small>${n ? Math.round(cnt[k] / n * 100) : 0}%</small><i style="height:${Math.round(cnt[k] / max * 100)}px"></i></div>
-    <span>${KSHAPE[k]} ${'ABCD'[k]} · ${esc(o)}${k === right ? ' ✓' : ''}</span></div>`).join('');
-  if (box.dataset.h !== html) { box.dataset.h = html; box.innerHTML = html; }
+    <span>${cardImg(optCard(ro, k), 'kimg')}<em>${KSHAPE[k]} ${'ABCD'[k]} · ${esc(o)}${k === right ? ' ✓' : ''}</em></span></div>`).join('');
+  if (box.dataset.h !== html) { box.dataset.h = html; box.innerHTML = html; fillImgs(); }
 }
 // scores under a group: class votes (or right / wrong guesses) + the teacher's handshakes
 function drawScore(sl, guess) {
@@ -3459,7 +3471,7 @@ function sRevealRel() {
           ${noVote ? `<div class="card center"><p class="big-note">🙈 ${VI('The class is rating your description…', 'Cả lớp đang chấm phần mô tả của nhóm…')}</p></div>`
           : `<p class="center"><b>${VI(`Did their sentences describe ${esc(ro.card.name)} well?`, 'Các câu có tả đúng không?')}</b></p><div class="vote" data-slot="${tk}">${RATES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}`
         : mate ? mateMsg : own ? `<div class="card center"><p class="big-note">🙈 ${ro.team ? VI('The other team is guessing…', 'Đội kia đang đoán…') : VI('The class is guessing…', 'Cả lớp đang đoán…')}</p></div>`
-        : `<p class="center"><b>🤔 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</b></p><div class="vote guess" data-slot="${tk}">${(ro.opts || []).map((o, k) => `<button data-gi="${k}"><span class="e">${KSHAPE[k]} ${'ABCD'[k]}</span><span>${esc(o)}</span></button>`).join('')}</div>`)
+        : `<p class="center"><b>🤔 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</b></p><div class="vote guess" data-slot="${tk}">${(ro.opts || []).map((o, k) => `<button data-gi="${k}"><span class="e">${KSHAPE[k]} ${'ABCD'[k]}</span>${cardImg(optCard(ro, k), 'gopt')}<span>${esc(o)}</span></button>`).join('')}</div>`)
       : mate ? mateMsg : own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>`
       : `<p class="muted center">${VI('Do the sentences fit together?', 'Các câu có hợp nhau không?')}</p><div class="vote" data-slot="${tk}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}
   </div>`, () => {
