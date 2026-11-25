@@ -101,8 +101,8 @@ button.tbl.mine{background:var(--sun)}
 #rjov .rjqr img,#rjov .rjqr canvas{width:min(300px,70vw)!important;height:auto!important}
 #rjov .rjlist{display:flex;flex-direction:column;gap:8px}
 /* teacher's card manager */
-#pkov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.85);display:flex;justify-content:center;align-items:flex-start;padding:16px;overflow:auto}
-#pkov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
+#setov{position:fixed;inset:0;z-index:80;background:rgba(67,48,63,.85);display:flex;justify-content:center;align-items:flex-start;padding:16px;overflow:auto}
+#setov[hidden]{display:none} #setov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
 #cmov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.55);display:flex;justify-content:center;align-items:flex-start;padding:16px;overflow:auto}
 #cmov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
 #cmov .cmtabs{display:flex;gap:8px;flex-wrap:wrap}
@@ -2601,6 +2601,16 @@ function tLobby() {
         <div class="card col">
           <div class="row" style="justify-content:space-between"><h2>${s.round ? VI(`Round ${next} — get ready`, `Vòng ${next} — chuẩn bị`) : VI('Who’s here?', 'Ai đã vào?')}</h2>
           <span class="tag" id="cnt"></span></div>
+          <div class="frame" id="frame"></div>
+          <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
+            <button class="btn" id="setOpen" type="button">⚙️ ${VI('Game settings', 'Cài đặt game')}</button>
+            <span class="muted" id="startNote"></span></div>
+        </div>
+        <!-- everything the teacher sets is in this popup: the projected screen only shows the instructions and who joined -->
+        <div id="setov" hidden><div class="card col">
+          <div class="row" style="justify-content:space-between;gap:10px"><h2 style="margin:0">⚙️ ${VI('Game settings', 'Cài đặt game')}</h2>
+            <button class="btn small primary" id="setDone" type="button">✓ ${VI('Done, hide it', 'Xong, ẩn đi')}</button></div>
+          <p class="muted" style="margin:0;font-size:14px">🙈 ${VI('Hide the screen from the class while this is open.', 'Nhớ che màn hình khi đang mở phần này.')}</p>
           <div class="row">
             <label class="field" style="flex:1;min-width:220px">${VI('Grammar this round', 'Ngữ pháp vòng này')}
               <select id="rtype">${types.map(t => `<option value="${t}"${t === last ? ' selected' : ''}>${TYPES[t].kind ? TYPES[t].name : TYPES[t].short + ' · ' + TYPES[t].name}</option>`).join('')}${types.length > 1 ? '<option value="?">🎲 Surprise me</option>' : ''}</select></label>
@@ -2612,28 +2622,28 @@ function tLobby() {
               <select id="relset"><option value="rand">🎲 Random (each group)</option>${Object.entries(REL_SETS).map(([k, v]) => `<option value="${k}">${v.e} ${v.en}</option>`).join('')}</select></label>
             <label class="field" id="gwBox" style="flex:1;min-width:200px">${VI('Make A Guess cards', 'Thẻ Make A Guess')}
               <select id="gwpack"><option value="all">🎲 Everything</option><option value="person">🧑 All people & characters</option>${GW_PACKS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}<option value="mine">✍️ Only my own cards</option></select></label>
-            <label class="field" id="modeBox" style="flex:1;min-width:220px">${VI('Who chooses each group’s card?', 'Ai chọn thẻ cho mỗi nhóm?')}
-              <select id="pickMode"><option value="rand">🎲 Random</option><option value="mine">🤫 I assign them secretly</option></select></label>
             <label class="field" id="lvlBox" style="flex:1;min-width:200px">${VI('Help on phones', 'Mức gợi ý trên điện thoại')}
               <select id="rellvl"><option value="hard">Hard: prompt only</option><option value="mid">Medium: + relative words</option><option value="easy">Easy: + sentence frame</option></select></label>
-            <details id="mineBox" style="flex-basis:100%"><summary>⚙️ ${VI('Settings', 'Cài đặt')}<span id="mineSum"></span></summary>
-              <div id="gwOnly"><div class="row" style="margin-top:8px;gap:10px"><button class="btn small primary" id="cmOpen" type="button">🗂 ${VI('See & edit all the cards', 'Xem & sửa tất cả thẻ')}</button>
-                <span class="muted" style="font-size:14px">${VI('Switch cards on/off, change pictures, delete', 'Bật/tắt thẻ, đổi ảnh, xoá thẻ')}</span></div>
-              <label class="field" style="margin-top:8px">${VI('Your own cards (one per line, optional picture): Name | Wikipedia page or picture link', 'Thẻ của bạn (mỗi dòng 1 thẻ, ảnh không bắt buộc): Tên | trang Wikipedia hoặc link ảnh')}
-              <textarea id="gwmine" rows="3" placeholder="Ms Hoa&#10;Cát Bà | https://vi.wikipedia.org/wiki/Cát_Bà&#10;Our school | https://…/photo.jpg"></textarea></label></div></details>
           </div>
-          <div class="card row" id="pickBox" style="gap:10px;padding:10px 14px;background:var(--sun)"><b id="pickSum"></b>
-            <button class="btn small primary" id="pickOpen" type="button">🤫 ${VI('Assign the cards (hide the screen first!)', 'Chọn thẻ (che màn hình trước!)')}</button></div>
-          <div class="frame" id="frame"></div>
-          <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
-            <span class="muted" id="startNote"></span></div>
-        </div>
-        <div class="card row" id="grpRow" style="gap:10px;padding:12px 16px">
+          <div class="card col" id="modeBox" style="gap:8px;padding:12px 16px;background:var(--sun)">
+            <b>🎭 ${VI('Topic / card for each group', 'Chủ đề / thẻ cho mỗi nhóm')}</b>
+            <div class="row" style="gap:18px">
+              <label class="row" style="gap:6px;font-weight:800;cursor:pointer"><input type="radio" name="pmode" value="rand" style="width:22px;height:22px"> 🎲 ${VI('Random: the computer chooses', 'Ngẫu nhiên: máy chọn')}</label>
+              <label class="row" style="gap:6px;font-weight:800;cursor:pointer"><input type="radio" name="pmode" value="mine" style="width:22px;height:22px"> ✋ ${VI('Choice: I assign each group', 'Tự chọn: tôi chọn cho từng nhóm')}</label></div>
+            <div id="pickBox" class="col" style="gap:6px"><span class="muted" id="pickSum" style="font-size:14px"></span><div class="tcards" id="pickList"></div></div>
+          </div>
+          <div class="card row" id="grpRow" style="gap:10px;padding:12px 16px">
           <b>👥 ${VI('Number of groups', 'Số nhóm')}</b><select id="ngrp" style="font:inherit;padding:6px 10px;border:2px solid var(--ink);border-radius:12px;background:#fff"></select>
           <button class="btn small primary" id="mkgrp">🎲 ${VI('Make the groups', 'Chia nhóm')}</button>
           <label class="row" style="gap:6px;font-weight:800;cursor:pointer"><input type="checkbox" id="teams" style="width:22px;height:22px"> ⚔️ ${VI('2 teams: 🔴 Red vs 🔵 Blue', '2 đội: Đỏ đấu Xanh')}</label>
           <span class="tag" id="teamCnt" hidden></span>
-          <span class="muted" style="font-size:14px">${VI('Mixes everyone at random. Or let students pair themselves.', 'Chia ngẫu nhiên cả lớp. Hoặc để học sinh tự ghép cặp.')}</span></div>
+            <span class="muted" style="font-size:14px">${VI('Mixes everyone at random. Or let students pair themselves.', 'Chia ngẫu nhiên cả lớp. Hoặc để học sinh tự ghép cặp.')}</span></div>
+          <div id="mineBox" class="col" style="gap:4px"><b>🗂 ${VI('Make A Guess cards', 'Thẻ Make A Guess')}<span id="mineSum" class="muted" style="font-weight:600"></span></b>
+            <div id="gwOnly"><div class="row" style="margin-top:8px;gap:10px"><button class="btn small primary" id="cmOpen" type="button">🗂 ${VI('See & edit all the cards', 'Xem & sửa tất cả thẻ')}</button>
+                <span class="muted" style="font-size:14px">${VI('Switch cards on/off, change pictures, delete', 'Bật/tắt thẻ, đổi ảnh, xoá thẻ')}</span></div>
+              <label class="field" style="margin-top:8px">${VI('Your own cards (one per line, optional picture): Name | Wikipedia page or picture link', 'Thẻ của bạn (mỗi dòng 1 thẻ, ảnh không bắt buộc): Tên | trang Wikipedia hoặc link ảnh')}
+              <textarea id="gwmine" rows="3" placeholder="Ms Hoa&#10;Cát Bà | https://vi.wikipedia.org/wiki/Cát_Bà&#10;Our school | https://…/photo.jpg"></textarea></label></div></div>
+        </div></div>
         <h3>${VI('Pairs · tap two names to pair them, or one name to unpair / remove', 'Các cặp · chạm 2 tên để ghép, chạm 1 tên để tách / xoá')}</h3>
         <div class="tables" id="tables"></div>
       </div>
@@ -2645,13 +2655,22 @@ function tLobby() {
       const t = $('#rtype').value;
       $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || !!(TYPES[t] && TYPES[t].kind);
       const anyT = k => t === k || (t === '?' && types.includes(k));
-      $('#relBox').hidden = !anyT('rA'); $('#gwBox').hidden = $('#mineBox').hidden = !anyT('rG'); $('#modeBox').hidden = t !== 'rA' && t !== 'rG'; $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
+      $('#relBox').hidden = !anyT('rA') || (t === 'rA' && pickMine()); $('#gwBox').hidden = $('#mineBox').hidden = !anyT('rG'); $('#modeBox').hidden = t !== 'rA' && t !== 'rG'; $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
       drawPicks();
       $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t, $('#trio').value, Object.values(tablesMap()).some(m => m.length >= 3));
       LS.set('cp_lastType_' + CODE, t);
     };
-    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', ''], ['pickMode', 'rand']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => { LS.set('cp_' + id, el.value); drawPicks(); }; });
-    relPicksSig = ''; $('#pickOpen').onclick = openPicks;
+    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', '']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => { LS.set('cp_' + id, el.value); drawPicks(); }; });
+    relPicksSig = '';
+    // Random / Choice
+    const pm0 = LS.get('cp_pickMode', 'rand') === 'mine' ? 'mine' : 'rand';
+    ROOT.querySelectorAll('input[name="pmode"]').forEach(r => { r.checked = r.value === pm0; r.onchange = () => { LS.set('cp_pickMode', r.value); relPicksSig = ''; drawFrame(); }; });
+    // the settings popup (closed by default, so the projected screen shows no settings)
+    const setClose = () => { $('#setov').hidden = true; };
+    $('#setOpen').onclick = () => { $('#setov').hidden = false; relPicksSig = ''; drawPicks(); };
+    $('#setDone').onclick = setClose;
+    $('#setov').onclick = e => { if (e.target.id === 'setov') setClose(); };
+    $('#setov').onkeydown = e => { if (e.key === 'Escape') setClose(); };
     const mineSum = () => {
       const n = parseGwMine($('#gwmine').value).length, all = gwAll(gwEdit(), $('#gwmine').value), on = all.filter(c => !c.off).length;
       $('#mineSum').textContent = ` · ${on} of ${all.length} cards on` + (n ? ` · ${n} of your own` : '');
@@ -2687,32 +2706,16 @@ function tLobby() {
 }
 // teacher: choose the secret card (Make A Guess) or the story set for each group before the round; 🎲 = random (default)
 let relPicks = { g: {}, s: {} }, relPicksSig = '';
-// (the projected screen only shows how many groups have one, never which card: the list is in a popup)
-const pickMine = () => $('#pickMode') && $('#pickMode').value === 'mine';
-function openPicks() {
-  if (document.getElementById('pkov')) return;
-  const guess = $('#rtype').value === 'rG', ov = document.createElement('div'); ov.id = 'pkov';
-  ov.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between;gap:10px">
-      <h2 style="margin:0">🤫 ${guess ? VI('Assign each group’s secret card', 'Chọn thẻ bí mật cho từng nhóm') : VI('Assign each group’s story set', 'Chọn bộ thẻ cho từng nhóm')}</h2>
-      <button class="btn small primary" id="pkDone">✓ ${VI('Done, hide it', 'Xong, ẩn đi')}</button></div>
-    <p class="muted" style="margin:0">${VI('Groups left on 🎲 get a random one.', 'Nhóm nào để 🎲 thì máy chọn ngẫu nhiên.')}</p>
-    <div class="tcards" id="pickList"></div></div>`;
-  document.body.appendChild(ov);
-  const close = () => { ov.remove(); relPicksSig = ''; drawPicks(); };
-  ov.querySelector('#pkDone').onclick = close;
-  ov.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  relPicksSig = ''; drawPicks();
-}
+const pickMine = () => { const r = document.querySelector('input[name="pmode"]:checked'); return !!r && r.value === 'mine'; };
 function drawPicks() {
   const box = $('#pickBox'); if (!box) return;
   const t = $('#rtype').value, guess = t === 'rG', cards = t === 'rA';
-  box.hidden = (!guess && !cards) || !pickMine();
-  const ov = document.getElementById('pkov'); if (box.hidden) { if (ov) ov.remove(); return; }
+  box.hidden = (!guess && !cards) || !pickMine(); if (box.hidden) return;
   const gs = groupsSorted(tablesMap()).filter(([, m]) => m.length >= 2), P = guess ? relPicks.g : relPicks.s;
   Object.keys(P).forEach(tb => { if (!gs.some(([id]) => id === tb)) delete P[tb]; }); // groups that are gone
   const n = gs.filter(([id]) => P[id]).length;
-  $('#pickSum').textContent = `🤫 ${n} / ${gs.length} ${guess ? 'groups have a secret card' : 'groups have a story set'}` + (n < gs.length ? ' · the rest 🎲 random' : ' ✓');
-  const list = ov && ov.querySelector('#pickList'); if (!list) return;
+  $('#pickSum').textContent = `${n} / ${gs.length} groups assigned` + (n < gs.length ? ' · groups left on 🎲 get a random one' : ' ✓');
+  const list = $('#pickList'); if (!list || $('#setov').hidden) return;
   const mineTxt = $('#gwmine').value, on = guess ? gwAll(gwEdit(), mineTxt).filter(c => !c.off) : [];
   const sig = [t, $('#relset').value, guess ? mineTxt + JSON.stringify(gwEdit()) : '', JSON.stringify(P), JSON.stringify(gs.map(([id, m]) => [id, m.map(p => p.name), groupTeam(m)]))].join('|');
   if (sig === relPicksSig || list.contains(document.activeElement)) return; relPicksSig = sig;
@@ -2761,7 +2764,7 @@ async function startRound(type, theme, trio, relOpt) {
     if (teamsOn()) roles['t' + tb].team = teamOfP(rot[0].pid) || 'r';
     if (rel) { // a story set, or a secret Make A Guess card: the teacher's pick, or random
       const pk = picks[tb], o = Object.assign({}, relOpt || {}), guess = TYPES[type].mode === 'guess';
-      if (pk && guess) o.pick = pk; else if (pk) o.set = pk;
+      if (pk && guess) o.pick = pk; else if (pk) o.set = pk; else if (!guess && pickMine()) o.set = 'rand';
       Object.assign(roles['t' + tb], relDeal(type, o, used));
     }
     else if (pass) roles['t' + tb].c = rot[2] ? shuffle(['and', 'so', 'but']).slice(0, 2) : shuffle(['so', 'because', 'but']).slice(0, 1);
