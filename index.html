@@ -107,6 +107,7 @@ button.tbl.mine{background:var(--sun)}
 #cmov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
 #cmov .cmtabs{display:flex;gap:8px;flex-wrap:wrap}
 #cmov .cmtabs .btn{box-shadow:0 3px 0 var(--ink)} #cmov .cmtabs .btn.on{background:var(--ink);color:#fff}
+#cmov select{font:inherit;font-size:14px;padding:6px 8px;border:2px solid var(--ink);border-radius:10px;background:#fff;max-width:100%} .cm select{font-size:13px;padding:3px 6px}
 #cmov input[type=search],#cmov input[type=text]{font:inherit;padding:8px 12px;border:2px solid var(--ink);border-radius:12px;background:#fff;min-width:0}
 .cmgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
 .cm{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:10px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative}
@@ -1488,24 +1489,27 @@ function gwSetLink(c, link) {
 }
 function parseGwMine(txt) {
   return String(txt || '').split('\n').map(l => l.trim()).filter(Boolean).slice(0, 60).map((l, i) => {
-    const [name, link] = l.split('|').map(x => x.trim()), c = { id: 'm' + i, k: 'any', name: name.slice(0, 60), al: [] };
+    const [name, link] = l.split('|').map(x => x.trim()), c = { id: 'm' + i, k: 'any', own: 1, name: name.slice(0, 60), al: [] };
     return link ? gwSetLink(c, link) : c;
   }).filter(c => c.name);
 }
-// the teacher's changes to the card list (kept on this computer): cards turned off, deleted, or with a new picture
-const gwEdit = () => { const e = LS.get('cp_gwedit', {}) || {}; return { off: e.off || {}, del: e.del || {}, pic: e.pic || {} }; };
+// the teacher's changes to the card list (kept on this computer): cards turned off, deleted, with a new picture,
+// and the category of each of their own cards (cat: name → star / char / place / object / time)
+const gwEdit = () => { const e = LS.get('cp_gwedit', {}) || {}; return { off: e.off || {}, del: e.del || {}, pic: e.pic || {}, cat: e.cat || {} }; };
+const GW_CATS = [['', '❔ No category'], ['star', '🌟 Famous person'], ['char', '🦸 Character'], ['place', '📍 Place'], ['object', '🎁 Object / food'], ['time', '⏰ Holiday / time']];
+function gwSetCat(x, pk) { if (pk === 'star' || pk === 'char') { x.k = 'person'; x.g = pk; } else if (pk) { x.k = pk; delete x.g; } return x; }
 function gwAll(edit, mineTxt) {
-  const e = edit || {}, off = e.off || {}, del = e.del || {}, pic = e.pic || {};
-  return GW_CARDS.concat(parseGwMine(mineTxt)).filter(c => !(c.k !== 'any' && del[c.name])).map(c => {
-    const x = Object.assign({}, c); if (pic[c.name]) gwSetLink(x, pic[c.name]); if (off[c.name]) x.off = true; return x;
+  const e = edit || {}, off = e.off || {}, del = e.del || {}, pic = e.pic || {}, cat = e.cat || {};
+  return GW_CARDS.concat(parseGwMine(mineTxt)).filter(c => !(!c.own && del[c.name])).map(c => {
+    const x = Object.assign({}, c); if (pic[c.name]) gwSetLink(x, pic[c.name]); if (off[c.name]) x.off = true; if (x.own && cat[c.name]) gwSetCat(x, cat[c.name]); return x;
   });
 }
 // hand out a card (or a prompt set) to each group; Make A Guess also gets 4 answer choices
 function relDeal(type, opt, used) {
   const lvl = opt.lvl || 'hard';
   if (TYPES[type].mode !== 'guess') return { set: opt.set && REL_SETS[opt.set] ? opt.set : shuffle(Object.keys(REL_SETS))[0], lvl };
-  const every = gwAll(opt.edit, opt.mine), on = every.filter(c => !c.off), built = on.filter(c => c.k !== 'any'), mine = on.filter(c => c.k === 'any');
-  const inPack = (c, pk) => pk === 'mine' ? c.k === 'any' : pk === 'person' ? c.k === 'person' : pk === 'star' || pk === 'char' ? c.g === pk : c.k === pk;
+  const every = gwAll(opt.edit, opt.mine), on = every.filter(c => !c.off), built = on.filter(c => !c.own), mine = on.filter(c => c.own);
+  const inPack = (c, pk) => pk === 'mine' ? !!c.own : pk === 'person' ? c.k === 'person' : pk === 'star' || pk === 'char' ? c.g === pk : c.k === pk;
   let pack = opt.pack, card = opt.pick && (on.find(c => c.name === opt.pick) || every.find(c => c.name === opt.pick));
   if (!card) {
     if (!pack || pack === 'all') {
@@ -1517,11 +1521,11 @@ function relDeal(type, opt, used) {
     const fresh = pool.filter(c => !used.has(c.name)); card = shuffle((fresh.length ? fresh : pool).slice())[0];
   }
   used.add(card.name);
-  // wrong answers: same kind of card, switched-on cards first
+  // wrong answers: same kind of card. Switched-off cards count too (off = never dealt as a secret card, but fine as a wrong answer)
   const sameAs = c => c.name !== card.name && (card.k === 'any' || (c.k === card.k && (!card.g || c.g === card.g)));
-  const wrong = shuffle(on.filter(sameAs)).concat(shuffle(every.filter(c => c.off && sameAs(c))), shuffle(GW_CARDS.filter(c => sameAs(c) && !every.some(x => x.name === c.name))));
+  const wrong = shuffle(every.filter(sameAs)).concat(shuffle(GW_CARDS.filter(c => sameAs(c) && !every.some(x => x.name === c.name))));
   const opts = shuffle([card.name].concat([...new Set(wrong.map(c => c.name))].slice(0, 3)));
-  const keep = { k: card.k, name: card.name, al: card.al || [] }; if (card.g) keep.g = card.g; if (card.wiki) keep.wiki = card.wiki; if (card.img) keep.img = card.img;
+  const keep = { k: card.k, name: card.name, al: card.al || [] }; if (card.own) keep.own = 1; if (card.g) keep.g = card.g; if (card.wiki) keep.wiki = card.wiki; if (card.img) keep.img = card.img;
   return { card: keep, opts, lvl };
 }
 // pictures: from Vietnamese Wikipedia (page summary thumbnail), or the teacher's own link
@@ -1543,7 +1547,7 @@ function fillImgs() {
     wikiImg(im.dataset.wiki).then(u => { if (u) im.src = u; else { const sp = document.createElement('span'); sp.className = 'gwemo'; sp.textContent = im.dataset.emo || '🎭'; im.replaceWith(sp); } });
   });
 }
-const gwPackOf = c => c.k === 'any' ? 'mine' : c.k === 'person' ? c.g || 'star' : c.k;
+const gwPackOf = c => c.own || c.k === 'any' ? 'mine' : c.k === 'person' ? c.g || 'star' : c.k;
 const gwCardHTML = c => `<div class="gwcard">${cardImg(c, 'gwimg')}<div><small>${VI('Your group’s secret card 🤫', 'Thẻ bí mật của nhóm bạn 🤫')}</small><b>${esc(c.name)}</b></div></div>`;
 const GROUPS = [
   { id: '0', topic: 'cond', label: 'Type 0', vi: 'Loại 0', types: ['0'] },
@@ -2824,7 +2828,7 @@ function drawTCards(R) {
   const sig = open + JSON.stringify(tks.map(tk => [roles[tk].v, roles[tk].card && roles[tk].card.name, roles[tk].set, memOf(roles[tk]).map(p => p && !!H[p])]));
   if (sig === tCardsSig) return; tCardsSig = sig;
   if (!open) { box.innerHTML = ''; return; }
-  const onCards = gwAll(gwEdit(), LS.get('cp_gwmine', '')).filter(c => !c.off), mine = onCards.filter(c => c.k === 'any'), packs = GW_PACKS.concat(mine.length ? [['mine', '✍️ My own cards']] : []);
+  const onCards = gwAll(gwEdit(), LS.get('cp_gwmine', '')).filter(c => !c.off), mine = onCards.filter(c => c.own), packs = GW_PACKS.concat(mine.length ? [['mine', '✍️ My own cards']] : []);
   box.innerHTML = tks.map(tk => {
     const ro = roles[tk], mem = memOf(ro), wrote = mem.filter(p => H[p]).length;
     const who = `<span class="who">${mem.map(p => esc(pname(p)) + (H[p] ? ' ✓' : '')).join(' · ')}</span>`;
@@ -2853,12 +2857,13 @@ function openCardMgr() {
   ov.innerHTML = `<div class="card">
     <div class="row" style="justify-content:space-between;gap:10px"><h2 style="margin:0">🗂 ${VI('Make A Guess cards', 'Thẻ Make A Guess')} <span class="tag" id="cmCount"></span></h2>
       <button class="btn small primary" data-cm="close">✓ ${VI('Done', 'Xong')}</button></div>
-    <p class="muted" style="margin:0">${VI('Switch off the cards your class won’t know: they are never dealt. Tap 🖼 to change a picture, 🗑 to delete. Saved on this computer.', 'Tắt những thẻ lớp không biết: thẻ tắt sẽ không được chia. Chạm 🖼 để đổi ảnh, 🗑 để xoá. Lưu trên máy này.')}</p>
+    <p class="muted" style="margin:0">${VI('Switched-off cards are never dealt as a secret card, but can still be a wrong answer (A / B / C / D). Give your own cards a category so they are dealt and mixed with the right cards. Tap 🖼 to change a picture, 🗑 to delete. Saved on this computer.', 'Thẻ tắt không bao giờ được chia làm thẻ bí mật, nhưng vẫn có thể là đáp án sai (A / B / C / D). Phân loại thẻ riêng để thẻ được chia và trộn đáp án đúng loại. Chạm 🖼 để đổi ảnh, 🗑 để xoá. Lưu trên máy này.')}</p>
     <div class="cmtabs" id="cmTabs"></div>
     <div class="row" style="gap:8px"><input type="search" id="cmQ" placeholder="🔍 Find a card · Tìm thẻ" style="flex:1;min-width:160px">
       <button class="btn small" data-cm="allon">✓ ${VI('All on', 'Bật hết')}</button><button class="btn small" data-cm="alloff">✕ ${VI('All off', 'Tắt hết')}</button></div>
     <div class="row" id="cmAdd" style="gap:8px" hidden><input type="text" id="cmNewName" placeholder="New card name · Tên thẻ mới" style="flex:1;min-width:150px" maxlength="60">
       <input type="text" id="cmNewLink" placeholder="Picture link or Wikipedia page (optional)" style="flex:2;min-width:180px">
+      <select id="cmNewCat" title="Category · Phân loại">${GW_CATS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select>
       <button class="btn small primary" data-cm="add">＋ ${VI('Add', 'Thêm')}</button></div>
     <div class="cmgrid" id="cmGrid"></div>
     <div class="row" style="justify-content:flex-end"><button class="btn small ghost" data-cm="reset">↺ ${VI('Undo all my changes to the built-in cards', 'Huỷ mọi thay đổi với thẻ có sẵn')}</button></div></div>`;
@@ -2870,6 +2875,7 @@ function openCardMgr() {
     const t = e.target;
     if (t.dataset.on != null) { gwEditSave(ed => { if (t.checked) delete ed.off[t.dataset.on]; else ed.off[t.dataset.on] = 1; }); drawCardMgr(); }
     else if (t.dataset.file != null && t.files[0]) cmUpload(t.dataset.file, t.files[0]);
+    else if (t.dataset.cat != null) { gwEditSave(ed => { if (t.value) ed.cat[t.dataset.cat] = t.value; else delete ed.cat[t.dataset.cat]; }); toast('🏷 Category saved · Đã phân loại'); drawCardMgr(); }
   });
   ov.addEventListener('keydown', e => {
     if (e.key === 'Escape') { if (cmPic) { cmPic = ''; drawCardMgr(); } else closeCardMgr(); }
@@ -2897,7 +2903,7 @@ function drawCardMgr() {
   ov.querySelectorAll('[data-cm="allon"],[data-cm="alloff"]').forEach(b => b.hidden = cmTab === 'del' && !nq);
   list.sort((a, b) => a.name.localeCompare(b.name, 'vi'));
   const tile = c => {
-    const n = esc(c.name), own = c.k === 'any', changed = !own && ed.pic[c.name];
+    const n = esc(c.name), own = !!c.own, changed = !own && ed.pic[c.name];
     if (c.gone) return `<div class="cm off">${cardImg(c, 'gwimg')}<b>${n}</b><button class="btn small" data-cm="restore" data-n="${n}">↺ ${VI('Restore', 'Khôi phục')}</button></div>`;
     const bar = cmPic === c.name ? `<div class="cmpic"><input data-link placeholder="Picture link or Wikipedia page" value="${esc(ed.pic[c.name] && !/^data:/.test(ed.pic[c.name]) ? ed.pic[c.name] : '')}">
         <div class="row"><label class="btn small" title="Choose a photo from this computer · Chọn ảnh trên máy">📁 ${VI('Photo', 'Ảnh')}<input type="file" accept="image/*" data-file="${n}" hidden></label>
@@ -2905,7 +2911,8 @@ function drawCardMgr() {
         <div class="row"><a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(c.name)}" target="_blank" rel="noopener">🔎 ${VI('Find a picture', 'Tìm ảnh')}</a>${ed.pic[c.name] ? ` · <a href="#" data-cm="picreset" data-n="${n}">↺ ${VI('Original', 'Ảnh gốc')}</a>` : ''}</div></div>`
       : `<div class="cmbar"><label class="sw" title="On / off · Bật / tắt"><input type="checkbox" data-on="${n}"${c.off ? '' : ' checked'}><span></span></label>
         <button class="btn small ghost" data-cm="pic" data-n="${n}" title="Change picture · Đổi ảnh">🖼</button><button class="btn small ghost" data-cm="del" data-n="${n}" title="Delete · Xoá">🗑</button></div>`;
-    return `<div class="cm${c.off ? ' off' : ''}">${changed ? `<span class="tag cmnew">🖼 ${VI('new', 'mới')}</span>` : ''}${cardImg(c, 'gwimg')}<b>${n}</b>${bar}</div>`;
+    const catSel = own ? `<select data-cat="${n}" title="Category · Phân loại">${GW_CATS.map(([k, l]) => `<option value="${k}"${(ed.cat[c.name] || '') === k ? ' selected' : ''}>${l}</option>`).join('')}</select>` : '';
+    return `<div class="cm${c.off ? ' off' : ''}">${changed ? `<span class="tag cmnew">🖼 ${VI('new', 'mới')}</span>` : ''}${cardImg(c, 'gwimg')}<b>${n}</b>${catSel}${bar}</div>`;
   };
   ov.querySelector('#cmGrid').innerHTML = list.length ? list.map(tile).join('') : `<p class="muted">${cmTab === 'mine' && !nq ? VI('No cards of your own yet. Add one above!', 'Chưa có thẻ riêng. Thêm ở trên nhé!') : VI('No cards found.', 'Không tìm thấy thẻ.')}</p>`;
   fillImgs();
@@ -2927,7 +2934,7 @@ function cmClick(e) {
   else if (act === 'picreset') { gwEditSave(ed => { delete ed.pic[n]; }); cmPic = ''; }
   else if (act === 'del') {
     const own = !GW_CARDS.some(c => c.name === n);
-    if (own) { if (!confirm(`Delete “${n}” from your own cards? · Xoá thẻ này?`)) return; gwMineSave(gwMineLines().filter(l => l.split('|')[0].trim() !== n)); gwEditSave(ed => { delete ed.off[n]; delete ed.pic[n]; }); }
+    if (own) { if (!confirm(`Delete “${n}” from your own cards? · Xoá thẻ này?`)) return; gwMineSave(gwMineLines().filter(l => l.split('|')[0].trim() !== n)); gwEditSave(ed => { delete ed.off[n]; delete ed.pic[n]; delete ed.cat[n]; }); }
     else gwEditSave(ed => { ed.del[n] = 1; });
     toast(own ? '🗑 Deleted · Đã xoá' : '🗑 Deleted · Đã xoá (↺ in “Deleted”)');
   }
@@ -2936,9 +2943,10 @@ function cmClick(e) {
     const nm = ov.querySelector('#cmNewName'), lk = ov.querySelector('#cmNewLink'), name = nm.value.replace(/\|/g, '/').trim(), link = lk.value.trim();
     if (!name) { nm.focus(); return; }
     if (cmCards().all.some(c => c.name.toLowerCase() === name.toLowerCase())) { toast('That card is already there · Đã có thẻ này'); return; }
+    const cat = ov.querySelector('#cmNewCat').value; if (cat) gwEditSave(ed => { ed.cat[name] = cat; });
     gwMineSave(gwMineLines().concat([link ? name + ' | ' + link : name])); nm.value = lk.value = ''; nm.focus();
   }
-  else if (act === 'reset') { if (!confirm('Switch every built-in card back on, bring back deleted cards and original pictures?')) return; LS.del('cp_gwedit'); }
+  else if (act === 'reset') { if (!confirm('Switch every built-in card back on, bring back deleted cards and original pictures?')) return; const cat = gwEdit().cat; LS.set('cp_gwedit', { cat }); } // your own cards keep their categories
   drawCardMgr();
 }
 // a photo from the computer: shrink it so it is small enough to send to the phones
