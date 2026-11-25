@@ -206,10 +206,22 @@ del.fixd{color:var(--ink-soft);opacity:.75;text-decoration:line-through 3px var(
 .tcard .gwimg{width:72px;height:72px} .tcard .gwemo{font-size:52px} .tcard>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
 .tcard b{font:800 20px/1.1 var(--display)} .tcard select{font:inherit;font-size:14px;padding:4px 6px;border:2px solid var(--ink);border-radius:10px;background:#fff;max-width:100%}
 .tcard .who{font-size:13px;color:var(--muted,#7a6a76)}
-.gans{display:flex;align-items:center;justify-content:center;gap:24px;margin:14px auto;animation:storyIn .6s cubic-bezier(.2,1.6,.4,1) backwards}
+.gans{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:24px;margin:14px auto;animation:storyIn .6s cubic-bezier(.2,1.6,.4,1) backwards}
 .gans h2{font-size:clamp(34px,4vw,60px)} .gans small{font-weight:800;color:var(--muted,#7a6a76)}
 .gans.small{justify-content:flex-start;gap:12px;margin:12px 0} .gans.small h2{font-size:26px}
+/* Make A Guess: how the class answered, Kahoot style (one coloured bar per answer, the right one ✓) */
+.kbars{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex:0 1 auto}
+.kb{display:flex;flex-direction:column;align-items:center;width:clamp(78px,10vw,150px);transition:opacity .4s}
+.kb .kc{height:150px;width:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.kb .kc b{font:800 clamp(22px,2.2vw,32px)/1 var(--display)} .kb .kc small{font-weight:800;color:var(--muted,#7a6a76)}
+.kb .kc i{display:block;width:72%;min-height:8px;border:3px solid var(--ink);border-bottom:0;border-radius:10px 10px 0 0;transform-origin:bottom;animation:kgrow .8s cubic-bezier(.2,1.3,.4,1) backwards}
+@keyframes kgrow{from{transform:scaleY(0)}}
+.kb span{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;gap:4px;text-align:center;color:#fff;font:800 15px/1.15 var(--body);padding:6px;border:3px solid var(--ink);border-radius:12px}
+.kb.k0 i,.kb.k0 span{background:#e21b3c} .kb.k1 i,.kb.k1 span{background:#1368ce} .kb.k2 i,.kb.k2 span{background:#d89e00} .kb.k3 i,.kb.k3 span{background:#26890c}
+.kbars.done .kb:not(.ok){opacity:.4} .kb.ok span{box-shadow:0 0 0 4px var(--sun)}
 .vote.guess button.on{background:var(--sun)}
+.vote.guess button .e{display:inline-grid;place-items:center;min-width:44px;height:44px;border:2px solid var(--ink);border-radius:10px;color:#fff;font:800 20px/1 var(--display)}
+.vote.guess button:nth-child(1) .e{background:#e21b3c} .vote.guess button:nth-child(2) .e{background:#1368ce} .vote.guess button:nth-child(3) .e{background:#d89e00} .vote.guess button:nth-child(4) .e{background:#26890c}
 ol.plan{margin:8px 0;padding-left:22px;text-align:left;font-weight:600} ol.plan li{margin:4px 0} ol.plan li.me{font-weight:900}
 .lnkrow .lnk::before,.lnkrow .lnk::after{width:10px;height:14px}
 .lnkrow .lnk::before{margin:0 0 -4px} .lnkrow .lnk::after{display:none}
@@ -2977,6 +2989,16 @@ function wordDiff(a, b) {
   }
   return out;
 }
+// Make A Guess: how many chose each of the 4 answers (Kahoot style), shown with the answer
+const KSHAPE = ['▲', '◆', '●', '■'];
+function drawGuessBars(tk) {
+  const box = $('#kb_' + tk); if (!box) return;
+  const R = curRound(), ro = R.meta.roles[tk], opts = ro.opts || [], gs = Object.values((R.g && R.g[tk]) || {}), right = opts.indexOf(ro.card && ro.card.name);
+  const cnt = opts.map((o, k) => gs.filter(g => g === k).length), max = Math.max(1, ...cnt), n = gs.length;
+  const html = opts.map((o, k) => `<div class="kb k${k}${k === right ? ' ok' : ''}"><div class="kc"><b>${cnt[k]}</b><small>${n ? Math.round(cnt[k] / n * 100) : 0}%</small><i style="height:${Math.round(cnt[k] / max * 100)}px"></i></div>
+    <span>${KSHAPE[k]} ${'ABCD'[k]} · ${esc(o)}${k === right ? ' ✓' : ''}</span></div>`).join('');
+  if (box.dataset.h !== html) { box.dataset.h = html; box.innerHTML = html; }
+}
 // scores under a group: class votes (or right / wrong guesses) + the teacher's handshakes
 function drawScore(sl, guess) {
   const box = $('#sc_' + sl); if (!box) return;
@@ -3006,7 +3028,7 @@ function tRevealRel() {
       : `<div class="story${many ? ' many' : ''}">${pids.map((p, k) => `<div class="half ${['hi', 'hm', 'hx'][k % 3]}" style="animation-delay:${k * (many ? 0.12 : 0.35)}s"><span class="lbl">${esc(pname(p))}${H[p] ? `<button class="fixbtn" data-fix="${p}" title="Click the sentence and type · Bấm vào câu để sửa">✏️ ${VI('Correct', 'Sửa')}</button><button class="fixbtn" data-unfix="${p}" id="fu_${p}" hidden title="Back to the student’s sentence · Trả lại câu gốc">↺ ${VI('Original', 'Câu gốc')}</button>` : ''}</span><div class="rs" id="rs_${p}" data-pid="${p}">${relSentHTML(H[p] && H[p].text, H[p] && H[p].fix)}</div></div>`).join('')}</div>
         ${guess && !ans ? `<div class="card row" style="justify-content:space-between;margin-top:14px"><p class="big-note">🤔 ${VI('Guess on your phone!', 'Đoán trên điện thoại nhé!')} <span class="tag sun" id="gcount"></span></p>
           <button class="btn primary" id="showAns">🎯 ${VI('Show the answer', 'Xem đáp án')}</button></div>` : ''}
-        ${ans ? `<div class="gans">${cardImg(ro.card, 'gwbig')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2></div></div>` : ''}
+        ${ans ? `<div class="gans">${cardImg(ro.card, 'gwbig')}<div><small>${VI('The answer', 'Đáp án')}</small><h2>${esc(ro.card.name)}</h2></div><div class="kbars done" id="kb_${tk}"></div></div>` : ''}
         ${!guess || ans ? `<div class="score" id="sc_${tk}"></div>` : ''}
         <div class="nav">
           <button class="btn" id="prev"${i === 0 ? ' disabled' : ''}>◀ ${VI('Back', 'Lùi')}</button>
@@ -3026,6 +3048,7 @@ function tRevealRel() {
     pids.forEach(p => { const fu = $('#fu_' + p); if (fu) fu.hidden = !(H2[p] && H2[p].fix); });
     pids.forEach(p => { const el = $('#rs_' + p); if (!el || relEdit === p) return; const h = relSentHTML(H2[p] && H2[p].text, H2[p] && H2[p].fix); if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } });
     if ($('#gcount')) { const n = Object.keys(((curRound().g || {})[tk]) || {}).length; $('#gcount').textContent = `${n} guess${n === 1 ? '' : 'es'}`; }
+    drawGuessBars(tk);
     drawScore(tk, guess);
   });
 }
@@ -3425,7 +3448,7 @@ function sRevealRel() {
           ${noVote ? `<div class="card center"><p class="big-note">🙈 ${VI('The class is rating your description…', 'Cả lớp đang chấm phần mô tả của nhóm…')}</p></div>`
           : `<p class="center"><b>${VI(`Did their sentences describe ${esc(ro.card.name)} well?`, 'Các câu có tả đúng không?')}</b></p><div class="vote" data-slot="${tk}">${RATES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}`
         : mate ? mateMsg : own ? `<div class="card center"><p class="big-note">🙈 ${ro.team ? VI('The other team is guessing…', 'Đội kia đang đoán…') : VI('The class is guessing…', 'Cả lớp đang đoán…')}</p></div>`
-        : `<p class="center"><b>🤔 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</b></p><div class="vote guess" data-slot="${tk}">${(ro.opts || []).map((o, k) => `<button data-gi="${k}"><span class="e">${'ABCD'[k]}</span><span>${esc(o)}</span></button>`).join('')}</div>`)
+        : `<p class="center"><b>🤔 ${VI('Who or what is it?', 'Đây là ai / cái gì?')}</b></p><div class="vote guess" data-slot="${tk}">${(ro.opts || []).map((o, k) => `<button data-gi="${k}"><span class="e">${KSHAPE[k]} ${'ABCD'[k]}</span><span>${esc(o)}</span></button>`).join('')}</div>`)
       : mate ? mateMsg : own ? `<div class="card center"><p class="big-note">🙈 ${VI('This is you! The class is voting…', 'Là bạn đó! Cả lớp đang bình chọn…')}</p></div>`
       : `<p class="muted center">${VI('Do the sentences fit together?', 'Các câu có hợp nhau không?')}</p><div class="vote" data-slot="${tk}">${VOTES.map(v => `<button class="k${v.k}" data-k="${v.k}"><span class="e">${v.e}</span><span>${VI(v.en, v.vi)}</span></button>`).join('')}</div>`}
   </div>`, () => {
