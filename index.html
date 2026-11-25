@@ -101,6 +101,8 @@ button.tbl.mine{background:var(--sun)}
 #rjov .rjqr img,#rjov .rjqr canvas{width:min(300px,70vw)!important;height:auto!important}
 #rjov .rjlist{display:flex;flex-direction:column;gap:8px}
 /* teacher's card manager */
+#pkov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.85);display:flex;justify-content:center;align-items:flex-start;padding:16px;overflow:auto}
+#pkov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
 #cmov{position:fixed;inset:0;z-index:90;background:rgba(67,48,63,.55);display:flex;justify-content:center;align-items:flex-start;padding:16px;overflow:auto}
 #cmov>.card{width:min(1100px,100%);display:flex;flex-direction:column;gap:12px}
 #cmov .cmtabs{display:flex;gap:8px;flex-wrap:wrap}
@@ -2598,17 +2600,18 @@ function tLobby() {
               <select id="relset"><option value="rand">🎲 Random (each group)</option>${Object.entries(REL_SETS).map(([k, v]) => `<option value="${k}">${v.e} ${v.en}</option>`).join('')}</select></label>
             <label class="field" id="gwBox" style="flex:1;min-width:200px">${VI('Make A Guess cards', 'Thẻ Make A Guess')}
               <select id="gwpack"><option value="all">🎲 Everything</option><option value="person">🧑 All people & characters</option>${GW_PACKS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}<option value="mine">✍️ Only my own cards</option></select></label>
+            <label class="field" id="modeBox" style="flex:1;min-width:220px">${VI('Who chooses each group’s card?', 'Ai chọn thẻ cho mỗi nhóm?')}
+              <select id="pickMode"><option value="rand">🎲 Random</option><option value="mine">🤫 I assign them secretly</option></select></label>
             <label class="field" id="lvlBox" style="flex:1;min-width:200px">${VI('Help on phones', 'Mức gợi ý trên điện thoại')}
               <select id="rellvl"><option value="hard">Hard: prompt only</option><option value="mid">Medium: + relative words</option><option value="easy">Easy: + sentence frame</option></select></label>
             <details id="mineBox" style="flex-basis:100%"><summary>⚙️ ${VI('Settings', 'Cài đặt')}<span id="mineSum"></span></summary>
-              <div id="pickBox" style="margin-top:8px"><b>🎭 <span id="pickSum"></span></b>
-                <p class="muted" style="margin:2px 0 0;font-size:14px">🙈 ${VI('Hide the screen from the class before opening Settings! Leave a group on 🎲 and the computer chooses for it.', 'Nhớ che màn hình trước khi mở Cài đặt! Nhóm nào để 🎲 thì máy chọn ngẫu nhiên.')}</p>
-                <div class="tcards" id="pickList"></div></div>
               <div id="gwOnly"><div class="row" style="margin-top:8px;gap:10px"><button class="btn small primary" id="cmOpen" type="button">🗂 ${VI('See & edit all the cards', 'Xem & sửa tất cả thẻ')}</button>
                 <span class="muted" style="font-size:14px">${VI('Switch cards on/off, change pictures, delete', 'Bật/tắt thẻ, đổi ảnh, xoá thẻ')}</span></div>
               <label class="field" style="margin-top:8px">${VI('Your own cards (one per line, optional picture): Name | Wikipedia page or picture link', 'Thẻ của bạn (mỗi dòng 1 thẻ, ảnh không bắt buộc): Tên | trang Wikipedia hoặc link ảnh')}
               <textarea id="gwmine" rows="3" placeholder="Ms Hoa&#10;Cát Bà | https://vi.wikipedia.org/wiki/Cát_Bà&#10;Our school | https://…/photo.jpg"></textarea></label></div></details>
           </div>
+          <div class="card row" id="pickBox" style="gap:10px;padding:10px 14px;background:var(--sun)"><b id="pickSum"></b>
+            <button class="btn small primary" id="pickOpen" type="button">🤫 ${VI('Assign the cards (hide the screen first!)', 'Chọn thẻ (che màn hình trước!)')}</button></div>
           <div class="frame" id="frame"></div>
           <div class="row"><button class="btn primary" id="start">▶ ${VI(`Start round ${next}`, `Bắt đầu vòng ${next}`)}</button>
             <span class="muted" id="startNote"></span></div>
@@ -2630,13 +2633,13 @@ function tLobby() {
       const t = $('#rtype').value;
       $('#trioBox').hidden = !Object.values(tablesMap()).some(m => m.length >= 3) || !!(TYPES[t] && TYPES[t].kind);
       const anyT = k => t === k || (t === '?' && types.includes(k));
-      $('#relBox').hidden = !anyT('rA'); $('#gwBox').hidden = $('#gwOnly').hidden = $('#mineSum').hidden = !anyT('rG'); $('#mineBox').hidden = !anyT('rG') && !anyT('rA'); $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
+      $('#relBox').hidden = !anyT('rA'); $('#gwBox').hidden = $('#mineBox').hidden = !anyT('rG'); $('#modeBox').hidden = t !== 'rA' && t !== 'rG'; $('#lvlBox').hidden = !anyT('rA') && !anyT('rG');
       drawPicks();
       $('#frame').innerHTML = t === '?' ? `<div class="fi">🎲 ${VI('A random type from your list', 'Ngẫu nhiên trong các loại đã chọn')}</div>` : frameHTML(t, $('#trio').value, Object.values(tablesMap()).some(m => m.length >= 3));
       LS.set('cp_lastType_' + CODE, t);
     };
-    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', '']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => { LS.set('cp_' + id, el.value); drawPicks(); }; });
-    relPicksSig = '';
+    [['relset', 'rand'], ['gwpack', 'all'], ['rellvl', 'hard'], ['gwmine', ''], ['pickMode', 'rand']].forEach(([id, d]) => { const el = $('#' + id); el.value = LS.get('cp_' + id, d); el.onchange = () => { LS.set('cp_' + id, el.value); drawPicks(); }; });
+    relPicksSig = ''; $('#pickOpen').onclick = openPicks;
     const mineSum = () => {
       const n = parseGwMine($('#gwmine').value).length, all = gwAll(gwEdit(), $('#gwmine').value), on = all.filter(c => !c.off).length;
       $('#mineSum').textContent = ` · ${on} of ${all.length} cards on` + (n ? ` · ${n} of your own` : '');
@@ -2672,14 +2675,32 @@ function tLobby() {
 }
 // teacher: choose the secret card (Make A Guess) or the story set for each group before the round; 🎲 = random (default)
 let relPicks = { g: {}, s: {} }, relPicksSig = '';
+// (the projected screen only shows how many groups have one, never which card: the list is in a popup)
+const pickMine = () => $('#pickMode') && $('#pickMode').value === 'mine';
+function openPicks() {
+  if (document.getElementById('pkov')) return;
+  const guess = $('#rtype').value === 'rG', ov = document.createElement('div'); ov.id = 'pkov';
+  ov.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between;gap:10px">
+      <h2 style="margin:0">🤫 ${guess ? VI('Assign each group’s secret card', 'Chọn thẻ bí mật cho từng nhóm') : VI('Assign each group’s story set', 'Chọn bộ thẻ cho từng nhóm')}</h2>
+      <button class="btn small primary" id="pkDone">✓ ${VI('Done, hide it', 'Xong, ẩn đi')}</button></div>
+    <p class="muted" style="margin:0">${VI('Groups left on 🎲 get a random one.', 'Nhóm nào để 🎲 thì máy chọn ngẫu nhiên.')}</p>
+    <div class="tcards" id="pickList"></div></div>`;
+  document.body.appendChild(ov);
+  const close = () => { ov.remove(); relPicksSig = ''; drawPicks(); };
+  ov.querySelector('#pkDone').onclick = close;
+  ov.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  relPicksSig = ''; drawPicks();
+}
 function drawPicks() {
-  const box = $('#pickBox'), list = $('#pickList'); if (!box || !list) return;
+  const box = $('#pickBox'); if (!box) return;
   const t = $('#rtype').value, guess = t === 'rG', cards = t === 'rA';
-  box.hidden = !guess && !cards; if (box.hidden) return;
+  box.hidden = (!guess && !cards) || !pickMine();
+  const ov = document.getElementById('pkov'); if (box.hidden) { if (ov) ov.remove(); return; }
   const gs = groupsSorted(tablesMap()).filter(([, m]) => m.length >= 2), P = guess ? relPicks.g : relPicks.s;
   Object.keys(P).forEach(tb => { if (!gs.some(([id]) => id === tb)) delete P[tb]; }); // groups that are gone
   const n = gs.filter(([id]) => P[id]).length;
-  $('#pickSum').textContent = (guess ? 'Each group’s secret card' : 'Each group’s story set') + ` · ${n ? n + ' chosen, the rest 🎲 random' : '🎲 all random'}`;
+  $('#pickSum').textContent = `🤫 ${n} / ${gs.length} ${guess ? 'groups have a secret card' : 'groups have a story set'}` + (n < gs.length ? ' · the rest 🎲 random' : ' ✓');
+  const list = ov && ov.querySelector('#pickList'); if (!list) return;
   const mineTxt = $('#gwmine').value, on = guess ? gwAll(gwEdit(), mineTxt).filter(c => !c.off) : [];
   const sig = [t, $('#relset').value, guess ? mineTxt + JSON.stringify(gwEdit()) : '', JSON.stringify(P), JSON.stringify(gs.map(([id, m]) => [id, m.map(p => p.name), groupTeam(m)]))].join('|');
   if (sig === relPicksSig || list.contains(document.activeElement)) return; relPicksSig = sig;
@@ -2716,7 +2737,9 @@ async function startRound(type, theme, trio, relOpt) {
   if (!rel && tooBig.length) return toast(`Groups bigger than ${MAX_PER_TABLE} only work for relative clauses. Make new groups (2–3 students) first.`, 6000);
   const tupd = teamsOn() ? teamUpdates(false) : {}, teamOfP = pid => tupd['players/' + pid + '/team'] || (players()[pid] || {}).team;
   // the teacher's own choice for some groups (a card / a story set); the others are random
-  const picks = rel ? (TYPES[type].mode === 'guess' ? relPicks.g : relPicks.s) : {};
+  const picks = rel && pickMine() ? (TYPES[type].mode === 'guess' ? relPicks.g : relPicks.s) : {};
+  if (rel && pickMine()) { const left = Object.values(tm).filter(m => m.length >= 2).length - Object.keys(tm).filter(tb => tm[tb].length >= 2 && picks[tb]).length;
+    if (left && !confirm(`${left} group(s) have no card from you yet: they will get a random one. Start anyway?`)) return; }
   if (rel && TYPES[type].mode === 'guess') Object.keys(tm).forEach(tb => { if (picks[tb]) used.add(picks[tb]); });
   for (const [tb, mem0] of Object.entries(tm)) {
     const mem = rel ? mem0 : mem0.slice(0, MAX_PER_TABLE); if (mem.length < 2) continue;
